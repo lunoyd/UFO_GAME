@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="manifest" href="manifest.json">
     <title>ŮFØ - LUNOYD</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -139,15 +139,14 @@
         </div>
 
         <!-- WORLD SELECT SCREEN -->
-        <div id="screen-worlds" class="absolute inset-0 hidden flex flex-col justify-start p-6 z-30 bg-[#050509]/98 gap-4">
-
+        <div id="screen-worlds" class="absolute inset-0 hidden flex flex-col justify-between p-6 z-30 bg-[#050509]/98">
             <div class="flex items-center justify-between">
                 <button onclick="showLobby()" class="px-3 py-1.5 bg-neutral-800 hover:bg-neutral-700 text-neutral-300 rounded-lg text-xs font-orbitron">◀ MENU</button>
                 <h2 id="txt-map-title" class="font-orbitron text-xl font-bold text-purple-300">SELEZIONA MONDO (7 MONDI)</h2>
                 <div class="text-xs font-orbitron text-yellow-400">⭐ <span id="world-stars">0</span></div>
             </div>
-<div id="worlds-container" class="grid grid-cols-2 md:grid-cols-4 gap-4 my-auto overflow-y-auto max-h-[360px] p-2">
 
+            <div id="worlds-container" class="grid grid-cols-2 md:grid-cols-4 gap-4 my-auto overflow-y-auto max-h-[360px] p-2"></div>
 
             <div id="txt-map-hint" class="text-center text-[10px] text-neutral-400 font-orbitron">
                 Clicca su una luna per accedere ai suoi 7 livelli fissi!
@@ -162,7 +161,7 @@
                 <div class="text-xs font-orbitron text-yellow-400">⭐ <span id="stages-stars">0</span></div>
             </div>
 
-            <div id="stages-container" class="grid grid-cols-7 gap-3 my-auto max-w-3xl mx-auto w-full"></div>
+            <div id="stages-container" class="grid grid-cols-7 gap-3 my-auto max-w-3xl mx-auto w-full overflow-y-auto max-h-[360px] p-2"></div>
 
             <div class="text-center text-[10px] text-neutral-400 font-orbitron">
                 Livelli lunghi, difficoltà progressiva avanzata con laser e spuntoni. Scegli lo stage!
@@ -320,7 +319,6 @@
             document.getElementById('warn-desc').innerText = t.warnDesc;
         }
 
-        // 30+ costose skin per l'UFO
         const skinsConfig = [
             { id: 'classic', name: 'Classic Grey', price: 0, bodyColor: '#9ca3af', lightColor: '#a855f7', haloColor: '#eab308' },
             { id: 'cyber', name: 'Cyber Neon', price: 40, bodyColor: '#1f2937', lightColor: '#06b6d4', haloColor: '#38bdf8' },
@@ -354,7 +352,6 @@
             { id: 'lunoyd', name: 'Lunoyd Prime', price: 6000, bodyColor: '#1e1b4b', lightColor: '#a855f7', haloColor: '#eab308' }
         ];
 
-        // 7 Mondi
         const worldsConfig = [
             { id: 0, unlocked: true, bg: "#0d0d12", floorColor: "#4b5563", primary: "#9ca3af", icon: "🌕" },
             { id: 1, unlocked: false, bg: "#1a0808", floorColor: "#991b1b", primary: "#ef4444", icon: "🔴" },
@@ -390,11 +387,10 @@
         }
         syncProgress();
 
-        // Web Audio API & Multi-part dynamic music system
         let audioCtx = null;
         let ambientMusicInterval = null;
         let gameMusicInterval = null;
-        let gameMusicTimer = 0; // Tracks seconds elapsed since gameplay started
+        let gameMusicTimer = 0;
 
         function initAudio() {
             if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -453,7 +449,6 @@
             }
         }
 
-        // 1. LOBBY: Chill lo-fi ambient lounge
         const lofiChords = [
             [130.81, 196.00, 246.94, 329.63],
             [110.00, 164.81, 207.65, 293.66],
@@ -489,7 +484,6 @@
             }, 3000);
         }
 
-        // 2. GAMEPLAY: Dynamic thasup-style song (Intro -> Drop with heavy 808 sliding sub-bass & bouncy trap hi-hats)
         const thasupIntroNotes = [330, 392, 440, 523.25];
         const thasupDropMelody = [440, 523.25, 587.33, 659.25, 523.25, 392, 440, 587.33];
         let thasupBeatStep = 0;
@@ -505,12 +499,10 @@
                 if (!audioCtx) return;
                 try {
                     const now = audioCtx.currentTime;
-                    gameMusicTimer += 0.18; // approx tick time
-
-                    const isDrop = gameMusicTimer >= 6.0; // Drop kicks in after 6 seconds!
+                    gameMusicTimer += 0.18;
+                    const isDrop = gameMusicTimer >= 6.0;
 
                     if (isDrop) {
-                        // DROP: Heavy 808 sliding sub-bass on beats 0 and 4
                         if (thasupBeatStep % 4 === 0) {
                             const bassOsc = audioCtx.createOscillator();
                             const bassGain = audioCtx.createGain();
@@ -524,7 +516,6 @@
                             bassOsc.start(now); bassOsc.stop(now + 0.32);
                         }
 
-                        // Bouncy trap hi-hat rolls
                         const hatOsc = audioCtx.createOscillator();
                         const hatGain = audioCtx.createGain();
                         hatOsc.type = 'square';
@@ -535,7 +526,6 @@
                         hatGain.connect(audioCtx.destination);
                         hatOsc.start(now); hatOsc.stop(now + 0.04);
 
-                        // Hype thasup melodic synth hook
                         const synthOsc = audioCtx.createOscillator();
                         const synthGain = audioCtx.createGain();
                         synthOsc.type = 'triangle';
@@ -548,7 +538,6 @@
                         synthOsc.start(now); synthOsc.stop(now + 0.16);
 
                     } else {
-                        // INTRO: Soft floating cosmic pads / melodic bells
                         const introOsc = audioCtx.createOscillator();
                         const introGain = audioCtx.createGain();
                         introOsc.type = 'sine';
@@ -588,7 +577,6 @@
             }
         });
 
-        // Screen Navigation
         function showLobby() {
             startAmbientMusic();
             hideAllScreens();
@@ -638,7 +626,6 @@
             ctx.translate(x, y);
             ctx.rotate(angle);
 
-            // Halo
             ctx.strokeStyle = skin.haloColor;
             ctx.shadowColor = skin.haloColor;
             ctx.shadowBlur = 10;
@@ -647,7 +634,6 @@
             ctx.ellipse(0, -22, 14, 5, 0, 0, Math.PI * 2);
             ctx.stroke();
 
-            // Dome
             ctx.fillStyle = 'rgba(168, 85, 247, 0.35)';
             ctx.strokeStyle = skin.lightColor;
             ctx.lineWidth = 2;
@@ -656,7 +642,6 @@
             ctx.fill();
             ctx.stroke();
 
-            // Body
             const grad = ctx.createLinearGradient(-radius, 0, radius, 0);
             grad.addColorStop(0, '#1f2937');
             grad.addColorStop(0.5, skin.bodyColor);
@@ -669,7 +654,6 @@
             ctx.fill();
             ctx.stroke();
 
-            // Neon lights
             ctx.fillStyle = skin.lightColor;
             ctx.shadowColor = skin.lightColor;
             ctx.shadowBlur = 12;
@@ -747,7 +731,7 @@
             worldsConfig.forEach((w, idx) => {
                 const worldName = t.worlds[idx];
                 const card = document.createElement('div');
-                card.className = `p-3 rounded-xl border flex flex-col justify-between transition relative ${
+                card.className = `p-3 rounded-xl border flex flex-col justify-between transition relative h-28 ${
                     w.unlocked ? 'bg-neutral-900 border-purple-500/40 hover:border-purple-400 cursor-pointer shadow-lg' : 'bg-neutral-950/90 border-neutral-800 opacity-60 cursor-not-allowed filter grayscale'
                 }`;
                 
@@ -756,8 +740,8 @@
                         <span class="font-orbitron text-[9px] text-purple-400">W0${idx + 1}</span>
                         <span class="text-sm">${w.unlocked ? '🔓' : '🔒'}</span>
                     </div>
-                    <div class="text-center my-2">
-                        <div class="text-3xl mb-1">${w.icon}</div>
+                    <div class="text-center my-1">
+                        <div class="text-2xl mb-0.5">${w.icon}</div>
                         <h3 class="font-orbitron font-bold text-[11px] text-white truncate">${worldName}</h3>
                     </div>
                     <div class="mt-1 pt-1 border-t border-neutral-800 text-[9px] text-neutral-400 text-center font-orbitron">
@@ -800,7 +784,6 @@
             document.getElementById('stages-stars').innerText = gameData.progress.stars;
         }
 
-        // Gameplay Engine
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         let animationId = null;
@@ -819,13 +802,14 @@
         function startActiveStage(worldIdx, stageIdx) {
             gameData.currentWorld = worldIdx;
             gameData.currentStage = stageIdx;
-            currentWorldObj = worldsConfig[worldIdx];
+            currentWorldObj = worldsConfig[worldIdx] || worldsConfig[0];
 
             hideAllScreens();
-            document.getElementById('screen-game').classList.remove('hidden');
+            const gameScreen = document.getElementById('screen-game');
+            if (gameScreen) gameScreen.classList.remove('hidden');
 
             const t = translations[currentLang];
-            const worldName = t.worlds[worldIdx];
+            const worldName = t.worlds[worldIdx] || "Mondo";
             document.getElementById('hud-level-title').innerText = `${worldName} - Stage ${stageIdx + 1}`;
             
             deathCount = 0;
@@ -840,6 +824,8 @@
             generateFixedStage(worldIdx, stageIdx);
             gameRunning = true;
             startGameMusic();
+            
+            if (animationId) cancelAnimationFrame(animationId);
             animationId = requestAnimationFrame(gameLoop);
         }
 
@@ -970,7 +956,6 @@
             ctx.fillStyle = currentWorldObj.bg;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Starry space background (white dots)
             ctx.fillStyle = "rgba(255, 255, 255, 0.85)";
             for (let i = 0; i < 55; i++) {
                 let sx = (i * 137 - distTraveled * 0.25) % canvas.width;
@@ -1127,4 +1112,4 @@
         });
     </script>
 </body>
-    </html>
+</html>
