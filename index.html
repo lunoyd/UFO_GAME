@@ -287,13 +287,13 @@
                 storyIntroTitle: "LA GRANDE FUGA DALL'IMPERO",
                 storyIntroText: "Sei un pilota ribelle a bordo del prototipo sperimentale ŮFØ. L'Impero Galattico ha bloccato tutte le rotte spaziali con campi laser e spuntoni orbitali. Attraversa le 6 Lune sorvegliate, raccogli le stelle energetiche e raggiungi la Terra per metterti in salvo!",
                 worldStories: [
-                    "Settore 01 - Luna Classica: Sei appena evaso dalla base lunare. Le difese sono ancora in fase di attivazione.",
-                    "Settore 02 - Luna Rossa: L'allarme è scattato! I cannoni laser rossi stanno pattugliando l'atmosfera.",
-                    "Settore 03 - Luna Gialla: Tempeste solari e trappole ad alta velocità bloccano il passaggio verso lo spazio profondo.",
-                    "Settore 04 - Luna Verde: Sei entrato nella zona tossica dell'Impero. I riflessi devono essere fulminei.",
-                    "Settore 05 - Luna Azzurra: Campo criogenico ad alta densità. Mancano solo due salti dimensionali alla Terra!",
-                    "Settore 06 - Luna Viola: La fortezza oscura dell'Imperatore. Supera l'ultimo sbarramento prima dell'atmosfera terrestre!",
-                    "Settore 07 - TERRA (FUGA FINALE): Ci sei quasi! Attraversa l'ultimo scudo orbitale e torna finalmente a casa!"
+                    "Sector 01 - Luna Classica: Sei appena evaso dalla base lunare. Le difese sono ancora in fase di attivazione.",
+                    "Sector 02 - Luna Rossa: L'allarme è scattato! I cannoni laser rossi stanno pattugliando l'atmosfera.",
+                    "Sector 03 - Luna Gialla: Tempeste solari e trappole ad alta velocità bloccano il passaggio verso lo spazio profondo.",
+                    "Sector 04 - Luna Verde: Sei entrato nella zona tossica dell'Impero. I riflessi devono essere fulminei.",
+                    "Sector 05 - Luna Azzurra: Campo criogenico ad alta densità. Mancano solo due salti dimensionali alla Terra!",
+                    "Sector 06 - Luna Viola: La fortezza oscura dell'Imperatore. Supera l'ultimo sbarramento prima dell'atmosfera terrestre!",
+                    "Sector 07 - TERRA (FUGA FINALE): Ci sei quasi! Attraversa l'ultimo scudo orbitale e torna finalmente a casa!"
                 ],
                 storyWinGameTitle: "MISSIONE COMPIUTA: SEI LIBERO!",
                 storyWinGameText: "Incredibile! Hai attraversato tutte le 6 Lune e superato lo scudo terrestre. L'ŮFØ è atterrato sano e salvo sulla Terra!"
@@ -468,16 +468,11 @@
             showStoryModal("🛸📡", t.storyIntroTitle, t.storyIntroText);
         }
 
-        // SISTEMA AUDIO: CHILL LOBBY + BEAT PERSONALE CON SEZIONI ALTERNATE
+        // SISTEMA AUDIO DINAMICO STILE GEOMETRY DASH (SINTETIZZATORE MULTI-BEAT PER MONDO)
         let audioCtx = null;
-        let chillInterval = null;
-        let chillStep = 0;
-
-        const userBeat = new Audio('FREE-tha-Supreme-Type-Beat.mp3');
-        userBeat.loop = true;
-        userBeat.volume = 0.65;
-
-        const beatSections = [13.5, 42.0, 70.0, 98.0, 126.0];
+        let lobbyMusicInterval = null;
+        let gameMusicInterval = null;
+        let beatStep = 0;
 
         function initAudio() {
             if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -486,18 +481,20 @@
             }
         }
 
+        // 1. Musica Chill per la Lobby
         const chillChords = [
             [174.61, 220.00, 261.63, 329.63],
             [164.81, 196.00, 246.94, 293.66],
             [146.83, 174.61, 220.00, 261.63],
             [130.81, 196.00, 246.94, 329.63]
         ];
+        let chillStep = 0;
 
         function startAmbientMusic() {
             stopAllMusic();
             if (!gameData.soundEnabled) return;
             
-            const playChillChord = () => {
+            lobbyMusicInterval = setInterval(() => {
                 if (!gameData.soundEnabled) return;
                 initAudio();
                 if (!audioCtx) return;
@@ -521,34 +518,96 @@
                     });
                     chillStep++;
                 } catch (e) {}
-            };
-
-            playChillChord();
-            chillInterval = setInterval(playChillChord, 3500);
+            }, 3500);
         }
+
+        // 2. Musica Energetica a Blocchi (Stile Geometry Dash) per ogni Mondo
+        // Ogni mondo ha scale e frequenze di synth differenti che "gasano" a 140 BPM!
+        const worldScales = [
+            [220, 246, 293, 329, 392, 440], // Mondo 0: Classico
+            [196, 220, 233, 261, 293, 392], // Mondo 1: Aggressivo (Rossa)
+            [261, 293, 329, 392, 440, 523], // Mondo 2: Luminoso (Gialla)
+            [164, 196, 220, 246, 293, 330], // Mondo 3: Profondo (Verde)
+            [293, 329, 370, 440, 493, 587], // Mondo 4: Elettrico (Azzurra)
+            [220, 261, 293, 349, 392, 523], // Mondo 5: Oscuro (Viola)
+            [329, 392, 440, 523, 659, 783]  // Mondo 6: Epico (Terra)
+        ];
 
         function startGameMusic() {
             stopAllMusic();
             if (!gameData.soundEnabled) return;
-            
-            const sectionIdx = (gameData.currentWorld * 7 + gameData.currentStage) % beatSections.length;
-            const startTime = beatSections[sectionIdx];
-            
-            try {
-                userBeat.currentTime = startTime;
-                userBeat.play().catch(e => {
-                    userBeat.currentTime = 0;
-                    userBeat.play().catch(() => {});
-                });
-            } catch (e) {}
+            beatStep = 0;
+
+            const scale = worldScales[gameData.currentWorld % worldScales.length];
+            const tempo = 185; // Velocità in millisecondi per nota (stile beat elettronico veloce)
+
+            gameMusicInterval = setInterval(() => {
+                if (!gameData.soundEnabled) return;
+                initAudio();
+                if (!audioCtx) return;
+                try {
+                    const now = audioCtx.currentTime;
+
+                    // Cassa elettronica pesante a ogni battito principale
+                    if (beatStep % 4 === 0) {
+                        const kick = audioCtx.createOscillator();
+                        const kickGain = audioCtx.createGain();
+                        kick.type = 'sawtooth';
+                        kick.frequency.setValueAtTime(130, now);
+                        kick.frequency.exponentialRampToValueAtTime(35, now + 0.12);
+                        kickGain.gain.setValueAtTime(0.28, now);
+                        kickGain.gain.linearRampToValueAtTime(0.001, now + 0.14);
+                        kick.connect(kickGain);
+                        kickGain.connect(audioCtx.destination);
+                        kick.start(now);
+                        kick.stop(now + 0.14);
+                    }
+
+                    // Hi-Hat / Piatto ritmato
+                    if (beatStep % 2 !== 0) {
+                        const hat = audioCtx.createOscillator();
+                        const hatGain = audioCtx.createGain();
+                        hat.type = 'square';
+                        hat.frequency.setValueAtTime(3500, now);
+                        hatGain.gain.setValueAtTime(0.04, now);
+                        hatGain.gain.linearRampToValueAtTime(0.001, now + 0.04);
+                        hat.connect(hatGain);
+                        hatGain.connect(audioCtx.destination);
+                        hat.start(now);
+                        hat.stop(now + 0.04);
+                    }
+
+                    // Melodia Synth Lead dinamica in stile Geometry Dash
+                    const synth = audioCtx.createOscillator();
+                    const synthGain = audioCtx.createGain();
+                    synth.type = (beatStep % 8 < 4) ? 'sawtooth' : 'triangle';
+                    
+                    const noteIdx = (beatStep * 3 + (gameData.currentStage * 2)) % scale.length;
+                    const freq = scale[noteIdx];
+                    synth.frequency.setValueAtTime(freq, now);
+
+                    synthGain.gain.setValueAtTime(0.12, now);
+                    synthGain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+
+                    synth.connect(synthGain);
+                    synthGain.connect(audioCtx.destination);
+                    synth.start(now);
+                    synth.stop(now + 0.16);
+
+                    beatStep++;
+                } catch (e) {}
+            }, tempo);
         }
 
         function stopAllMusic() {
-            if (chillInterval) {
-                clearInterval(chillInterval);
-                chillInterval = null;
+            if (lobbyMusicInterval) {
+                clearInterval(lobbyMusicInterval);
+                lobbyMusicInterval = null;
             }
-            userBeat.pause();
+            if (gameMusicInterval) {
+                clearInterval(gameMusicInterval);
+                gameMusicInterval = null;
+            }
         }
 
         function toggleSound() {
@@ -566,7 +625,7 @@
         document.addEventListener('click', (e) => {
             if (e.target.tagName === 'BUTTON') {
                 playSound('click');
-                if (gameData.soundEnabled && !gameRunning && !chillInterval) {
+                if (gameData.soundEnabled && !gameRunning && !lobbyMusicInterval) {
                     startAmbientMusic();
                 }
             }
