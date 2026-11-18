@@ -2,152 +2,1125 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ŮFØ - Deluxe Neon Edition</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ŮFØ - LUNOYD</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; user-select: none; }
-        body { background: #05050a; color: #fff; width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; }
-        #app { width: 100%; max-width: 900px; height: 500px; background: linear-gradient(135deg, #0b0f19 0%, #1a1c29 100%); border: 2px solid #3b82f6; border-radius: 16px; display: flex; flex-direction: column; position: relative; box-shadow: 0 0 30px rgba(59, 130, 246, 0.3); overflow: hidden; }
-        .screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; z-index: 10; background: rgba(11, 15, 25, 0.9); }
-        .hidden { display: none !important; }
-        h1 { font-size: 3.5rem; color: #60a5fa; margin-bottom: 5px; text-shadow: 0 0 20px rgba(96, 165, 250, 0.6); letter-spacing: 2px; }
-        p { color: #9ca3af; margin-bottom: 25px; font-size: 1.1rem; }
-        .btn { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: white; border: none; padding: 16px 45px; font-size: 1.5rem; font-weight: bold; border-radius: 12px; cursor: pointer; box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6); transition: transform 0.1s ease; }
-        .btn:active { transform: scale(0.95); }
-        canvas { display: block; background: #030408; width: 100%; height: 100%; cursor: pointer; }
-        #hud { position: absolute; top: 15px; left: 20px; right: 20px; display: flex; justify-content: space-between; font-weight: bold; font-size: 1.2rem; pointer-events: none; text-shadow: 0 2px 6px rgba(0,0,0,0.9); z-index: 5; }
-        .stars-badge { background: rgba(251, 191, 36, 0.15); border: 1px solid #fbbf24; padding: 5px 12px; border-radius: 20px; color: #fbbf24; display: flex; align-items: center; gap: 6px; }
-    </style>
-</head>
-<body>
-    <div id="app">
-        <div id="lobby-screen" class="screen">
-            <h1>ŮFØ</h1>
-            <p>Geometry Dash Style | Boss Mode (+100 ⭐)</p>
-            <button class="btn" onclick="startGame()">GIOCA ORA</button>
-        </div>
-        <div id="game-screen" class="screen hidden" style="background: none; padding: 0;">
-            <div id="hud">
-                <span id="hud-level" style="color: #60a5fa;">Livello Boss 1</span>
-                <div class="stars-badge">⭐ <span id="star-count">0</span></div>
-            </div>
-            <canvas id="gameCanvas" width="900" height="500"></canvas>
-        </div>
-    </div>
-    <script>
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-        let isPlaying = false;
-        let stars = 0;
-        let particles = [];
-
-        // Genera stelle di sfondo fisse per profondità
-        let bgStars = Array.from({length: 50}, () => ({
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
-            size: Math.random() * 2 + 1,
-            speed: Math.random() * 1.5 + 0.5
-        }));
-
-        function startGame() {
-            isPlaying = true;
-            document.getElementById('lobby-screen').classList.add('hidden');
-            document.getElementById('game-screen').classList.remove('hidden');
-            runGameLoop();
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@400;600;800&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #030307;
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            touch-action: none;
+            user-select: none;
+            -webkit-user-select: none;
         }
 
-        let ufoY = 250, ufoVY = 0, progress = 0;
-        
-        // Controllo touch / click migliorato
-        canvas.addEventListener('pointerdown', () => { 
-            if (isPlaying) {
-                ufoVY = -7.5;
-                // Aggiunge particelle di scia al salto
-                for(let i=0; i<5; i++) {
-                    particles.push({x: 150, y: ufoY, vx: -Math.random()*3 - 1, vy: (Math.random()-0.5)*4, alpha: 1});
-                }
+        .font-orbitron {
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .neon-purple {
+            text-shadow: 0 0 15px rgba(168, 85, 247, 0.8), 0 0 30px rgba(168, 85, 247, 0.5);
+        }
+        .neon-yellow {
+            text-shadow: 0 0 15px rgba(234, 179, 8, 0.8), 0 0 30px rgba(234, 179, 8, 0.5);
+        }
+        .box-glow-purple {
+            box-shadow: 0 0 25px rgba(168, 85, 247, 0.5);
+        }
+        .box-glow-yellow {
+            box-shadow: 0 0 25px rgba(234, 179, 8, 0.5);
+        }
+
+        #rotate-warning {
+            display: none;
+        }
+        @media screen and (orientation: portrait) and (max-width: 1024px) {
+            #rotate-warning {
+                display: flex;
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #a855f7;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center relative">
+
+    <!-- ORIENTATION WARNING OVERLAY -->
+    <div id="rotate-warning" class="fixed inset-0 z-50 bg-[#030307] flex-col items-center justify-center p-6 text-center">
+        <div class="text-6xl mb-4 animate-bounce">📱🔄</div>
+        <h2 id="warn-title" class="font-orbitron text-2xl font-bold text-yellow-400 mb-2">RUOTA IL DISPOSITIVO</h2>
+        <p id="warn-desc" class="text-neutral-300 text-sm max-w-xs">ŮFØ è progettato in orientamento orizzontale (landscape) per un'esperienza perfetta!</p>
+    </div>
+
+    <!-- MAIN APP CONTAINER -->
+    <div id="app" class="w-full h-full max-w-[960px] max-h-[540px] flex flex-col relative bg-[#07070b] shadow-2xl overflow-hidden border border-purple-900/40 rounded-2xl">
+
+        <!-- LOBBY SCREEN -->
+        <div id="screen-lobby" class="absolute inset-0 flex flex-col justify-between p-6 z-20 bg-gradient-to-b from-[#120b24] via-[#07070b] to-[#020204]">
+            
+            <!-- Top Bar -->
+            <div class="w-full flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <span class="text-yellow-400 font-orbitron text-xs">⭐ <span id="lobby-stars">0</span></span>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="setLanguage('it')" id="lang-btn-it" class="px-3 py-1 rounded-lg border border-purple-500/50 bg-purple-900/40 font-orbitron text-xs font-bold transition flex items-center gap-1">🇮🇹 IT</button>
+                    <button onclick="setLanguage('en')" id="lang-btn-en" class="px-3 py-1 rounded-lg border border-neutral-700 bg-neutral-900 font-orbitron text-xs font-bold text-neutral-400 transition flex items-center gap-1">🇬🇧 EN</button>
+                </div>
+            </div>
+
+            <!-- Title & UFO Preview -->
+            <div class="text-center my-auto">
+                <h1 class="font-orbitron text-6xl md:text-8xl font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-yellow-400 neon-purple">
+                    ŮFØ
+                </h1>
+                <p id="txt-subtitle" class="text-purple-300/80 text-xs md:text-sm tracking-widest uppercase mt-1 font-orbitron">Geometry Space Escape</p>
+                
+                <!-- UFO Preview Canvas -->
+                <div class="flex justify-center my-3">
+                    <div class="w-16 h-8 relative flex items-center justify-center animate-pulse">
+                        <canvas id="previewCanvas" width="80" height="40" class="w-20 h-10"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Menu Buttons -->
+            <div class="flex flex-row justify-center gap-3 w-full max-w-md mx-auto mb-2">
+                <button onclick="showWorldSelect()" id="btn-play" class="flex-1 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 font-orbitron font-bold text-sm rounded-xl shadow-lg box-glow-purple transition transform active:scale-95 text-white flex items-center justify-center gap-2">
+                    🚀 GIOCA ORA
+                </button>
+                <button onclick="showShop()" id="btn-shop" class="flex-1 py-3 bg-gradient-to-r from-amber-600 to-yellow-600 hover:from-amber-500 hover:to-yellow-500 font-orbitron font-bold text-sm rounded-xl shadow-lg box-glow-yellow transition transform active:scale-95 text-black flex items-center justify-center gap-2">
+                    🛒 NEGOZIO
+                </button>
+                <button onclick="toggleSound()" id="sound-btn" class="px-4 py-3 bg-neutral-900/80 hover:bg-neutral-800 border border-neutral-700 font-orbitron font-semibold text-xs rounded-xl transition text-neutral-300">
+                    🔊
+                </button>
+            </div>
+
+            <!-- Creator Credit Footer -->
+            <div class="text-center">
+                <p class="font-orbitron text-xs text-yellow-400 tracking-wide neon-yellow flex items-center justify-center gap-2">
+                    Created by <span class="flex items-center gap-1 text-purple-300">📺 Lunoyd_</span>
+                </p>
+            </div>
+        </div>
+
+        <!-- SHOP SCREEN -->
+        <div id="screen-shop" class="absolute inset-0 hidden flex flex-col justify-between p-6 z-30 bg-[#050509]">
+            <div class="flex items-center justify-between">
+                <button onclick="showLobby()" class="px-3 py-1.5 bg-neutral-800 hover:bg-neutral-700 text-neutral-300 rounded-lg text-xs font-orbitron">◀ MENU</button>
+                <h2 id="txt-shop-title" class="font-orbitron text-xl font-bold text-yellow-400">NEGOZIO SKIN ŮFØ (30+ LEGENDARIE)</h2>
+                <div class="text-xs font-orbitron text-yellow-400">⭐ <span id="shop-stars">0</span></div>
+            </div>
+
+            <div id="skins-container" class="grid grid-cols-2 md:grid-cols-4 gap-4 my-auto overflow-y-auto max-h-[360px] p-2"></div>
+
+            <div class="text-center text-xs text-neutral-400 font-orbitron" id="shop-hint">
+                Inizia con 0 stelle e accumula ricchezze completando i livelli per sbloccare skin esclusive!
+            </div>
+        </div>
+
+        <!-- WORLD SELECT SCREEN -->
+        <div id="screen-worlds" class="absolute inset-0 hidden flex flex-col justify-between p-6 z-30 bg-[#050509]/98">
+            <div class="flex items-center justify-between">
+                <button onclick="showLobby()" class="px-3 py-1.5 bg-neutral-800 hover:bg-neutral-700 text-neutral-300 rounded-lg text-xs font-orbitron">◀ MENU</button>
+                <h2 id="txt-map-title" class="font-orbitron text-xl font-bold text-purple-300">SELEZIONA MONDO (7 MONDI)</h2>
+                <div class="text-xs font-orbitron text-yellow-400">⭐ <span id="world-stars">0</span></div>
+            </div>
+
+            <div id="worlds-container" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-2.5 my-auto"></div>
+
+            <div id="txt-map-hint" class="text-center text-[10px] text-neutral-400 font-orbitron">
+                Clicca su una luna per accedere ai suoi 7 livelli fissi!
+            </div>
+        </div>
+
+        <!-- STAGES SELECT SCREEN -->
+        <div id="screen-stages" class="absolute inset-0 hidden flex flex-col justify-between p-6 z-30 bg-[#050509]/98">
+            <div class="flex items-center justify-between">
+                <button onclick="showWorldSelect()" class="px-3 py-1.5 bg-neutral-800 hover:bg-neutral-700 text-neutral-300 rounded-lg text-xs font-orbitron">◀ MONDI</button>
+                <h2 id="stages-world-title" class="font-orbitron text-xl font-bold text-yellow-400">Luna Classica - Livelli</h2>
+                <div class="text-xs font-orbitron text-yellow-400">⭐ <span id="stages-stars">0</span></div>
+            </div>
+
+            <div id="stages-container" class="grid grid-cols-7 gap-3 my-auto max-w-3xl mx-auto w-full"></div>
+
+            <div class="text-center text-[10px] text-neutral-400 font-orbitron">
+                Livelli lunghi, difficoltà progressiva avanzata con laser e spuntoni. Scegli lo stage!
+            </div>
+        </div>
+
+        <!-- GAMEPLAY SCREEN -->
+        <div id="screen-game" class="absolute inset-0 hidden flex flex-col z-25">
+            <div class="absolute top-0 left-0 right-0 p-3 flex flex-col gap-2 z-10 pointer-events-none">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center gap-3">
+                        <button onclick="returnToStages()" class="pointer-events-auto px-3 py-1 bg-neutral-900/80 hover:bg-neutral-800 text-white rounded-lg text-xs font-orbitron border border-neutral-700">🚪 ESCI</button>
+                        <div>
+                            <div id="hud-level-title" class="font-orbitron text-xs font-bold text-purple-300">Luna Classica - Stage 1</div>
+                            <div class="text-[10px] text-neutral-400">Morti: <span id="hud-deaths" class="text-red-400 font-bold">0</span></div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 bg-black/60 px-3 py-1.5 rounded-xl border border-purple-500/30">
+                        <div class="text-yellow-400 font-orbitron text-xs">⭐ <span id="hud-stars">0</span></div>
+                    </div>
+                </div>
+                <!-- Progress Bar -->
+                <div class="w-full bg-neutral-900/80 border border-purple-900/40 h-3 rounded-full overflow-hidden p-0.5">
+                    <div id="hud-progress-bar" class="bg-gradient-to-r from-purple-500 to-yellow-400 h-full rounded-full transition-all duration-75" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- Canvas -->
+            <canvas id="gameCanvas" width="960" height="540" class="w-full h-full block bg-black cursor-pointer"></canvas>
+
+            <div class="absolute bottom-2 left-0 right-0 text-center pointer-events-none md:hidden">
+                <span id="txt-touch-hint" class="text-[10px] font-orbitron text-neutral-400 bg-black/70 px-3 py-1 rounded-full border border-neutral-800">Tocca per fluttuare (Pavimento sicuro, soffitto solido)</span>
+            </div>
+        </div>
+
+        <!-- WIN SCREEN -->
+        <div id="screen-win" class="absolute inset-0 hidden flex flex-col items-center justify-center p-6 z-40 bg-black/90 backdrop-blur-md">
+            <div class="max-w-sm w-full bg-neutral-900 border border-purple-500/40 p-6 rounded-2xl text-center shadow-2xl flex flex-col gap-3">
+                <div class="text-4xl animate-bounce">🏆⭐</div>
+                <h2 id="win-title" class="font-orbitron text-xl font-bold text-yellow-400">LIVELLO SUPERATO!</h2>
+                <p id="win-message" class="text-neutral-300 text-xs">Hai completato lo stage con successo!</p>
+                <div class="flex justify-around bg-neutral-950 p-3 rounded-xl">
+                    <div>
+                        <div class="text-[10px] text-neutral-500 font-orbitron">STELLE RACCOLTE</div>
+                        <div id="win-stars" class="text-sm font-bold text-yellow-400">10</div>
+                    </div>
+                    <div>
+                        <div class="text-[10px] text-neutral-500 font-orbitron">MORTI TOTALI</div>
+                        <div id="win-deaths" class="text-sm font-bold text-red-400">0</div>
+                    </div>
+                </div>
+                <div class="flex gap-2 mt-1">
+                    <button onclick="showStages(gameData.currentWorld)" id="btn-win-stages" class="flex-1 py-2.5 bg-neutral-800 hover:bg-neutral-700 font-orbitron text-xs rounded-xl text-neutral-200">LIVELLI</button>
+                    <button onclick="proceedNextStage()" id="btn-next-stage" class="flex-1 py-2.5 bg-purple-600 hover:bg-purple-500 font-orbitron text-xs font-bold rounded-xl text-white">PROSSIMO ➔</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- GAME OVER SCREEN -->
+        <div id="screen-gameover" class="absolute inset-0 hidden flex flex-col items-center justify-center p-6 z-40 bg-red-950/80 backdrop-blur-md">
+            <div class="max-w-xs w-full bg-neutral-900 border border-red-500/40 p-6 rounded-2xl text-center shadow-2xl flex flex-col gap-3">
+                <div class="text-4xl animate-pulse">💥🛸</div>
+                <h2 id="go-title" class="font-orbitron text-xl font-bold text-red-500">DISTRUTTO!</h2>
+                <p id="gameover-reason" class="text-neutral-300 text-xs">Sei stato colpito.</p>
+                <div class="flex gap-2 mt-2">
+                    <button onclick="showStages(gameData.currentWorld)" id="btn-go-stages" class="flex-1 py-2.5 bg-neutral-800 hover:bg-neutral-700 font-orbitron text-xs rounded-xl text-neutral-200">LIVELLI</button>
+                    <button onclick="restartActiveStage()" id="btn-go-retry" class="flex-1 py-2.5 bg-red-600 hover:bg-red-500 font-orbitron text-xs font-bold rounded-xl text-white">RIPROVA ↺</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- GAME LOGIC SCRIPT -->
+    <script>
+        let currentLang = 'it';
+        const translations = {
+            it: {
+                subtitle: "Geometry Space Escape",
+                playBtn: "🚀 GIOCA ORA",
+                shopBtn: "🛒 NEGOZIO",
+                shopTitle: "NEGOZIO SKIN ŮFØ (30+ LEGENDARIE)",
+                shopHint: "Inizia con 0 stelle e accumula ricchezze completando i livelli!",
+                mapTitle: "SELEZIONA MONDO (7 MONDI)",
+                mapHint: "Clicca su una luna per accedere ai suoi 7 livelli fissi!",
+                menuBtn: "◀ MENU",
+                stagesTitle: "Livelli - Mondo",
+                startRun: "VIA ALLA FUGA ➔",
+                backMap: "◀ Mondi",
+                exit: "🚪 ESCI",
+                progress: "Progresso:",
+                touchHint: "Tocca per fluttuare (Pavimento sicuro, soffitto solido)",
+                winTitle: "LIVELLO SUPERATO!",
+                winMsg: "Hai completato lo stage con successo!",
+                stagesBtn: "LIVELLI",
+                nextStage: "PROSSIMO ➔",
+                goTitle: "ATTACCO ALIENO!",
+                retry: "RIPROVA ↺",
+                warnTitle: "RUOTA IL DISPOSITIVO",
+                warnDesc: "ŮFØ è progettato in orientamento orizzontale (landscape) per un'esperienza perfetta!",
+                worlds: ["Luna Classica", "Luna Rossa", "Luna Gialla", "Luna Verde", "Luna Azzurra", "Luna Viola", "Terra (Fuga)"]
+            },
+            en: {
+                subtitle: "Geometry Space Escape",
+                playBtn: "🚀 PLAY NOW",
+                shopBtn: "🛒 SHOP",
+                shopTitle: "ŮFØ SKIN SHOP (30+ LEGENDARY)",
+                shopHint: "Start with 0 stars and accumulate wealth by beating levels!",
+                mapTitle: "SELECT WORLD (7 WORLDS)",
+                mapHint: "Click on a moon to access its 7 fixed stages!",
+                menuBtn: "◀ MENU",
+                stagesTitle: "Stages - World",
+                startRun: "START ESCAPE ➔",
+                backMap: "◀ Worlds",
+                exit: "🚪 EXIT",
+                progress: "Progress:",
+                touchHint: "Tap to float (Safe ground, solid ceiling)",
+                winTitle: "STAGE CLEARED!",
+                winMsg: "You successfully completed the stage!",
+                stagesBtn: "STAGES",
+                nextStage: "NEXT ➔",
+                goTitle: "ALIEN ATTACK!",
+                retry: "RETRY ↺",
+                warnTitle: "ROTATE DEVICE",
+                warnDesc: "ŮFØ is designed in landscape orientation for the ultimate gameplay experience!",
+                worlds: ["Classic Moon", "Red Moon", "Yellow Moon", "Green Moon", "Blue Moon", "Purple Moon", "Earth (Escape)"]
+            }
+        };
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            document.getElementById('lang-btn-it').className = lang === 'it' ? "px-3 py-1 rounded-lg border border-purple-500/50 bg-purple-900/40 font-orbitron text-xs font-bold transition flex items-center gap-1" : "px-3 py-1 rounded-lg border border-neutral-700 bg-neutral-900 font-orbitron text-xs font-bold text-neutral-400 transition flex items-center gap-1";
+            document.getElementById('lang-btn-en').className = lang === 'en' ? "px-3 py-1 rounded-lg border border-purple-500/50 bg-purple-900/40 font-orbitron text-xs font-bold transition flex items-center gap-1" : "px-3 py-1 rounded-lg border border-neutral-700 bg-neutral-900 font-orbitron text-xs font-bold text-neutral-400 transition flex items-center gap-1";
+            updateUITexts();
+        }
+
+        function updateUITexts() {
+            const t = translations[currentLang];
+            document.getElementById('txt-subtitle').innerText = t.subtitle;
+            document.getElementById('btn-play').innerHTML = t.playBtn;
+            document.getElementById('btn-shop').innerHTML = t.shopBtn;
+            document.getElementById('txt-shop-title').innerText = t.shopTitle;
+            document.getElementById('shop-hint').innerText = t.shopHint;
+            document.getElementById('txt-map-title').innerText = t.mapTitle;
+            document.getElementById('txt-map-hint').innerText = t.mapHint;
+            document.getElementById('txt-touch-hint').innerText = t.touchHint;
+            document.getElementById('win-title').innerText = t.winTitle;
+            document.getElementById('win-message').innerText = t.winMsg;
+            document.getElementById('btn-win-stages').innerText = t.stagesBtn;
+            document.getElementById('btn-next-stage').innerText = t.nextStage;
+            document.getElementById('go-title').innerText = t.goTitle;
+            document.getElementById('btn-go-stages').innerText = t.stagesBtn;
+            document.getElementById('btn-go-retry').innerText = t.retry;
+            document.getElementById('warn-title').innerText = t.warnTitle;
+            document.getElementById('warn-desc').innerText = t.warnDesc;
+        }
+
+        // 30+ costose skin per l'UFO
+        const skinsConfig = [
+            { id: 'classic', name: 'Classic Grey', price: 0, bodyColor: '#9ca3af', lightColor: '#a855f7', haloColor: '#eab308' },
+            { id: 'cyber', name: 'Cyber Neon', price: 40, bodyColor: '#1f2937', lightColor: '#06b6d4', haloColor: '#38bdf8' },
+            { id: 'golden', name: 'Golden Star', price: 80, bodyColor: '#78350f', lightColor: '#f59e0b', haloColor: '#fbbf24' },
+            { id: 'emerald', name: 'Emerald Beast', price: 130, bodyColor: '#065f46', lightColor: '#10b981', haloColor: '#34d399' },
+            { id: 'ruby', name: 'Ruby Pulse', price: 190, bodyColor: '#991b1b', lightColor: '#ef4444', haloColor: '#f87171' },
+            { id: 'plasma', name: 'Plasma Ghost', price: 260, bodyColor: '#3b0764', lightColor: '#c084fc', haloColor: '#e879f9' },
+            { id: 'obsidian', name: 'Obsidian Void', price: 340, bodyColor: '#09090b', lightColor: '#71717a', haloColor: '#a1a1aa' },
+            { id: 'stalker', name: 'Neon Stalker', price: 430, bodyColor: '#18181b', lightColor: '#22c55e', haloColor: '#4ade80' },
+            { id: 'royal', name: 'Royal Crown', price: 530, bodyColor: '#4c1d95', lightColor: '#8b5cf6', haloColor: '#c4b5fd' },
+            { id: 'solar', name: 'Solar Flare', price: 640, bodyColor: '#7c2d12', lightColor: '#f97316', haloColor: '#fb923c' },
+            { id: 'frost', name: 'Cosmic Frost', price: 760, bodyColor: '#0c4a6e', lightColor: '#38bdf8', haloColor: '#7dd3fc' },
+            { id: 'quantum', name: 'Quantum Spark', price: 890, bodyColor: '#134e4a', lightColor: '#2dd4bf', haloColor: '#5eead4' },
+            { id: 'titanium', name: 'Titanium Shield', price: 1030, bodyColor: '#334155', lightColor: '#94a3b8', haloColor: '#cbd5e1' },
+            { id: 'darkmatter', name: 'Dark Matter', price: 1180, bodyColor: '#020617', lightColor: '#6366f1', haloColor: '#818cf8' },
+            { id: 'drifter', name: 'Starlight Drifter', price: 1340, bodyColor: '#3b82f6', lightColor: '#60a5fa', haloColor: '#bfdbfe' },
+            { id: 'crimson', name: 'Crimson Blaze', price: 1510, bodyColor: '#450a0a', lightColor: '#dc2626', haloColor: '#fca5a5' },
+            { id: 'phantom', name: 'Astral Phantom', price: 1690, bodyColor: '#2e1065', lightColor: '#a855f7', haloColor: '#d8b4fe' },
+            { id: 'supernova', name: 'Supernova King', price: 1880, bodyColor: '#581c87', lightColor: '#ec4899', haloColor: '#f472b6' },
+            { id: 'eclipse', name: 'Eclipse Shadow', price: 2080, bodyColor: '#172554', lightColor: '#3b82f6', haloColor: '#93c5fd' },
+            { id: 'galaxy', name: 'Galaxy Warden', price: 2300, bodyColor: '#030712', lightColor: '#eab308', haloColor: '#fef08a' },
+            { id: 'nebula', name: 'Nebula Storm', price: 2550, bodyColor: '#311042', lightColor: '#d946ef', haloColor: '#f0abfc' },
+            { id: 'vortex', name: 'Vortex Abyss', price: 2820, bodyColor: '#042f2e', lightColor: '#14b8a6', haloColor: '#5fdba7' },
+            { id: 'inferno', name: 'Inferno Core', price: 3110, bodyColor: '#431407', lightColor: '#ea580c', haloColor: '#fdba74' },
+            { id: 'zenith', name: 'Zenith Apex', price: 3420, bodyColor: '#1e1b4b', lightColor: '#6366f1', haloColor: '#a5b4fc' },
+            { id: 'neutron', name: 'Neutron Star', price: 3750, bodyColor: '#111827', lightColor: '#facc15', haloColor: '#fef08a' },
+            { id: 'hyperion', name: 'Hyperion Titan', price: 4100, bodyColor: '#27272a', lightColor: '#f43f5e', haloColor: '#fda4af' },
+            { id: 'pulsar', name: 'Pulsar Beam', price: 4480, bodyColor: '#064e3b', lightColor: '#34d399', haloColor: '#a7f3d0' },
+            { id: 'quasar', name: 'Quasar Blast', price: 4890, bodyColor: '#4a044e', lightColor: '#e879f9', haloColor: '#f5d0fe' },
+            { id: 'singularity', name: 'Singularity', price: 5330, bodyColor: '#000000', lightColor: '#ffffff', haloColor: '#cbd5e1' },
+            { id: 'lunoyd', name: 'Lunoyd Prime', price: 6000, bodyColor: '#1e1b4b', lightColor: '#a855f7', haloColor: '#eab308' }
+        ];
+
+        // 7 Mondi
+        const worldsConfig = [
+            { id: 0, unlocked: true, bg: "#0d0d12", floorColor: "#4b5563", primary: "#9ca3af", icon: "🌕" },
+            { id: 1, unlocked: false, bg: "#1a0808", floorColor: "#991b1b", primary: "#ef4444", icon: "🔴" },
+            { id: 2, unlocked: false, bg: "#1a1608", floorColor: "#854d0e", primary: "#eab308", icon: "🌕" },
+            { id: 3, unlocked: false, bg: "#081a0b", floorColor: "#166534", primary: "#22c55e", icon: "🟢" },
+            { id: 4, unlocked: false, bg: "#08151a", floorColor: "#0369a1", primary: "#0ea5e9", icon: "🔵" },
+            { id: 5, unlocked: false, bg: "#12081a", floorColor: "#6b21a8", primary: "#a855f7", icon: "🟣" },
+            { id: 6, unlocked: false, bg: "#051326", floorColor: "#1d4ed8", primary: "#38bdf8", icon: "🌍" }
+        ];
+
+        let gameData = {
+            currentWorld: 0,
+            currentStage: 0,
+            soundEnabled: true,
+            progress: JSON.parse(localStorage.getItem('unoyd_ufo_ultimate_v6_progress')) || {
+                unlockedWorlds: [0],
+                unlockedStages: { 0: [0] },
+                stars: 0,
+                skins: ['classic'],
+                activeSkin: 'classic'
+            },
+            stats: { deaths: 0 }
+        };
+
+        function syncProgress() {
+            worldsConfig.forEach((w, idx) => {
+                w.unlocked = gameData.progress.unlockedWorlds.includes(idx);
+            });
+            document.getElementById('lobby-stars').innerText = gameData.progress.stars;
+            document.getElementById('shop-stars').innerText = gameData.progress.stars;
+            document.getElementById('world-stars').innerText = gameData.progress.stars;
+            document.getElementById('stages-stars').innerText = gameData.progress.stars;
+        }
+        syncProgress();
+
+        // Web Audio API & Multi-part dynamic music system
+        let audioCtx = null;
+        let ambientMusicInterval = null;
+        let gameMusicInterval = null;
+        let gameMusicTimer = 0; // Tracks seconds elapsed since gameplay started
+
+        function initAudio() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playSound(type) {
+            if (!gameData.soundEnabled) return;
+            initAudio();
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            const now = audioCtx.currentTime;
+
+            if (type === 'click') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(500, now);
+                osc.frequency.exponentialRampToValueAtTime(1000, now + 0.04);
+                gain.gain.setValueAtTime(0.08, now);
+                gain.gain.linearRampToValueAtTime(0.001, now + 0.04);
+                osc.start(now); osc.stop(now + 0.04);
+            } else if (type === 'jump') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(220, now);
+                osc.frequency.exponentialRampToValueAtTime(520, now + 0.1);
+                gain.gain.setValueAtTime(0.18, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.1);
+                osc.start(now); osc.stop(now + 0.1);
+            } else if (type === 'star') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(700, now);
+                osc.frequency.setValueAtTime(1100, now + 0.07);
+                gain.gain.setValueAtTime(0.12, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.15);
+                osc.start(now); osc.stop(now + 0.15);
+            } else if (type === 'crash') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(120, now);
+                osc.frequency.linearRampToValueAtTime(20, now + 0.35);
+                gain.gain.setValueAtTime(0.25, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.35);
+                osc.start(now); osc.stop(now + 0.35);
+            } else if (type === 'win') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(523.25, now);
+                osc.frequency.setValueAtTime(659.25, now + 0.12);
+                osc.frequency.setValueAtTime(783.99, now + 0.24);
+                osc.frequency.setValueAtTime(1046.50, now + 0.36);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.55);
+                osc.start(now); osc.stop(now + 0.55);
+            }
+        }
+
+        // 1. LOBBY: Chill lo-fi ambient lounge
+        const lofiChords = [
+            [130.81, 196.00, 246.94, 329.63],
+            [110.00, 164.81, 207.65, 293.66],
+            [98.00,  146.83, 185.00, 261.63],
+            [146.83, 220.00, 261.63, 329.63]
+        ];
+        let lofiStep = 0;
+        function startAmbientMusic() {
+            stopAllMusic();
+            ambientMusicInterval = setInterval(() => {
+                if (!gameData.soundEnabled) return;
+                initAudio();
+                if (!audioCtx) return;
+                try {
+                    const chord = lofiChords[lofiStep % lofiChords.length];
+                    chord.forEach((freq, idx) => {
+                        const osc = audioCtx.createOscillator();
+                        const gain = audioCtx.createGain();
+                        osc.type = idx === 0 ? 'sine' : 'triangle';
+                        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+                        gain.gain.setValueAtTime(0.0001, audioCtx.currentTime);
+                        gain.gain.linearRampToValueAtTime(0.04, audioCtx.currentTime + 0.5);
+                        gain.gain.linearRampToValueAtTime(0.0001, audioCtx.currentTime + 3.2);
+
+                        osc.connect(gain);
+                        gain.connect(audioCtx.destination);
+                        osc.start();
+                        osc.stop(audioCtx.currentTime + 3.2);
+                    });
+                    lofiStep++;
+                } catch (e) {}
+            }, 3000);
+        }
+
+        // 2. GAMEPLAY: Dynamic thasup-style song (Intro -> Drop with heavy 808 sliding sub-bass & bouncy trap hi-hats)
+        const thasupIntroNotes = [330, 392, 440, 523.25];
+        const thasupDropMelody = [440, 523.25, 587.33, 659.25, 523.25, 392, 440, 587.33];
+        let thasupBeatStep = 0;
+
+        function startGameMusic() {
+            stopAllMusic();
+            gameMusicTimer = 0;
+            thasupBeatStep = 0;
+
+            gameMusicInterval = setInterval(() => {
+                if (!gameData.soundEnabled) return;
+                initAudio();
+                if (!audioCtx) return;
+                try {
+                    const now = audioCtx.currentTime;
+                    gameMusicTimer += 0.18; // approx tick time
+
+                    const isDrop = gameMusicTimer >= 6.0; // Drop kicks in after 6 seconds!
+
+                    if (isDrop) {
+                        // DROP: Heavy 808 sliding sub-bass on beats 0 and 4
+                        if (thasupBeatStep % 4 === 0) {
+                            const bassOsc = audioCtx.createOscillator();
+                            const bassGain = audioCtx.createGain();
+                            bassOsc.type = 'sawtooth';
+                            bassOsc.frequency.setValueAtTime(120, now);
+                            bassOsc.frequency.exponentialRampToValueAtTime(45, now + 0.3);
+                            bassGain.gain.setValueAtTime(0.26, now);
+                            bassGain.gain.linearRampToValueAtTime(0.001, now + 0.32);
+                            bassOsc.connect(bassGain);
+                            bassGain.connect(audioCtx.destination);
+                            bassOsc.start(now); bassOsc.stop(now + 0.32);
+                        }
+
+                        // Bouncy trap hi-hat rolls
+                        const hatOsc = audioCtx.createOscillator();
+                        const hatGain = audioCtx.createGain();
+                        hatOsc.type = 'square';
+                        hatOsc.frequency.setValueAtTime(4000, now);
+                        hatGain.gain.setValueAtTime(thasupBeatStep % 2 === 0 ? 0.05 : 0.02, now);
+                        hatGain.gain.linearRampToValueAtTime(0.001, now + 0.04);
+                        hatOsc.connect(hatGain);
+                        hatGain.connect(audioCtx.destination);
+                        hatOsc.start(now); hatOsc.stop(now + 0.04);
+
+                        // Hype thasup melodic synth hook
+                        const synthOsc = audioCtx.createOscillator();
+                        const synthGain = audioCtx.createGain();
+                        synthOsc.type = 'triangle';
+                        const note = thasupDropMelody[thasupBeatStep % thasupDropMelody.length];
+                        synthOsc.frequency.setValueAtTime(note, now);
+                        synthGain.gain.setValueAtTime(0.09, now);
+                        synthGain.gain.linearRampToValueAtTime(0.001, now + 0.16);
+                        synthOsc.connect(synthGain);
+                        synthGain.connect(audioCtx.destination);
+                        synthOsc.start(now); synthOsc.stop(now + 0.16);
+
+                    } else {
+                        // INTRO: Soft floating cosmic pads / melodic bells
+                        const introOsc = audioCtx.createOscillator();
+                        const introGain = audioCtx.createGain();
+                        introOsc.type = 'sine';
+                        const note = thasupIntroNotes[Math.floor(thasupBeatStep / 2) % thasupIntroNotes.length];
+                        introOsc.frequency.setValueAtTime(note, now);
+                        introGain.gain.setValueAtTime(0.05, now);
+                        introGain.gain.linearRampToValueAtTime(0.001, now + 0.3);
+                        introOsc.connect(introGain);
+                        introGain.connect(audioCtx.destination);
+                        introOsc.start(now); introOsc.stop(now + 0.3);
+                    }
+
+                    thasupBeatStep++;
+                } catch (e) {}
+            }, 180);
+        }
+
+        function stopAllMusic() {
+            if (ambientMusicInterval) { clearInterval(ambientMusicInterval); ambientMusicInterval = null; }
+            if (gameMusicInterval) { clearInterval(gameMusicInterval); gameMusicInterval = null; }
+        }
+
+        function toggleSound() {
+            gameData.soundEnabled = !gameData.soundEnabled;
+            document.getElementById('sound-btn').innerText = gameData.soundEnabled ? '🔊' : '🔇';
+            if (gameData.soundEnabled) {
+                startAmbientMusic();
+            } else {
+                stopAllMusic();
+            }
+            playSound('click');
+        }
+
+        document.addEventListener('click', (e) => {
+            if (e.target.tagName === 'BUTTON') {
+                playSound('click');
             }
         });
 
-        function runGameLoop() {
-            if (!isPlaying) return;
-            ufoVY += 0.45; 
-            ufoY += ufoVY;
-            
-            // Delimitazione bordi con collisione sicura a terra/soffitto
-            if (ufoY > 460) { ufoY = 460; ufoVY = 0; }
-            if (ufoY < 40) { ufoY = 40; ufoVY = 0; }
-            
-            progress += 0.25; 
-            if (progress >= 100) {
-                progress = 0;
-                stars += 100; // Premio di 100 stelle per il boss sconfitto!
-                document.getElementById('star-countinnerText' || 'star-count').innerText = stars;
+        // Screen Navigation
+        function showLobby() {
+            startAmbientMusic();
+            hideAllScreens();
+            document.getElementById('screen-lobby').classList.remove('hidden');
+            renderPreviewUFO();
+        }
+        function showShop() {
+            syncProgress();
+            renderShop();
+            hideAllScreens();
+            document.getElementById('screen-shop').classList.remove('hidden');
+        }
+        function showWorldSelect() {
+            syncProgress();
+            renderWorldsGrid();
+            hideAllScreens();
+            document.getElementById('screen-worlds').classList.remove('hidden');
+        }
+        function showStages(worldIdx) {
+            gameData.currentWorld = worldIdx;
+            syncProgress();
+            renderStagesGrid(worldIdx);
+            hideAllScreens();
+            document.getElementById('screen-stages').classList.remove('hidden');
+        }
+        function hideAllScreens() {
+            document.getElementById('screen-lobby').classList.add('hidden');
+            document.getElementById('screen-shop').classList.add('hidden');
+            document.getElementById('screen-worlds').classList.add('hidden');
+            document.getElementById('screen-stages').classList.add('hidden');
+            document.getElementById('screen-game').classList.add('hidden');
+            document.getElementById('screen-win').classList.add('hidden');
+            document.getElementById('screen-gameover').classList.add('hidden');
+            stopGameLoopOnly();
+        }
+
+        function renderPreviewUFO() {
+            const pCanvas = document.getElementById('previewCanvas');
+            const pCtx = pCanvas.getContext('2d');
+            pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height);
+            const activeSkin = skinsConfig.find(s => s.id === gameData.progress.activeSkin) || skinsConfig[0];
+            drawUFO(pCtx, 40, 22, 16, 0, activeSkin);
+        }
+
+        function drawUFO(ctx, x, y, radius, angle, skin) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate(angle);
+
+            // Halo
+            ctx.strokeStyle = skin.haloColor;
+            ctx.shadowColor = skin.haloColor;
+            ctx.shadowBlur = 10;
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.ellipse(0, -22, 14, 5, 0, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // Dome
+            ctx.fillStyle = 'rgba(168, 85, 247, 0.35)';
+            ctx.strokeStyle = skin.lightColor;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(0, -4, 11, Math.PI, 0, false);
+            ctx.fill();
+            ctx.stroke();
+
+            // Body
+            const grad = ctx.createLinearGradient(-radius, 0, radius, 0);
+            grad.addColorStop(0, '#1f2937');
+            grad.addColorStop(0.5, skin.bodyColor);
+            grad.addColorStop(1, '#111827');
+            ctx.fillStyle = grad;
+            ctx.strokeStyle = '#e5e7eb';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.ellipse(0, 4, radius, 7.5, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            // Neon lights
+            ctx.fillStyle = skin.lightColor;
+            ctx.shadowColor = skin.lightColor;
+            ctx.shadowBlur = 12;
+            for (let i = -2; i <= 2; i++) {
+                ctx.beginPath();
+                ctx.arc(i * 7, 4, 1.8, 0, Math.PI * 2);
+                ctx.fill();
             }
 
-            // --- DISEGNO GRAFICA ---
-            ctx.fillStyle = '#030408';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.restore();
+        }
 
-            // Sfondo dinamico con stelle scorrevoli
-            ctx.fillStyle = '#ffffff';
-            bgStars.forEach(s => {
-                s.x -= s.speed;
-                if (s.x < 0) s.x = canvas.width;
-                ctx.globalAlpha = Math.random() * 0.5 + 0.3;
-                ctx.fillRect(s.x, s.y, s.size, s.size);
+        function renderShop() {
+            const container = document.getElementById('skins-container');
+            container.innerHTML = '';
+            skinsConfig.forEach(skin => {
+                const isOwned = gameData.progress.skins.includes(skin.id);
+                const isActive = gameData.progress.activeSkin === skin.id;
+
+                const card = document.createElement('div');
+                card.className = `p-3 rounded-xl border flex flex-col items-center justify-between transition relative ${
+                    isActive ? 'bg-purple-950/60 border-purple-500 shadow-lg' : 'bg-neutral-900 border-neutral-800'
+                }`;
+
+                card.innerHTML = `
+                    <div class="font-orbitron font-bold text-[10px] text-white text-center truncate w-full mb-1">${skin.name}</div>
+                    <div class="w-16 h-10 flex items-center justify-center my-1" id="skin-prev-${skin.id}"></div>
+                    <div class="w-full mt-2">
+                        ${isActive ? '<span class="block text-center font-orbitron text-[9px] text-purple-400 py-1">ATTIVA</span>' :
+                          isOwned ? `<button onclick="selectSkin('${skin.id}')" class="w-full py-1 bg-neutral-800 hover:bg-neutral-700 text-white font-orbitron text-[9px] rounded-lg">USA</button>` :
+                          `<button onclick="buySkin('${skin.id}')" class="w-full py-1 bg-yellow-600 hover:bg-yellow-500 text-black font-orbitron font-bold text-[9px] rounded-lg">⭐ ${skin.price}</button>`}
+                    </div>
+                `;
+                container.appendChild(card);
+
+                setTimeout(() => {
+                    const scEl = document.getElementById(`skin-prev-${skin.id}`);
+                    if (scEl) {
+                        const scCanvas = document.createElement('canvas');
+                        scCanvas.width = 60; scCanvas.height = 30;
+                        const scCtx = scCanvas.getContext('2d');
+                        drawUFO(scCtx, 30, 15, 12, 0, skin);
+                        scEl.appendChild(scCanvas);
+                    }
+                }, 50);
             });
-            ctx.globalAlpha = 1.0;
+        }
 
-            // Particelle di scia
-            particles.forEach((p, index) => {
-                p.x += p.vx; p.y += p.vy; p.alpha -= 0.03;
-                if (p.alpha <= 0) particles.splice(index, 1);
-                else {
-                    ctx.fillStyle = `rgba(96, 165, 250, ${p.alpha})`;
-                    ctx.fillRect(p.x, p.y, 4, 4);
+        function buySkin(skinId) {
+            const skin = skinsConfig.find(s => s.id === skinId);
+            if (gameData.progress.stars >= skin.price) {
+                gameData.progress.stars -= skin.price;
+                gameData.progress.skins.push(skinId);
+                gameData.progress.activeSkin = skinId;
+                localStorage.setItem('unoyd_ufo_ultimate_v6_progress', JSON.stringify(gameData.progress));
+                syncProgress();
+                renderShop();
+                playSound('win');
+            } else {
+                playSound('crash');
+            }
+        }
+
+        function selectSkin(skinId) {
+            gameData.progress.activeSkin = skinId;
+            localStorage.setItem('unoyd_ufo_ultimate_v6_progress', JSON.stringify(gameData.progress));
+            renderShop();
+        }
+
+        function renderWorldsGrid() {
+            const container = document.getElementById('worlds-container');
+            container.innerHTML = '';
+            const t = translations[currentLang];
+
+            worldsConfig.forEach((w, idx) => {
+                const worldName = t.worlds[idx];
+                const card = document.createElement('div');
+                card.className = `p-3 rounded-xl border flex flex-col justify-between transition relative ${
+                    w.unlocked ? 'bg-neutral-900 border-purple-500/40 hover:border-purple-400 cursor-pointer shadow-lg' : 'bg-neutral-950/90 border-neutral-800 opacity-60 cursor-not-allowed filter grayscale'
+                }`;
+                
+                card.innerHTML = `
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="font-orbitron text-[9px] text-purple-400">W0${idx + 1}</span>
+                        <span class="text-sm">${w.unlocked ? '🔓' : '🔒'}</span>
+                    </div>
+                    <div class="text-center my-2">
+                        <div class="text-3xl mb-1">${w.icon}</div>
+                        <h3 class="font-orbitron font-bold text-[11px] text-white truncate">${worldName}</h3>
+                    </div>
+                    <div class="mt-1 pt-1 border-t border-neutral-800 text-[9px] text-neutral-400 text-center font-orbitron">
+                        7 Livelli Lunghi
+                    </div>
+                `;
+
+                if (w.unlocked) card.onclick = () => showStages(idx);
+                container.appendChild(card);
+            });
+            document.getElementById('world-stars').innerText = gameData.progress.stars;
+        }
+
+        function renderStagesGrid(worldIdx) {
+            const container = document.getElementById('stages-container');
+            container.innerHTML = '';
+            const t = translations[currentLang];
+            const worldName = t.worlds[worldIdx];
+
+            document.getElementById('stages-world-title').innerText = `${worldName} - Livelli`;
+            const unlockedStages = gameData.progress.unlockedStages[worldIdx] || [0];
+
+            for (let s = 0; s < 7; s++) {
+                const isUnlocked = unlockedStages.includes(s) || (worldIdx === 0 && s === 0);
+                const card = document.createElement('div');
+                card.className = `p-3 rounded-xl border flex flex-col items-center justify-center transition relative h-20 ${
+                    isUnlocked ? 'bg-neutral-900 border-purple-500/50 hover:border-purple-400 cursor-pointer shadow-lg' : 'bg-neutral-950/90 border-neutral-800 opacity-50 cursor-not-allowed'
+                }`;
+
+                card.innerHTML = `
+                    <div class="font-orbitron font-bold text-sm text-yellow-400 mb-1">#0${s + 1}</div>
+                    <div class="text-xs">${isUnlocked ? '⭐' : '🔒'}</div>
+                `;
+
+                if (isUnlocked) {
+                    card.onclick = () => startActiveStage(worldIdx, s);
+                }
+                container.appendChild(card);
+            }
+            document.getElementById('stages-stars').innerText = gameData.progress.stars;
+        }
+
+        // Gameplay Engine
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        let animationId = null;
+        let gameRunning = false;
+
+        let ufo = { x: 120, y: 440, vy: 0, gravity: 0.52, lift: -9.2, radius: 18, angle: 0 };
+        let obstacles = [];
+        let stars = [];
+        let particles = [];
+        let distTraveled = 0;
+        let levelLength = 7500;
+        let starsCollected = 0;
+        let currentWorldObj = null;
+        let deathCount = 0;
+
+        function startActiveStage(worldIdx, stageIdx) {
+            gameData.currentWorld = worldIdx;
+            gameData.currentStage = stageIdx;
+            currentWorldObj = worldsConfig[worldIdx];
+
+            hideAllScreens();
+            document.getElementById('screen-game').classList.remove('hidden');
+
+            const t = translations[currentLang];
+            const worldName = t.worlds[worldIdx];
+            document.getElementById('hud-level-title').innerText = `${worldName} - Stage ${stageIdx + 1}`;
+            
+            deathCount = 0;
+            document.getElementById('hud-deaths').innerText = deathCount;
+
+            const floorY = canvas.height - 50;
+            ufo.x = 120; ufo.y = floorY - ufo.radius; ufo.vy = 0;
+            distTraveled = 0; starsCollected = 0;
+            document.getElementById('hud-stars').innerText = starsCollected;
+            document.getElementById('hud-progress-bar').style.width = '0%';
+
+            generateFixedStage(worldIdx, stageIdx);
+            gameRunning = true;
+            startGameMusic();
+            animationId = requestAnimationFrame(gameLoop);
+        }
+
+        function generateFixedStage(wIdx, sIdx) {
+            obstacles = []; stars = [];
+            levelLength = 8000 + (wIdx * 1300) + (sIdx * 450);
+            
+            let seed = (wIdx + 1) * 137 + (sIdx + 1) * 73;
+            function pseudoRandom() {
+                seed = (seed * 9301 + 49297) % 233280;
+                return seed / 233280;
+            }
+
+            let spawnX = 600;
+            let density = 100 - (wIdx * 6) - (sIdx * 3);
+            if (density < 50) density = 50;
+
+            while (spawnX < levelLength - 400) {
+                const r = pseudoRandom();
+                const floorHeight = 50;
+                const ceilingHeight = 45;
+
+                if (r < 0.3) {
+                    obstacles.push({ x: spawnX, y: canvas.height - floorHeight - 42, width: 32, height: 42, type: 'spike' });
+                } else if (r < 0.6) {
+                    obstacles.push({ x: spawnX, y: ceilingHeight, width: 32, height: 42, type: 'spike' });
+                } else if (r < 0.85) {
+                    obstacles.push({ x: spawnX, y: canvas.height / 2 - 45, width: 22, height: 95, type: 'laser' });
+                } else {
+                    obstacles.push({ x: spawnX, y: canvas.height - floorHeight - 38, width: 28, height: 38, type: 'spike' });
+                    obstacles.push({ x: spawnX + 45, y: ceilingHeight, width: 28, height: 38, type: 'spike' });
+                }
+
+                if (pseudoRandom() > 0.25) {
+                    stars.push({ x: spawnX + 70, y: pseudoRandom() * 300 + 110, radius: 10, collected: false });
+                }
+                spawnX += pseudoRandom() * 65 + density;
+            }
+        }
+
+        function triggerJump() {
+            if (!gameRunning) return;
+            ufo.vy = ufo.lift;
+            playSound('jump');
+
+            const activeSkin = skinsConfig.find(s => s.id === gameData.progress.activeSkin) || skinsConfig[0];
+            for (let i = 0; i < 3; i++) {
+                particles.push({
+                    x: ufo.x - 10, y: ufo.y + 6,
+                    vx: (Math.random() - 0.5) * 3 - 2, vy: (Math.random() - 0.5) * 3,
+                    alpha: 1, color: activeSkin.lightColor
+                });
+            }
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if ((e.code === 'Space' || e.code === 'ArrowUp') && gameRunning) {
+                e.preventDefault();
+                triggerJump();
+            }
+        });
+
+        canvas.addEventListener('pointerdown', (e) => {
+            e.preventDefault();
+            triggerJump();
+        });
+
+        function gameLoop() {
+            if (!gameRunning) return;
+            updateGame();
+            renderGame();
+            animationId = requestAnimationFrame(gameLoop);
+        }
+
+        function updateGame() {
+            ufo.vy += ufo.gravity;
+            ufo.y += ufo.vy;
+            ufo.angle = Math.min(Math.max(ufo.vy * 0.035, -0.35), 0.35);
+
+            const floorY = canvas.height - 50;
+            const ceilingY = 45;
+
+            if (ufo.y >= floorY - ufo.radius) {
+                ufo.y = floorY - ufo.radius;
+                ufo.vy = 0;
+                ufo.angle = 0;
+            }
+            if (ufo.y <= ceilingY + ufo.radius) {
+                ufo.y = ceilingY + ufo.radius;
+                ufo.vy = 0;
+            }
+
+            const speed = 5.6 + (gameData.currentWorld * 0.35) + (gameData.currentStage * 0.12);
+            distTraveled += speed;
+
+            const percent = Math.min(Math.floor((distTraveled / levelLength) * 100), 100);
+            document.getElementById('hud-progress-bar').style.width = percent + '%';
+
+            if (distTraveled >= levelLength) {
+                stageWin();
+                return;
+            }
+
+            particles.forEach(p => { p.x += p.vx; p.y += p.vy; p.alpha -= 0.03; });
+            particles = particles.filter(p => p.alpha > 0);
+
+            stars.forEach(st => {
+                if (!st.collected) {
+                    const screenX = st.x - distTraveled + ufo.x;
+                    if (Math.hypot(ufo.x - screenX, ufo.y - st.y) < ufo.radius + st.radius) {
+                        st.collected = true; starsCollected++;
+                        document.getElementById('hud-stars').innerText = starsCollected;
+                        playSound('star');
+                    }
                 }
             });
 
-            // Disegna il Boss Alieno in fondo alla barra di progresso
-            let bossX = 700 + (progress * 1.5);
-            ctx.fillStyle = '#ef4444';
-            ctx.shadowColor = '#ef4444';
-            ctx.shadowBlur = 15;
-            ctx.fillRect(750, 180, 50, 140);
-            ctx.fillStyle = '#fee2e2';
-            ctx.font = "bold 13px sans-serif";
-            ctx.fillText("BOSS", 758, 170);
-            ctx.shadowBlur = 0; // reset ombra
-
-            // Disegna l'UFO con stile al neon
-            ctx.save();
-            ctx.translate(150, ufoY);
-            ctx.shadowColor = '#3b82f6';
-            ctx.shadowBlur = 12;
-            
-            // Corpo UFO
-            ctx.fillStyle = '#60a5fa';
-            ctx.beginPath();
-            ctx.ellipse(0, 0, 22, 10, 0, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Cupola UFO
-            ctx.fillStyle = '#93c5fd';
-            ctx.beginPath();
-            ctx.arc(0, -5, 10, Math.PI, 0, false);
-            ctx.fill();
-            
-            ctx.restore();
-
-            // Barra di avanzamento inferiore stilizzata
-            ctx.fillStyle = '#1f2937';
-            ctx.fillRect(100, 485, 700, 6);
-            ctx.fillStyle = '#3b82f6';
-            ctx.fillRect(100, 485, 7 * progress, 6);
-
-            requestAnimationFrame(runGameLoop);
+            obstacles.forEach(obs => {
+                const screenX = obs.x - distTraveled + ufo.x;
+                if (ufo.x + ufo.radius > screenX && ufo.x - ufo.radius < screenX + obs.width &&
+                    ufo.y + ufo.radius > obs.y && ufo.y - ufo.radius < obs.y + obs.height) {
+                    gameOver("Impatto con le difese aliene!");
+                }
+            });
         }
+
+        function renderGame() {
+            ctx.fillStyle = currentWorldObj.bg;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Starry space background (white dots)
+            ctx.fillStyle = "rgba(255, 255, 255, 0.85)";
+            for (let i = 0; i < 55; i++) {
+                let sx = (i * 137 - distTraveled * 0.25) % canvas.width;
+                if (sx < 0) sx += canvas.width;
+                let sy = (i * 83) % (canvas.height - 100) + 50;
+                let size = (i % 3 === 0) ? 2.5 : 1.5;
+                ctx.fillRect(sx, sy, size, size);
+            }
+
+            const floorY = canvas.height - 50;
+            const ceilingY = 45;
+
+            ctx.fillStyle = currentWorldObj.floorColor;
+            ctx.fillRect(0, floorY, canvas.width, 50);
+            ctx.fillRect(0, 0, canvas.width, ceilingY);
+
+            ctx.strokeStyle = currentWorldObj.primary;
+            ctx.shadowColor = currentWorldObj.primary;
+            ctx.shadowBlur = 8;
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            ctx.moveTo(0, floorY); ctx.lineTo(canvas.width, floorY);
+            ctx.moveTo(0, ceilingY); ctx.lineTo(canvas.width, ceilingY);
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+
+            stars.forEach(st => {
+                if (!st.collected) {
+                    const screenX = st.x - distTraveled + ufo.x;
+                    if (screenX > -40 && screenX < canvas.width + 40) {
+                        ctx.save();
+                        ctx.translate(screenX, st.y);
+                        ctx.fillStyle = '#eab308';
+                        ctx.shadowColor = '#eab308';
+                        ctx.shadowBlur = 12;
+                        ctx.beginPath();
+                        for (let i = 0; i < 5; i++) {
+                            ctx.lineTo(Math.cos((18 + i * 72) * Math.PI / 180) * st.radius, -Math.sin((18 + i * 72) * Math.PI / 180) * st.radius);
+                            ctx.lineTo(Math.cos((54 + i * 72) * Math.PI / 180) * (st.radius/2), -Math.sin((54 + i * 72) * Math.PI / 180) * (st.radius/2));
+                        }
+                        ctx.closePath();
+                        ctx.fill();
+                        ctx.restore();
+                    }
+                }
+            });
+
+            obstacles.forEach(obs => {
+                const screenX = obs.x - distTraveled + ufo.x;
+                if (screenX > -80 && screenX < canvas.width + 80) {
+                    ctx.save();
+                    if (obs.type === 'spike') {
+                        ctx.fillStyle = '#ef4444';
+                        ctx.strokeStyle = '#f87171';
+                        ctx.lineWidth = 2;
+                        ctx.beginPath();
+                        ctx.moveTo(screenX, obs.y + obs.height);
+                        ctx.lineTo(screenX + obs.width / 2, obs.y);
+                        ctx.lineTo(screenX + obs.width, obs.y + obs.height);
+                        ctx.closePath();
+                        ctx.fill(); ctx.stroke();
+                    } else {
+                        ctx.fillStyle = '#a855f7';
+                        ctx.shadowColor = '#c084fc';
+                        ctx.shadowBlur = 15;
+                        ctx.fillRect(screenX, obs.y, obs.width, obs.height);
+                        ctx.fillStyle = '#ffffff';
+                        ctx.fillRect(screenX + 6, obs.y, obs.width - 12, obs.height);
+                    }
+                    ctx.restore();
+                }
+            });
+
+            particles.forEach(p => {
+                ctx.save(); ctx.globalAlpha = p.alpha; ctx.fillStyle = p.color;
+                ctx.beginPath(); ctx.arc(p.x, p.y, 2, 0, Math.PI * 2); ctx.fill();
+                ctx.restore();
+            });
+
+            const activeSkin = skinsConfig.find(s => s.id === gameData.progress.activeSkin) || skinsConfig[0];
+            drawUFO(ctx, ufo.x, ufo.y, ufo.radius, ufo.angle, activeSkin);
+        }
+
+        function stopGameLoopOnly() {
+            gameRunning = false;
+            stopAllMusic();
+            if (animationId) { cancelAnimationFrame(animationId); animationId = null; }
+        }
+
+        function gameOver(reason) {
+            stopGameLoopOnly();
+            playSound('crash');
+            deathCount++;
+            document.getElementById('hud-deaths').innerText = deathCount;
+            document.getElementById('gameover-reason').innerText = reason;
+            document.getElementById('screen-gameover').classList.remove('hidden');
+        }
+
+        function restartActiveStage() {
+            hideAllScreens();
+            startActiveStage(gameData.currentWorld, gameData.currentStage);
+        }
+
+        function returnToStages() {
+            stopGameLoopOnly();
+            showStages(gameData.currentWorld);
+        }
+
+        function stageWin() {
+            stopGameLoopOnly();
+            playSound('win');
+
+            const wIdx = gameData.currentWorld;
+            const sIdx = gameData.currentStage;
+
+            if (!gameData.progress.unlockedStages[wIdx]) {
+                gameData.progress.unlockedStages[wIdx] = [0];
+            }
+            if (sIdx + 1 < 7 && !gameData.progress.unlockedStages[wIdx].includes(sIdx + 1)) {
+                gameData.progress.unlockedStages[wIdx].push(sIdx + 1);
+            } else if (sIdx + 1 >= 7 && wIdx + 1 < worldsConfig.length) {
+                if (!gameData.progress.unlockedWorlds.includes(wIdx + 1)) {
+                    gameData.progress.unlockedWorlds.push(wIdx + 1);
+                }
+                if (!gameData.progress.unlockedStages[wIdx + 1]) {
+                    gameData.progress.unlockedStages[wIdx + 1] = [0];
+                }
+            }
+
+            const rewardStars = starsCollected + 12 + (wIdx * 4);
+            gameData.progress.stars = (gameData.progress.stars || 0) + rewardStars;
+            localStorage.setItem('unoyd_ufo_ultimate_v6_progress', JSON.stringify(gameData.progress));
+            syncProgress();
+
+            document.getElementById('win-stars').innerText = rewardStars;
+            document.getElementById('win-deaths').innerText = deathCount;
+            document.getElementById('screen-win').classList.remove('hidden');
+        }
+
+        function proceedNextStage() {
+            const wIdx = gameData.currentWorld;
+            const sIdx = gameData.currentStage;
+            if (sIdx + 1 < 7) {
+                startActiveStage(wIdx, sIdx + 1);
+            } else if (wIdx + 1 < worldsConfig.length) {
+                startActiveStage(wIdx + 1, 0);
+            } else {
+                showWorldSelect();
+            }
+        }
+
+        window.addEventListener('load', () => {
+            showLobby();
+        });
     </script>
 </body>
-</html>
+    </html>
