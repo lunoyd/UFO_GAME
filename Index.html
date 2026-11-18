@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ŮFØ - Deluxe Neon Edition</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; user-select: none; }
+        body { background: #05050a; color: #fff; width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; }
+        #app { width: 100%; max-width: 900px; height: 500px; background: linear-gradient(135deg, #0b0f19 0%, #1a1c29 100%); border: 2px solid #3b82f6; border-radius: 16px; display: flex; flex-direction: column; position: relative; box-shadow: 0 0 30px rgba(59, 130, 246, 0.3); overflow: hidden; }
+        .screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; z-index: 10; background: rgba(11, 15, 25, 0.9); }
+        .hidden { display: none !important; }
+        h1 { font-size: 3.5rem; color: #60a5fa; margin-bottom: 5px; text-shadow: 0 0 20px rgba(96, 165, 250, 0.6); letter-spacing: 2px; }
+        p { color: #9ca3af; margin-bottom: 25px; font-size: 1.1rem; }
+        .btn { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: white; border: none; padding: 16px 45px; font-size: 1.5rem; font-weight: bold; border-radius: 12px; cursor: pointer; box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6); transition: transform 0.1s ease; }
+        .btn:active { transform: scale(0.95); }
+        canvas { display: block; background: #030408; width: 100%; height: 100%; cursor: pointer; }
+        #hud { position: absolute; top: 15px; left: 20px; right: 20px; display: flex; justify-content: space-between; font-weight: bold; font-size: 1.2rem; pointer-events: none; text-shadow: 0 2px 6px rgba(0,0,0,0.9); z-index: 5; }
+        .stars-badge { background: rgba(251, 191, 36, 0.15); border: 1px solid #fbbf24; padding: 5px 12px; border-radius: 20px; color: #fbbf24; display: flex; align-items: center; gap: 6px; }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div id="lobby-screen" class="screen">
+            <h1>ŮFØ</h1>
+            <p>Geometry Dash Style | Boss Mode (+100 ⭐)</p>
+            <button class="btn" onclick="startGame()">GIOCA ORA</button>
+        </div>
+        <div id="game-screen" class="screen hidden" style="background: none; padding: 0;">
+            <div id="hud">
+                <span id="hud-level" style="color: #60a5fa;">Livello Boss 1</span>
+                <div class="stars-badge">⭐ <span id="star-count">0</span></div>
+            </div>
+            <canvas id="gameCanvas" width="900" height="500"></canvas>
+        </div>
+    </div>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        let isPlaying = false;
+        let stars = 0;
+        let particles = [];
+
+        // Genera stelle di sfondo fisse per profondità
+        let bgStars = Array.from({length: 50}, () => ({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            size: Math.random() * 2 + 1,
+            speed: Math.random() * 1.5 + 0.5
+        }));
+
+        function startGame() {
+            isPlaying = true;
+            document.getElementById('lobby-screen').classList.add('hidden');
+            document.getElementById('game-screen').classList.remove('hidden');
+            runGameLoop();
+        }
+
+        let ufoY = 250, ufoVY = 0, progress = 0;
+        
+        // Controllo touch / click migliorato
+        canvas.addEventListener('pointerdown', () => { 
+            if (isPlaying) {
+                ufoVY = -7.5;
+                // Aggiunge particelle di scia al salto
+                for(let i=0; i<5; i++) {
+                    particles.push({x: 150, y: ufoY, vx: -Math.random()*3 - 1, vy: (Math.random()-0.5)*4, alpha: 1});
+                }
+            }
+        });
+
+        function runGameLoop() {
+            if (!isPlaying) return;
+            ufoVY += 0.45; 
+            ufoY += ufoVY;
+            
+            // Delimitazione bordi con collisione sicura a terra/soffitto
+            if (ufoY > 460) { ufoY = 460; ufoVY = 0; }
+            if (ufoY < 40) { ufoY = 40; ufoVY = 0; }
+            
+            progress += 0.25; 
+            if (progress >= 100) {
+                progress = 0;
+                stars += 100; // Premio di 100 stelle per il boss sconfitto!
+                document.getElementById('star-countinnerText' || 'star-count').innerText = stars;
+            }
+
+            // --- DISEGNO GRAFICA ---
+            ctx.fillStyle = '#030408';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Sfondo dinamico con stelle scorrevoli
+            ctx.fillStyle = '#ffffff';
+            bgStars.forEach(s => {
+                s.x -= s.speed;
+                if (s.x < 0) s.x = canvas.width;
+                ctx.globalAlpha = Math.random() * 0.5 + 0.3;
+                ctx.fillRect(s.x, s.y, s.size, s.size);
+            });
+            ctx.globalAlpha = 1.0;
+
+            // Particelle di scia
+            particles.forEach((p, index) => {
+                p.x += p.vx; p.y += p.vy; p.alpha -= 0.03;
+                if (p.alpha <= 0) particles.splice(index, 1);
+                else {
+                    ctx.fillStyle = `rgba(96, 165, 250, ${p.alpha})`;
+                    ctx.fillRect(p.x, p.y, 4, 4);
+                }
+            });
+
+            // Disegna il Boss Alieno in fondo alla barra di progresso
+            let bossX = 700 + (progress * 1.5);
+            ctx.fillStyle = '#ef4444';
+            ctx.shadowColor = '#ef4444';
+            ctx.shadowBlur = 15;
+            ctx.fillRect(750, 180, 50, 140);
+            ctx.fillStyle = '#fee2e2';
+            ctx.font = "bold 13px sans-serif";
+            ctx.fillText("BOSS", 758, 170);
+            ctx.shadowBlur = 0; // reset ombra
+
+            // Disegna l'UFO con stile al neon
+            ctx.save();
+            ctx.translate(150, ufoY);
+            ctx.shadowColor = '#3b82f6';
+            ctx.shadowBlur = 12;
+            
+            // Corpo UFO
+            ctx.fillStyle = '#60a5fa';
+            ctx.beginPath();
+            ctx.ellipse(0, 0, 22, 10, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Cupola UFO
+            ctx.fillStyle = '#93c5fd';
+            ctx.beginPath();
+            ctx.arc(0, -5, 10, Math.PI, 0, false);
+            ctx.fill();
+            
+            ctx.restore();
+
+            // Barra di avanzamento inferiore stilizzata
+            ctx.fillStyle = '#1f2937';
+            ctx.fillRect(100, 485, 700, 6);
+            ctx.fillStyle = '#3b82f6';
+            ctx.fillRect(100, 485, 7 * progress, 6);
+
+            requestAnimationFrame(runGameLoop);
+        }
+    </script>
+</body>
+</html>
