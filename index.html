@@ -137,7 +137,7 @@
             </div>
         </div>
 
-        <!-- WORLD SELECT SCREEN -->
+        <!-- WORLD SELECT SCREEN (CON SCROLL VERTICALE AGGIUSTATO) -->
         <div id="screen-worlds" class="absolute inset-0 hidden flex flex-col justify-between p-6 z-30 bg-[#050509]/98">
             <div class="flex items-center justify-between">
                 <button onclick="showLobby()" class="px-3 py-1.5 bg-neutral-800 hover:bg-neutral-700 text-neutral-300 rounded-lg text-xs font-orbitron">◀ MENU</button>
@@ -379,15 +379,12 @@
             worldsConfig.forEach((w, idx) => {
                 w.unlocked = gameData.progress.unlockedWorlds.includes(idx);
             });
-            const ls = document.getElementById('lobby-stars');
-            if (ls) ls.innerText = gameData.progress.stars;
-            const ss = document.getElementById('shop-stars');
-            if (ss) ss.innerText = gameData.progress.stars;
-            const ws = document.getElementById('world-stars');
-            if (ws) ws.innerText = gameData.progress.stars;
-            const sts = document.getElementById('stages-stars');
-            if (sts) sts.innerText = gameData.progress.stars;
+            document.getElementById('lobby-stars').innerText = gameData.progress.stars;
+            document.getElementById('shop-stars').innerText = gameData.progress.stars;
+            document.getElementById('world-stars').innerText = gameData.progress.stars;
+            document.getElementById('stages-stars').innerText = gameData.progress.stars;
         }
+        syncProgress();
 
         let audioCtx = null;
         let ambientMusicInterval = null;
@@ -564,8 +561,7 @@
 
         function toggleSound() {
             gameData.soundEnabled = !gameData.soundEnabled;
-            const sb = document.getElementById('sound-btn');
-            if (sb) sb.innerText = gameData.soundEnabled ? '🔊' : '🔇';
+            document.getElementById('sound-btn').innerText = gameData.soundEnabled ? '🔊' : '🔇';
             if (gameData.soundEnabled) {
                 startAmbientMusic();
             } else {
@@ -583,43 +579,41 @@
         function showLobby() {
             startAmbientMusic();
             hideAllScreens();
-            const lobby = document.getElementById('screen-lobby');
-            if (lobby) lobby.classList.remove('hidden');
+            document.getElementById('screen-lobby').classList.remove('hidden');
             renderPreviewUFO();
         }
         function showShop() {
             syncProgress();
             renderShop();
             hideAllScreens();
-            const shop = document.getElementById('screen-shop');
-            if (shop) shop.classList.remove('hidden');
+            document.getElementById('screen-shop').classList.remove('hidden');
         }
         function showWorldSelect() {
             syncProgress();
             renderWorldsGrid();
             hideAllScreens();
-            const worlds = document.getElementById('screen-worlds');
-            if (worlds) worlds.classList.remove('hidden');
+            document.getElementById('screen-worlds').classList.remove('hidden');
         }
         function showStages(worldIdx) {
             gameData.currentWorld = worldIdx;
             syncProgress();
             renderStagesGrid(worldIdx);
             hideAllScreens();
-            const stages = document.getElementById('screen-stages');
-            if (stages) stages.classList.remove('hidden');
+            document.getElementById('screen-stages').classList.remove('hidden');
         }
         function hideAllScreens() {
-            ['screen-lobby', 'screen-shop', 'screen-worlds', 'screen-stages', 'screen-game', 'screen-win', 'screen-gameover'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.classList.add('hidden');
-            });
+            document.getElementById('screen-lobby').classList.add('hidden');
+            document.getElementById('screen-shop').classList.add('hidden');
+            document.getElementById('screen-worlds').classList.add('hidden');
+            document.getElementById('screen-stages').classList.add('hidden');
+            document.getElementById('screen-game').classList.add('hidden');
+            document.getElementById('screen-win').classList.add('hidden');
+            document.getElementById('screen-gameover').classList.add('hidden');
             stopGameLoopOnly();
         }
 
         function renderPreviewUFO() {
             const pCanvas = document.getElementById('previewCanvas');
-            if (!pCanvas) return;
             const pCtx = pCanvas.getContext('2d');
             pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height);
             const activeSkin = skinsConfig.find(s => s.id === gameData.progress.activeSkin) || skinsConfig[0];
@@ -673,7 +667,6 @@
 
         function renderShop() {
             const container = document.getElementById('skins-container');
-            if (!container) return;
             container.innerHTML = '';
             skinsConfig.forEach(skin => {
                 const isOwned = gameData.progress.skins.includes(skin.id);
@@ -731,7 +724,6 @@
 
         function renderWorldsGrid() {
             const container = document.getElementById('worlds-container');
-            if (!container) return;
             container.innerHTML = '';
             const t = translations[currentLang];
 
@@ -759,19 +751,16 @@
                 if (w.unlocked) card.onclick = () => showStages(idx);
                 container.appendChild(card);
             });
-            const ws = document.getElementById('world-stars');
-            if (ws) ws.innerText = gameData.progress.stars;
+            document.getElementById('world-stars').innerText = gameData.progress.stars;
         }
 
         function renderStagesGrid(worldIdx) {
             const container = document.getElementById('stages-container');
-            if (!container) return;
             container.innerHTML = '';
             const t = translations[currentLang];
             const worldName = t.worlds[worldIdx];
 
-            const swt = document.getElementById('stages-world-title');
-            if (swt) swt.innerText = `${worldName} - Livelli`;
+            document.getElementById('stages-world-title').innerText = `${worldName} - Livelli`;
             const unlockedStages = gameData.progress.unlockedStages[worldIdx] || [0];
 
             for (let s = 0; s < 7; s++) {
@@ -791,12 +780,11 @@
                 }
                 container.appendChild(card);
             }
-            const sts = document.getElementById('stages-stars');
-            if (sts) sts.innerText = gameData.progress.stars;
+            document.getElementById('stages-stars').innerText = gameData.progress.stars;
         }
 
-        let canvas = null;
-        let ctx = null;
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
         let animationId = null;
         let gameRunning = false;
 
@@ -816,28 +804,20 @@
             currentWorldObj = worldsConfig[worldIdx] || worldsConfig[0];
 
             hideAllScreens();
-            const gameScreen = document.getElementById('screen-game');
-            if (gameScreen) gameScreen.classList.remove('hidden');
-
-            canvas = document.getElementById('gameCanvas');
-            if (canvas) ctx = canvas.getContext('2d');
+            document.getElementById('screen-game').classList.remove('hidden');
 
             const t = translations[currentLang];
             const worldName = t.worlds[worldIdx] || "Mondo";
-            const hlt = document.getElementById('hud-level-title');
-            if (hlt) hlt.innerText = `${worldName} - Stage ${stageIdx + 1}`;
+            document.getElementById('hud-level-title').innerText = `${worldName} - Stage ${stageIdx + 1}`;
             
             deathCount = 0;
-            const hd = document.getElementById('hud-deaths');
-            if (hd) hd.innerText = deathCount;
+            document.getElementById('hud-deaths').innerText = deathCount;
 
-            const floorY = canvas ? canvas.height - 50 : 490;
+            const floorY = canvas.height - 50;
             ufo.x = 120; ufo.y = floorY - ufo.radius; ufo.vy = 0;
             distTraveled = 0; starsCollected = 0;
-            const hs = document.getElementById('hud-stars');
-            if (hs) hs.innerText = starsCollected;
-            const hp = document.getElementById('hud-progress-bar');
-            if (hp) hp.style.width = '0%';
+            document.getElementById('hud-stars').innerText = starsCollected;
+            document.getElementById('hud-progress-bar').style.width = '0%';
 
             generateFixedStage(worldIdx, stageIdx);
             gameRunning = true;
@@ -860,7 +840,6 @@
             let spawnX = 600;
             let density = 100 - (wIdx * 6) - (sIdx * 3);
             if (density < 50) density = 50;
-            const cHeight = canvas ? canvas.height : 540;
 
             while (spawnX < levelLength - 400) {
                 const r = pseudoRandom();
@@ -868,13 +847,13 @@
                 const ceilingHeight = 45;
 
                 if (r < 0.3) {
-                    obstacles.push({ x: spawnX, y: cHeight - floorHeight - 42, width: 32, height: 42, type: 'spike' });
+                    obstacles.push({ x: spawnX, y: canvas.height - floorHeight - 42, width: 32, height: 42, type: 'spike' });
                 } else if (r < 0.6) {
                     obstacles.push({ x: spawnX, y: ceilingHeight, width: 32, height: 42, type: 'spike' });
                 } else if (r < 0.85) {
-                    obstacles.push({ x: spawnX, y: cHeight / 2 - 45, width: 22, height: 95, type: 'laser' });
+                    obstacles.push({ x: spawnX, y: canvas.height / 2 - 45, width: 22, height: 95, type: 'laser' });
                 } else {
-                    obstacles.push({ x: spawnX, y: cHeight - floorHeight - 38, width: 28, height: 38, type: 'spike' });
+                    obstacles.push({ x: spawnX, y: canvas.height - floorHeight - 38, width: 28, height: 38, type: 'spike' });
                     obstacles.push({ x: spawnX + 45, y: ceilingHeight, width: 28, height: 38, type: 'spike' });
                 }
 
@@ -907,15 +886,9 @@
             }
         });
 
-        window.addEventListener('load', () => {
-            canvas = document.getElementById('gameCanvas');
-            if (canvas) {
-                canvas.addEventListener('pointerdown', (e) => {
-                    e.preventDefault();
-                    triggerJump();
-                });
-            }
-            showLobby();
+        canvas.addEventListener('pointerdown', (e) => {
+            e.preventDefault();
+            triggerJump();
         });
 
         function gameLoop() {
@@ -926,7 +899,6 @@
         }
 
         function updateGame() {
-            if (!canvas) return;
             ufo.vy += ufo.gravity;
             ufo.y += ufo.vy;
             ufo.angle = Math.min(Math.max(ufo.vy * 0.035, -0.35), 0.35);
@@ -948,8 +920,7 @@
             distTraveled += speed;
 
             const percent = Math.min(Math.floor((distTraveled / levelLength) * 100), 100);
-            const pb = document.getElementById('hud-progress-bar');
-            if (pb) pb.style.width = percent + '%';
+            document.getElementById('hud-progress-bar').style.width = percent + '%';
 
             if (distTraveled >= levelLength) {
                 stageWin();
@@ -964,8 +935,7 @@
                     const screenX = st.x - distTraveled + ufo.x;
                     if (Math.hypot(ufo.x - screenX, ufo.y - st.y) < ufo.radius + st.radius) {
                         st.collected = true; starsCollected++;
-                        const hs = document.getElementById('hud-stars');
-                        if (hs) hs.innerText = starsCollected;
+                        document.getElementById('hud-stars').innerText = starsCollected;
                         playSound('star');
                     }
                 }
@@ -981,7 +951,6 @@
         }
 
         function renderGame() {
-            if (!ctx || !canvas) return;
             ctx.fillStyle = currentWorldObj.bg;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -1078,12 +1047,9 @@
             stopGameLoopOnly();
             playSound('crash');
             deathCount++;
-            const hd = document.getElementById('hud-deaths');
-            if (hd) hd.innerText = deathCount;
-            const gr = document.getElementById('gameover-reason');
-            if (gr) gr.innerText = reason;
-            const go = document.getElementById('screen-gameover');
-            if (go) go.classList.remove('hidden');
+            document.getElementById('hud-deaths').innerText = deathCount;
+            document.getElementById('gameover-reason').innerText = reason;
+            document.getElementById('screen-gameover').classList.remove('hidden');
         }
 
         function restartActiveStage() {
@@ -1122,12 +1088,9 @@
             localStorage.setItem('unoyd_ufo_ultimate_v6_progress', JSON.stringify(gameData.progress));
             syncProgress();
 
-            const ws = document.getElementById('win-stars');
-            if (ws) ws.innerText = rewardStars;
-            const wd = document.getElementById('win-deaths');
-            if (wd) wd.innerText = deathCount;
-            const sw = document.getElementById('screen-win');
-            if (sw) sw.classList.remove('hidden');
+            document.getElementById('win-stars').innerText = rewardStars;
+            document.getElementById('win-deaths').innerText = deathCount;
+            document.getElementById('screen-win').classList.remove('hidden');
         }
 
         function proceedNextStage() {
@@ -1141,6 +1104,10 @@
                 showWorldSelect();
             }
         }
+
+        window.addEventListener('load', () => {
+            showLobby();
+        });
     </script>
 </body>
 </html>
