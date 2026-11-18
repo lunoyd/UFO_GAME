@@ -6,6 +6,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <title>ŮFØ - LUNOYD</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@400;600;800&display=swap');
@@ -19,6 +20,7 @@
             width: 100vw;
             height: 100vh;
             overflow: hidden;
+            touch-action: none;
             user-select: none;
             -webkit-user-select: none;
         }
@@ -38,16 +40,6 @@
         }
         .box-glow-yellow {
             box-shadow: 0 0 25px rgba(234, 179, 8, 0.5);
-        }
-
-        .scrollable-list {
-            overflow-y: auto;
-            touch-action: pan-y;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        #gameCanvas {
-            touch-action: none;
         }
 
         #rotate-warning {
@@ -80,38 +72,28 @@
     <!-- MAIN APP CONTAINER -->
     <div id="app" class="w-full h-full max-w-[960px] max-h-[540px] flex flex-col relative bg-[#07070b] shadow-2xl overflow-hidden border border-purple-900/40 rounded-2xl">
 
-        <!-- STORY MODAL OVERLAY -->
-        <div id="screen-story" class="absolute inset-0 hidden flex flex-col items-center justify-center p-6 z-50 bg-black/95 backdrop-blur-md">
-            <div class="max-w-lg w-full bg-neutral-900/90 border border-purple-500/50 p-6 rounded-2xl text-center shadow-2xl flex flex-col gap-4 box-glow-purple">
-                <div id="story-icon" class="text-4xl animate-pulse">🛸📡</div>
-                <h2 id="story-title" class="font-orbitron text-lg md:text-xl font-bold text-yellow-400 tracking-wider">TRASMISSIONE INTERCETTATA</h2>
-                <p id="story-text" class="text-neutral-200 text-xs md:text-sm leading-relaxed font-normal"></p>
-                <button onclick="closeStoryModal()" id="btn-story-continue" class="mt-2 py-2.5 px-6 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 font-orbitron text-xs font-bold rounded-xl text-white shadow-lg transition transform active:scale-95 mx-auto">
-                    CONTINUA MISSIONE ➔
-                </button>
-            </div>
-        </div>
-
         <!-- LOBBY SCREEN -->
         <div id="screen-lobby" class="absolute inset-0 flex flex-col justify-between p-6 z-20 bg-gradient-to-b from-[#120b24] via-[#07070b] to-[#020204]">
+            
+            <!-- Top Bar -->
             <div class="w-full flex justify-between items-center">
-                <div class="flex items-center gap-3">
-                    <span class="text-yellow-400 font-orbitron text-xs bg-black/40 px-2.5 py-1 rounded-lg border border-yellow-500/30">⭐ <span id="lobby-stars">0</span></span>
-                    <span class="text-red-400 font-orbitron text-xs bg-black/40 px-2.5 py-1 rounded-lg border border-red-500/30">💀 <span id="lobby-deaths">0</span></span>
+                <div class="flex items-center gap-2">
+                    <span class="text-yellow-400 font-orbitron text-xs">⭐ <span id="lobby-stars">0</span></span>
                 </div>
                 <div class="flex gap-2">
-                    <button onclick="openIntroStory()" id="btn-story-lobby" class="px-3 py-1 rounded-lg border border-yellow-500/40 bg-yellow-900/20 hover:bg-yellow-900/40 font-orbitron text-xs font-bold text-yellow-300 transition">📜 STORIA</button>
                     <button onclick="setLanguage('it')" id="lang-btn-it" class="px-3 py-1 rounded-lg border border-purple-500/50 bg-purple-900/40 font-orbitron text-xs font-bold transition flex items-center gap-1">🇮🇹 IT</button>
                     <button onclick="setLanguage('en')" id="lang-btn-en" class="px-3 py-1 rounded-lg border border-neutral-700 bg-neutral-900 font-orbitron text-xs font-bold text-neutral-400 transition flex items-center gap-1">🇬🇧 EN</button>
                 </div>
             </div>
 
+            <!-- Title & UFO Preview -->
             <div class="text-center my-auto">
                 <h1 class="font-orbitron text-6xl md:text-8xl font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-yellow-400 neon-purple">
                     ŮFØ
                 </h1>
                 <p id="txt-subtitle" class="text-purple-300/80 text-xs md:text-sm tracking-widest uppercase mt-1 font-orbitron">Geometry Space Escape</p>
                 
+                <!-- UFO Preview Canvas -->
                 <div class="flex justify-center my-3">
                     <div class="w-16 h-8 relative flex items-center justify-center animate-pulse">
                         <canvas id="previewCanvas" width="80" height="40" class="w-20 h-10"></canvas>
@@ -119,6 +101,7 @@
                 </div>
             </div>
 
+            <!-- Menu Buttons -->
             <div class="flex flex-row justify-center gap-3 w-full max-w-md mx-auto mb-2">
                 <button onclick="showWorldSelect()" id="btn-play" class="flex-1 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 font-orbitron font-bold text-sm rounded-xl shadow-lg box-glow-purple transition transform active:scale-95 text-white flex items-center justify-center gap-2">
                     🚀 GIOCA ORA
@@ -131,6 +114,7 @@
                 </button>
             </div>
 
+            <!-- Creator Credit Footer -->
             <div class="text-center">
                 <p class="font-orbitron text-xs text-yellow-400 tracking-wide neon-yellow flex items-center justify-center gap-2">
                     Created by <span class="flex items-center gap-1 text-purple-300">📺 Lunoyd_</span>
@@ -146,28 +130,25 @@
                 <div class="text-xs font-orbitron text-yellow-400">⭐ <span id="shop-stars">0</span></div>
             </div>
 
-            <div id="skins-container" class="scrollable-list grid grid-cols-2 md:grid-cols-4 gap-4 my-auto max-h-[360px] p-2"></div>
+            <div id="skins-container" class="grid grid-cols-2 md:grid-cols-4 gap-4 my-auto overflow-y-auto max-h-[360px] p-2"></div>
 
             <div class="text-center text-xs text-neutral-400 font-orbitron" id="shop-hint">
                 Inizia con 0 stelle e accumula ricchezze completando i livelli per sbloccare skin esclusive!
             </div>
         </div>
 
-        <!-- WORLD SELECT SCREEN -->
+        <!-- WORLD SELECT SCREEN (CON SCROLL VERTICALE AGGIUSTATO) -->
         <div id="screen-worlds" class="absolute inset-0 hidden flex flex-col justify-between p-6 z-30 bg-[#050509]/98">
             <div class="flex items-center justify-between">
                 <button onclick="showLobby()" class="px-3 py-1.5 bg-neutral-800 hover:bg-neutral-700 text-neutral-300 rounded-lg text-xs font-orbitron">◀ MENU</button>
                 <h2 id="txt-map-title" class="font-orbitron text-xl font-bold text-purple-300">SELEZIONA MONDO (7 MONDI)</h2>
-                <div class="flex items-center gap-3 text-xs font-orbitron">
-                    <span class="text-red-400">💀 <span id="world-deaths">0</span></span>
-                    <span class="text-yellow-400">⭐ <span id="world-stars">0</span></span>
-                </div>
+                <div class="text-xs font-orbitron text-yellow-400">⭐ <span id="world-stars">0</span></div>
             </div>
 
-            <div id="worlds-container" class="scrollable-list grid grid-cols-2 md:grid-cols-4 gap-4 my-auto max-h-[360px] p-2"></div>
+            <div id="worlds-container" class="grid grid-cols-2 md:grid-cols-4 gap-4 my-auto overflow-y-auto max-h-[360px] p-2"></div>
 
             <div id="txt-map-hint" class="text-center text-[10px] text-neutral-400 font-orbitron">
-                Scorri su e giù e clicca su una luna per accedere ai suoi 7 livelli fissi!
+                Clicca su una luna per accedere ai suoi 7 livelli fissi!
             </div>
         </div>
 
@@ -179,10 +160,10 @@
                 <div class="text-xs font-orbitron text-yellow-400">⭐ <span id="stages-stars">0</span></div>
             </div>
 
-            <div id="stages-container" class="scrollable-list grid grid-cols-4 md:grid-cols-7 gap-3 my-auto max-w-3xl mx-auto w-full max-h-[360px] p-2"></div>
+            <div id="stages-container" class="grid grid-cols-7 gap-3 my-auto max-w-3xl mx-auto w-full overflow-y-auto max-h-[360px] p-2"></div>
 
-            <div id="stages-story-banner" class="text-center text-[11px] text-purple-300/90 font-orbitron bg-purple-950/30 py-1.5 px-3 rounded-lg border border-purple-500/20">
-                Obiettivo: Supera le difese aliene di questa luna per aprire il portale successivo!
+            <div class="text-center text-[10px] text-neutral-400 font-orbitron">
+                Livelli lunghi, difficoltà progressiva avanzata con laser e spuntoni. Scegli lo stage!
             </div>
         </div>
 
@@ -194,21 +175,20 @@
                         <button onclick="returnToStages()" class="pointer-events-auto px-3 py-1 bg-neutral-900/80 hover:bg-neutral-800 text-white rounded-lg text-xs font-orbitron border border-neutral-700">🚪 ESCI</button>
                         <div>
                             <div id="hud-level-title" class="font-orbitron text-xs font-bold text-purple-300">Luna Classica - Stage 1</div>
-                            <div class="text-[10px] text-neutral-300 font-orbitron">
-                                Morti Stage: <span id="hud-deaths" class="text-red-400 font-bold">0</span> | 
-                                Totali: <span id="hud-total-deaths" class="text-red-500 font-bold">0</span>
-                            </div>
+                            <div class="text-[10px] text-neutral-400">Morti: <span id="hud-deaths" class="text-red-400 font-bold">0</span></div>
                         </div>
                     </div>
                     <div class="flex items-center gap-3 bg-black/60 px-3 py-1.5 rounded-xl border border-purple-500/30">
                         <div class="text-yellow-400 font-orbitron text-xs">⭐ <span id="hud-stars">0</span></div>
                     </div>
                 </div>
+                <!-- Progress Bar -->
                 <div class="w-full bg-neutral-900/80 border border-purple-900/40 h-3 rounded-full overflow-hidden p-0.5">
                     <div id="hud-progress-bar" class="bg-gradient-to-r from-purple-500 to-yellow-400 h-full rounded-full transition-all duration-75" style="width: 0%"></div>
                 </div>
             </div>
 
+            <!-- Canvas -->
             <canvas id="gameCanvas" width="960" height="540" class="w-full h-full block bg-black cursor-pointer"></canvas>
 
             <div class="absolute bottom-2 left-0 right-0 text-center pointer-events-none md:hidden">
@@ -224,16 +204,12 @@
                 <p id="win-message" class="text-neutral-300 text-xs">Hai completato lo stage con successo!</p>
                 <div class="flex justify-around bg-neutral-950 p-3 rounded-xl">
                     <div>
-                        <div class="text-[10px] text-neutral-500 font-orbitron">STELLE</div>
+                        <div class="text-[10px] text-neutral-500 font-orbitron">STELLE RACCOLTE</div>
                         <div id="win-stars" class="text-sm font-bold text-yellow-400">10</div>
                     </div>
                     <div>
-                        <div class="text-[10px] text-neutral-500 font-orbitron">MORTI STAGE</div>
-                        <div id="win-deaths" class="text-sm font-bold text-red-400">0</div>
-                    </div>
-                    <div>
                         <div class="text-[10px] text-neutral-500 font-orbitron">MORTI TOTALI</div>
-                        <div id="win-total-deaths" class="text-sm font-bold text-red-500">0</div>
+                        <div id="win-deaths" class="text-sm font-bold text-red-400">0</div>
                     </div>
                 </div>
                 <div class="flex gap-2 mt-1">
@@ -249,10 +225,7 @@
                 <div class="text-4xl animate-pulse">💥🛸</div>
                 <h2 id="go-title" class="font-orbitron text-xl font-bold text-red-500">DISTRUTTO!</h2>
                 <p id="gameover-reason" class="text-neutral-300 text-xs">Sei stato colpito.</p>
-                <div class="text-[11px] font-orbitron text-red-300 bg-red-950/50 py-1.5 rounded-lg border border-red-500/20">
-                    Morti Stage: <span id="go-stage-deaths" class="font-bold">1</span> | Totali: <span id="go-total-deaths" class="font-bold">1</span>
-                </div>
-                <div class="flex gap-2 mt-1">
+                <div class="flex gap-2 mt-2">
                     <button onclick="showStages(gameData.currentWorld)" id="btn-go-stages" class="flex-1 py-2.5 bg-neutral-800 hover:bg-neutral-700 font-orbitron text-xs rounded-xl text-neutral-200">LIVELLI</button>
                     <button onclick="restartActiveStage()" id="btn-go-retry" class="flex-1 py-2.5 bg-red-600 hover:bg-red-500 font-orbitron text-xs font-bold rounded-xl text-white">RIPROVA ↺</button>
                 </div>
@@ -269,11 +242,16 @@
                 subtitle: "Geometry Space Escape",
                 playBtn: "🚀 GIOCA ORA",
                 shopBtn: "🛒 NEGOZIO",
-                storyBtn: "📜 STORIA",
                 shopTitle: "NEGOZIO SKIN ŮFØ (30+ LEGENDARIE)",
                 shopHint: "Inizia con 0 stelle e accumula ricchezze completando i livelli!",
                 mapTitle: "SELEZIONA MONDO (7 MONDI)",
-                mapHint: "Scorri su e giù e clicca su una luna per accedere ai suoi 7 livelli fissi!",
+                mapHint: "Clicca su una luna per accedere ai suoi 7 livelli fissi!",
+                menuBtn: "◀ MENU",
+                stagesTitle: "Livelli - Mondo",
+                startRun: "VIA ALLA FUGA ➔",
+                backMap: "◀ Mondi",
+                exit: "🚪 ESCI",
+                progress: "Progresso:",
                 touchHint: "Tocca per fluttuare (Pavimento sicuro, soffitto solido)",
                 winTitle: "LIVELLO SUPERATO!",
                 winMsg: "Hai completato lo stage con successo!",
@@ -283,30 +261,22 @@
                 retry: "RIPROVA ↺",
                 warnTitle: "RUOTA IL DISPOSITIVO",
                 warnDesc: "ŮFØ è progettato in orientamento orizzontale (landscape) per un'esperienza perfetta!",
-                worlds: ["Luna Classica", "Luna Rossa", "Luna Gialla", "Luna Verde", "Luna Azzurra", "Luna Viola", "Terra (Fuga)"],
-                storyIntroTitle: "LA GRANDE FUGA DALL'IMPERO",
-                storyIntroText: "Sei un pilota ribelle a bordo del prototipo sperimentale ŮFØ. L'Impero Galattico ha bloccato tutte le rotte spaziali con campi laser e spuntoni orbitali. Attraversa le 6 Lune sorvegliate, raccogli le stelle energetiche e raggiungi la Terra per metterti in salvo!",
-                worldStories: [
-                    "Sector 01 - Luna Classica: Sei appena evaso dalla base lunare. Le difese sono ancora in fase di attivazione.",
-                    "Sector 02 - Luna Rossa: L'allarme è scattato! I cannoni laser rossi stanno pattugliando l'atmosfera.",
-                    "Sector 03 - Luna Gialla: Tempeste solari e trappole ad alta velocità bloccano il passaggio verso lo spazio profondo.",
-                    "Sector 04 - Luna Verde: Sei entrato nella zona tossica dell'Impero. I riflessi devono essere fulminei.",
-                    "Sector 05 - Luna Azzurra: Campo criogenico ad alta densità. Mancano solo due salti dimensionali alla Terra!",
-                    "Sector 06 - Luna Viola: La fortezza oscura dell'Imperatore. Supera l'ultimo sbarramento prima dell'atmosfera terrestre!",
-                    "Sector 07 - TERRA (FUGA FINALE): Ci sei quasi! Attraversa l'ultimo scudo orbitale e torna finalmente a casa!"
-                ],
-                storyWinGameTitle: "MISSIONE COMPIUTA: SEI LIBERO!",
-                storyWinGameText: "Incredibile! Hai attraversato tutte le 6 Lune e superato lo scudo terrestre. L'ŮFØ è atterrato sano e salvo sulla Terra!"
+                worlds: ["Luna Classica", "Luna Rossa", "Luna Gialla", "Luna Verde", "Luna Azzurra", "Luna Viola", "Terra (Fuga)"]
             },
             en: {
                 subtitle: "Geometry Space Escape",
                 playBtn: "🚀 PLAY NOW",
                 shopBtn: "🛒 SHOP",
-                storyBtn: "📜 STORY",
                 shopTitle: "ŮFØ SKIN SHOP (30+ LEGENDARY)",
                 shopHint: "Start with 0 stars and accumulate wealth by beating levels!",
                 mapTitle: "SELECT WORLD (7 WORLDS)",
-                mapHint: "Scroll up and down and click on a moon to access its 7 fixed stages!",
+                mapHint: "Click on a moon to access its 7 fixed stages!",
+                menuBtn: "◀ MENU",
+                stagesTitle: "Stages - World",
+                startRun: "START ESCAPE ➔",
+                backMap: "◀ Worlds",
+                exit: "🚪 EXIT",
+                progress: "Progress:",
                 touchHint: "Tap to float (Safe ground, solid ceiling)",
                 winTitle: "STAGE CLEARED!",
                 winMsg: "You successfully completed the stage!",
@@ -316,20 +286,7 @@
                 retry: "RETRY ↺",
                 warnTitle: "ROTATE DEVICE",
                 warnDesc: "ŮFØ is designed in landscape orientation for the ultimate gameplay experience!",
-                worlds: ["Classic Moon", "Red Moon", "Yellow Moon", "Green Moon", "Blue Moon", "Purple Moon", "Earth (Escape)"],
-                storyIntroTitle: "THE GREAT ESCAPE",
-                storyIntroText: "You are a rogue pilot aboard the experimental ŮFØ prototype. The Galactic Empire has locked down all space routes with laser grids and orbital spikes. Cross the 6 guarded Moons, collect energy stars, and reach Earth to escape!",
-                worldStories: [
-                    "Sector 01 - Classic Moon: You just broke out of the lunar base. Defenses are still powering up.",
-                    "Sector 02 - Red Moon: The alarm is triggered! Red laser cannons are patrolling the atmosphere.",
-                    "Sector 03 - Yellow Moon: Solar storms and high-speed traps block the way to deep space.",
-                    "Sector 04 - Green Moon: You entered the Empire's toxic zone. Your reflexes must be lightning fast.",
-                    "Sector 05 - Blue Moon: High-density cryogenic field. Only two dimensional jumps left to Earth!",
-                    "Sector 06 - Purple Moon: The Emperor's dark fortress. Break through the final blockade before Earth!",
-                    "Sector 07 - EARTH (FINAL ESCAPE): You're almost there! Cross the final orbital shield and return home!"
-                ],
-                storyWinGameTitle: "MISSION ACCOMPLISHED: YOU ARE FREE!",
-                storyWinGameText: "Unbelievable! You crossed all 6 Moons and broke through Earth's shield. The ŮFØ has safely landed on Earth!"
+                worlds: ["Classic Moon", "Red Moon", "Yellow Moon", "Green Moon", "Blue Moon", "Purple Moon", "Earth (Escape)"]
             }
         };
 
@@ -345,7 +302,6 @@
             document.getElementById('txt-subtitle').innerText = t.subtitle;
             document.getElementById('btn-play').innerHTML = t.playBtn;
             document.getElementById('btn-shop').innerHTML = t.shopBtn;
-            document.getElementById('btn-story-lobby').innerHTML = t.storyBtn;
             document.getElementById('txt-shop-title').innerText = t.shopTitle;
             document.getElementById('shop-hint').innerText = t.shopHint;
             document.getElementById('txt-map-title').innerText = t.mapTitle;
@@ -413,20 +369,11 @@
                 unlockedWorlds: [0],
                 unlockedStages: { 0: [0] },
                 stars: 0,
-                totalDeaths: 0,
-                storySeen: false,
                 skins: ['classic'],
                 activeSkin: 'classic'
-            }
+            },
+            stats: { deaths: 0 }
         };
-
-        if (typeof gameData.progress.totalDeaths !== 'number') {
-            gameData.progress.totalDeaths = 0;
-        }
-
-        function saveProgress() {
-            localStorage.setItem('unoyd_ufo_ultimate_v6_progress', JSON.stringify(gameData.progress));
-        }
 
         function syncProgress() {
             worldsConfig.forEach((w, idx) => {
@@ -436,43 +383,13 @@
             document.getElementById('shop-stars').innerText = gameData.progress.stars;
             document.getElementById('world-stars').innerText = gameData.progress.stars;
             document.getElementById('stages-stars').innerText = gameData.progress.stars;
-
-            document.getElementById('lobby-deaths').innerText = gameData.progress.totalDeaths;
-            document.getElementById('world-deaths').innerText = gameData.progress.totalDeaths;
-            document.getElementById('hud-total-deaths').innerText = gameData.progress.totalDeaths;
         }
         syncProgress();
 
-        // SISTEMA STORIA
-        let afterStoryCallback = null;
-
-        function showStoryModal(icon, title, text, callback = null) {
-            document.getElementById('story-icon').innerText = icon;
-            document.getElementById('story-title').innerText = title;
-            document.getElementById('story-text').innerText = text;
-            afterStoryCallback = callback;
-            document.getElementById('screen-story').classList.remove('hidden');
-        }
-
-        function closeStoryModal() {
-            document.getElementById('screen-story').classList.add('hidden');
-            if (afterStoryCallback) {
-                const cb = afterStoryCallback;
-                afterStoryCallback = null;
-                cb();
-            }
-        }
-
-        function openIntroStory() {
-            const t = translations[currentLang];
-            showStoryModal("🛸📡", t.storyIntroTitle, t.storyIntroText);
-        }
-
-        // SISTEMA AUDIO DINAMICO STILE GEOMETRY DASH (SINTETIZZATORE MULTI-BEAT PER MONDO)
         let audioCtx = null;
-        let lobbyMusicInterval = null;
+        let ambientMusicInterval = null;
         let gameMusicInterval = null;
-        let beatStep = 0;
+        let gameMusicTimer = 0;
 
         function initAudio() {
             if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -480,156 +397,6 @@
                 audioCtx.resume();
             }
         }
-
-        // 1. Musica Chill per la Lobby
-        const chillChords = [
-            [174.61, 220.00, 261.63, 329.63],
-            [164.81, 196.00, 246.94, 293.66],
-            [146.83, 174.61, 220.00, 261.63],
-            [130.81, 196.00, 246.94, 329.63]
-        ];
-        let chillStep = 0;
-
-        function startAmbientMusic() {
-            stopAllMusic();
-            if (!gameData.soundEnabled) return;
-            
-            lobbyMusicInterval = setInterval(() => {
-                if (!gameData.soundEnabled) return;
-                initAudio();
-                if (!audioCtx) return;
-                try {
-                    const now = audioCtx.currentTime;
-                    const chord = chillChords[chillStep % chillChords.length];
-                    chord.forEach((freq, i) => {
-                        const osc = audioCtx.createOscillator();
-                        const gain = audioCtx.createGain();
-                        osc.type = i === 0 ? 'sine' : 'triangle';
-                        osc.frequency.setValueAtTime(freq, now);
-                        
-                        gain.gain.setValueAtTime(0.0001, now);
-                        gain.gain.linearRampToValueAtTime(i === 0 ? 0.05 : 0.025, now + 0.8);
-                        gain.gain.exponentialRampToValueAtTime(0.0001, now + 3.4);
-
-                        osc.connect(gain);
-                        gain.connect(audioCtx.destination);
-                        osc.start(now);
-                        osc.stop(now + 3.5);
-                    });
-                    chillStep++;
-                } catch (e) {}
-            }, 3500);
-        }
-
-        // 2. Musica Energetica a Blocchi (Stile Geometry Dash) per ogni Mondo
-        // Ogni mondo ha scale e frequenze di synth differenti che "gasano" a 140 BPM!
-        const worldScales = [
-            [220, 246, 293, 329, 392, 440], // Mondo 0: Classico
-            [196, 220, 233, 261, 293, 392], // Mondo 1: Aggressivo (Rossa)
-            [261, 293, 329, 392, 440, 523], // Mondo 2: Luminoso (Gialla)
-            [164, 196, 220, 246, 293, 330], // Mondo 3: Profondo (Verde)
-            [293, 329, 370, 440, 493, 587], // Mondo 4: Elettrico (Azzurra)
-            [220, 261, 293, 349, 392, 523], // Mondo 5: Oscuro (Viola)
-            [329, 392, 440, 523, 659, 783]  // Mondo 6: Epico (Terra)
-        ];
-
-        function startGameMusic() {
-            stopAllMusic();
-            if (!gameData.soundEnabled) return;
-            beatStep = 0;
-
-            const scale = worldScales[gameData.currentWorld % worldScales.length];
-            const tempo = 185; // Velocità in millisecondi per nota (stile beat elettronico veloce)
-
-            gameMusicInterval = setInterval(() => {
-                if (!gameData.soundEnabled) return;
-                initAudio();
-                if (!audioCtx) return;
-                try {
-                    const now = audioCtx.currentTime;
-
-                    // Cassa elettronica pesante a ogni battito principale
-                    if (beatStep % 4 === 0) {
-                        const kick = audioCtx.createOscillator();
-                        const kickGain = audioCtx.createGain();
-                        kick.type = 'sawtooth';
-                        kick.frequency.setValueAtTime(130, now);
-                        kick.frequency.exponentialRampToValueAtTime(35, now + 0.12);
-                        kickGain.gain.setValueAtTime(0.28, now);
-                        kickGain.gain.linearRampToValueAtTime(0.001, now + 0.14);
-                        kick.connect(kickGain);
-                        kickGain.connect(audioCtx.destination);
-                        kick.start(now);
-                        kick.stop(now + 0.14);
-                    }
-
-                    // Hi-Hat / Piatto ritmato
-                    if (beatStep % 2 !== 0) {
-                        const hat = audioCtx.createOscillator();
-                        const hatGain = audioCtx.createGain();
-                        hat.type = 'square';
-                        hat.frequency.setValueAtTime(3500, now);
-                        hatGain.gain.setValueAtTime(0.04, now);
-                        hatGain.gain.linearRampToValueAtTime(0.001, now + 0.04);
-                        hat.connect(hatGain);
-                        hatGain.connect(audioCtx.destination);
-                        hat.start(now);
-                        hat.stop(now + 0.04);
-                    }
-
-                    // Melodia Synth Lead dinamica in stile Geometry Dash
-                    const synth = audioCtx.createOscillator();
-                    const synthGain = audioCtx.createGain();
-                    synth.type = (beatStep % 8 < 4) ? 'sawtooth' : 'triangle';
-                    
-                    const noteIdx = (beatStep * 3 + (gameData.currentStage * 2)) % scale.length;
-                    const freq = scale[noteIdx];
-                    synth.frequency.setValueAtTime(freq, now);
-
-                    synthGain.gain.setValueAtTime(0.12, now);
-                    synthGain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
-
-                    synth.connect(synthGain);
-                    synthGain.connect(audioCtx.destination);
-                    synth.start(now);
-                    synth.stop(now + 0.16);
-
-                    beatStep++;
-                } catch (e) {}
-            }, tempo);
-        }
-
-        function stopAllMusic() {
-            if (lobbyMusicInterval) {
-                clearInterval(lobbyMusicInterval);
-                lobbyMusicInterval = null;
-            }
-            if (gameMusicInterval) {
-                clearInterval(gameMusicInterval);
-                gameMusicInterval = null;
-            }
-        }
-
-        function toggleSound() {
-            gameData.soundEnabled = !gameData.soundEnabled;
-            document.getElementById('sound-btn').innerText = gameData.soundEnabled ? '🔊' : '🔇';
-            if (gameData.soundEnabled) {
-                if (gameRunning) startGameMusic();
-                else startAmbientMusic();
-            } else {
-                stopAllMusic();
-            }
-            playSound('click');
-        }
-
-        document.addEventListener('click', (e) => {
-            if (e.target.tagName === 'BUTTON') {
-                playSound('click');
-                if (gameData.soundEnabled && !gameRunning && !lobbyMusicInterval) {
-                    startAmbientMusic();
-                }
-            }
-        });
 
         function playSound(type) {
             if (!gameData.soundEnabled) return;
@@ -652,7 +419,7 @@
                 osc.type = 'triangle';
                 osc.frequency.setValueAtTime(220, now);
                 osc.frequency.exponentialRampToValueAtTime(520, now + 0.1);
-                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.setValueAtTime(0.18, now);
                 gain.gain.linearRampToValueAtTime(0.01, now + 0.1);
                 osc.start(now); osc.stop(now + 0.1);
             } else if (type === 'star') {
@@ -681,17 +448,139 @@
             }
         }
 
+        const lofiChords = [
+            [130.81, 196.00, 246.94, 329.63],
+            [110.00, 164.81, 207.65, 293.66],
+            [98.00,  146.83, 185.00, 261.63],
+            [146.83, 220.00, 261.63, 329.63]
+        ];
+        let lofiStep = 0;
+        function startAmbientMusic() {
+            stopAllMusic();
+            ambientMusicInterval = setInterval(() => {
+                if (!gameData.soundEnabled) return;
+                initAudio();
+                if (!audioCtx) return;
+                try {
+                    const chord = lofiChords[lofiStep % lofiChords.length];
+                    chord.forEach((freq, idx) => {
+                        const osc = audioCtx.createOscillator();
+                        const gain = audioCtx.createGain();
+                        osc.type = idx === 0 ? 'sine' : 'triangle';
+                        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+                        gain.gain.setValueAtTime(0.0001, audioCtx.currentTime);
+                        gain.gain.linearRampToValueAtTime(0.04, audioCtx.currentTime + 0.5);
+                        gain.gain.linearRampToValueAtTime(0.0001, audioCtx.currentTime + 3.2);
+
+                        osc.connect(gain);
+                        gain.connect(audioCtx.destination);
+                        osc.start();
+                        osc.stop(audioCtx.currentTime + 3.2);
+                    });
+                    lofiStep++;
+                } catch (e) {}
+            }, 3000);
+        }
+
+        const thasupIntroNotes = [330, 392, 440, 523.25];
+        const thasupDropMelody = [440, 523.25, 587.33, 659.25, 523.25, 392, 440, 587.33];
+        let thasupBeatStep = 0;
+
+        function startGameMusic() {
+            stopAllMusic();
+            gameMusicTimer = 0;
+            thasupBeatStep = 0;
+
+            gameMusicInterval = setInterval(() => {
+                if (!gameData.soundEnabled) return;
+                initAudio();
+                if (!audioCtx) return;
+                try {
+                    const now = audioCtx.currentTime;
+                    gameMusicTimer += 0.18;
+                    const isDrop = gameMusicTimer >= 6.0;
+
+                    if (isDrop) {
+                        if (thasupBeatStep % 4 === 0) {
+                            const bassOsc = audioCtx.createOscillator();
+                            const bassGain = audioCtx.createGain();
+                            bassOsc.type = 'sawtooth';
+                            bassOsc.frequency.setValueAtTime(120, now);
+                            bassOsc.frequency.exponentialRampToValueAtTime(45, now + 0.3);
+                            bassGain.gain.setValueAtTime(0.26, now);
+                            bassGain.gain.linearRampToValueAtTime(0.001, now + 0.32);
+                            bassOsc.connect(bassGain);
+                            bassGain.connect(audioCtx.destination);
+                            bassOsc.start(now); bassOsc.stop(now + 0.32);
+                        }
+
+                        const hatOsc = audioCtx.createOscillator();
+                        const hatGain = audioCtx.createGain();
+                        hatOsc.type = 'square';
+                        hatOsc.frequency.setValueAtTime(4000, now);
+                        hatGain.gain.setValueAtTime(thasupBeatStep % 2 === 0 ? 0.05 : 0.02, now);
+                        hatGain.gain.linearRampToValueAtTime(0.001, now + 0.04);
+                        hatOsc.connect(hatGain);
+                        hatGain.connect(audioCtx.destination);
+                        hatOsc.start(now); hatOsc.stop(now + 0.04);
+
+                        const synthOsc = audioCtx.createOscillator();
+                        const synthGain = audioCtx.createGain();
+                        synthOsc.type = 'triangle';
+                        const note = thasupDropMelody[thasupBeatStep % thasupDropMelody.length];
+                        synthOsc.frequency.setValueAtTime(note, now);
+                        synthGain.gain.setValueAtTime(0.09, now);
+                        synthGain.gain.linearRampToValueAtTime(0.001, now + 0.16);
+                        synthOsc.connect(synthGain);
+                        synthGain.connect(audioCtx.destination);
+                        synthOsc.start(now); synthOsc.stop(now + 0.16);
+
+                    } else {
+                        const introOsc = audioCtx.createOscillator();
+                        const introGain = audioCtx.createGain();
+                        introOsc.type = 'sine';
+                        const note = thasupIntroNotes[Math.floor(thasupBeatStep / 2) % thasupIntroNotes.length];
+                        introOsc.frequency.setValueAtTime(note, now);
+                        introGain.gain.setValueAtTime(0.05, now);
+                        introGain.gain.linearRampToValueAtTime(0.001, now + 0.3);
+                        introOsc.connect(introGain);
+                        introGain.connect(audioCtx.destination);
+                        introOsc.start(now); introOsc.stop(now + 0.3);
+                    }
+
+                    thasupBeatStep++;
+                } catch (e) {}
+            }, 180);
+        }
+
+        function stopAllMusic() {
+            if (ambientMusicInterval) { clearInterval(ambientMusicInterval); ambientMusicInterval = null; }
+            if (gameMusicInterval) { clearInterval(gameMusicInterval); gameMusicInterval = null; }
+        }
+
+        function toggleSound() {
+            gameData.soundEnabled = !gameData.soundEnabled;
+            document.getElementById('sound-btn').innerText = gameData.soundEnabled ? '🔊' : '🔇';
+            if (gameData.soundEnabled) {
+                startAmbientMusic();
+            } else {
+                stopAllMusic();
+            }
+            playSound('click');
+        }
+
+        document.addEventListener('click', (e) => {
+            if (e.target.tagName === 'BUTTON') {
+                playSound('click');
+            }
+        });
+
         function showLobby() {
-            hideAllScreens();
-            syncProgress();
             startAmbientMusic();
+            hideAllScreens();
             document.getElementById('screen-lobby').classList.remove('hidden');
             renderPreviewUFO();
-            if (!gameData.progress.storySeen) {
-                gameData.progress.storySeen = true;
-                saveProgress();
-                openIntroStory();
-            }
         }
         function showShop() {
             syncProgress();
@@ -710,8 +599,6 @@
             syncProgress();
             renderStagesGrid(worldIdx);
             hideAllScreens();
-            const t = translations[currentLang];
-            document.getElementById('stages-story-banner').innerText = t.worldStories[worldIdx] || "";
             document.getElementById('screen-stages').classList.remove('hidden');
         }
         function hideAllScreens() {
@@ -820,7 +707,7 @@
                 gameData.progress.stars -= skin.price;
                 gameData.progress.skins.push(skinId);
                 gameData.progress.activeSkin = skinId;
-                saveProgress();
+                localStorage.setItem('unoyd_ufo_ultimate_v6_progress', JSON.stringify(gameData.progress));
                 syncProgress();
                 renderShop();
                 playSound('win');
@@ -831,7 +718,7 @@
 
         function selectSkin(skinId) {
             gameData.progress.activeSkin = skinId;
-            saveProgress();
+            localStorage.setItem('unoyd_ufo_ultimate_v6_progress', JSON.stringify(gameData.progress));
             renderShop();
         }
 
@@ -864,7 +751,7 @@
                 if (w.unlocked) card.onclick = () => showStages(idx);
                 container.appendChild(card);
             });
-            syncProgress();
+            document.getElementById('world-stars').innerText = gameData.progress.stars;
         }
 
         function renderStagesGrid(worldIdx) {
@@ -893,7 +780,7 @@
                 }
                 container.appendChild(card);
             }
-            syncProgress();
+            document.getElementById('stages-stars').innerText = gameData.progress.stars;
         }
 
         const canvas = document.getElementById('gameCanvas');
@@ -909,16 +796,9 @@
         let levelLength = 7500;
         let starsCollected = 0;
         let currentWorldObj = null;
-        let stageDeathCount = 0;
-        let lastStageKey = "";
+        let deathCount = 0;
 
         function startActiveStage(worldIdx, stageIdx) {
-            const stageKey = `${worldIdx}-${stageIdx}`;
-            if (lastStageKey !== stageKey) {
-                stageDeathCount = 0;
-                lastStageKey = stageKey;
-            }
-
             gameData.currentWorld = worldIdx;
             gameData.currentStage = stageIdx;
             currentWorldObj = worldsConfig[worldIdx] || worldsConfig[0];
@@ -930,8 +810,8 @@
             const worldName = t.worlds[worldIdx] || "Mondo";
             document.getElementById('hud-level-title').innerText = `${worldName} - Stage ${stageIdx + 1}`;
             
-            document.getElementById('hud-deaths').innerText = stageDeathCount;
-            document.getElementById('hud-total-deaths').innerText = gameData.progress.totalDeaths;
+            deathCount = 0;
+            document.getElementById('hud-deaths').innerText = deathCount;
 
             const floorY = canvas.height - 50;
             ufo.x = 120; ufo.y = floorY - ufo.radius; ufo.vy = 0;
@@ -1159,22 +1039,15 @@
 
         function stopGameLoopOnly() {
             gameRunning = false;
+            stopAllMusic();
             if (animationId) { cancelAnimationFrame(animationId); animationId = null; }
         }
 
         function gameOver(reason) {
             stopGameLoopOnly();
-            stopAllMusic();
             playSound('crash');
-
-            stageDeathCount++;
-            gameData.progress.totalDeaths++;
-            saveProgress();
-            syncProgress();
-
-            document.getElementById('hud-deaths').innerText = stageDeathCount;
-            document.getElementById('go-stage-deaths').innerText = stageDeathCount;
-            document.getElementById('go-total-deaths').innerText = gameData.progress.totalDeaths;
+            deathCount++;
+            document.getElementById('hud-deaths').innerText = deathCount;
             document.getElementById('gameover-reason').innerText = reason;
             document.getElementById('screen-gameover').classList.remove('hidden');
         }
@@ -1186,56 +1059,38 @@
 
         function returnToStages() {
             stopGameLoopOnly();
-            stopAllMusic();
             showStages(gameData.currentWorld);
-            startAmbientMusic();
         }
 
         function stageWin() {
             stopGameLoopOnly();
-            stopAllMusic();
             playSound('win');
 
             const wIdx = gameData.currentWorld;
             const sIdx = gameData.currentStage;
-            let unlockedNewWorld = false;
-            let gameCompleted = false;
 
             if (!gameData.progress.unlockedStages[wIdx]) {
                 gameData.progress.unlockedStages[wIdx] = [0];
             }
             if (sIdx + 1 < 7 && !gameData.progress.unlockedStages[wIdx].includes(sIdx + 1)) {
                 gameData.progress.unlockedStages[wIdx].push(sIdx + 1);
-            } else if (sIdx + 1 >= 7) {
-                if (wIdx + 1 < worldsConfig.length) {
-                    if (!gameData.progress.unlockedWorlds.includes(wIdx + 1)) {
-                        gameData.progress.unlockedWorlds.push(wIdx + 1);
-                        unlockedNewWorld = true;
-                    }
-                    if (!gameData.progress.unlockedStages[wIdx + 1]) {
-                        gameData.progress.unlockedStages[wIdx + 1] = [0];
-                    }
-                } else {
-                    gameCompleted = true;
+            } else if (sIdx + 1 >= 7 && wIdx + 1 < worldsConfig.length) {
+                if (!gameData.progress.unlockedWorlds.includes(wIdx + 1)) {
+                    gameData.progress.unlockedWorlds.push(wIdx + 1);
+                }
+                if (!gameData.progress.unlockedStages[wIdx + 1]) {
+                    gameData.progress.unlockedStages[wIdx + 1] = [0];
                 }
             }
 
             const rewardStars = starsCollected + 12 + (wIdx * 4);
             gameData.progress.stars = (gameData.progress.stars || 0) + rewardStars;
-            saveProgress();
+            localStorage.setItem('unoyd_ufo_ultimate_v6_progress', JSON.stringify(gameData.progress));
             syncProgress();
 
             document.getElementById('win-stars').innerText = rewardStars;
-            document.getElementById('win-deaths').innerText = stageDeathCount;
-            document.getElementById('win-total-deaths').innerText = gameData.progress.totalDeaths;
+            document.getElementById('win-deaths').innerText = deathCount;
             document.getElementById('screen-win').classList.remove('hidden');
-
-            const t = translations[currentLang];
-            if (gameCompleted) {
-                showStoryModal("🌍🏆", t.storyWinGameTitle, t.storyWinGameText);
-            } else if (unlockedNewWorld) {
-                showStoryModal(worldsConfig[wIdx + 1].icon, t.worlds[wIdx + 1], t.worldStories[wIdx + 1]);
-            }
         }
 
         function proceedNextStage() {
@@ -1247,7 +1102,6 @@
                 startActiveStage(wIdx + 1, 0);
             } else {
                 showWorldSelect();
-                startAmbientMusic();
             }
         }
 
