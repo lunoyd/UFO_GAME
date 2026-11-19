@@ -83,12 +83,12 @@
         <!-- BOSS BRIEFING MODAL (STAGE 7) -->
         <div id="screen-boss-briefing" class="absolute inset-0 hidden flex flex-col items-center justify-center p-6 z-50 bg-black/95 backdrop-blur-md">
             <div class="max-w-lg w-full bg-neutral-900/95 border border-red-500/50 p-5 rounded-2xl text-center shadow-2xl flex flex-col gap-3">
-                <div class="text-[10px] font-orbitron uppercase tracking-widest text-red-400">⚠️ ALLERTA BOSS - STAGE 07</div>
+                <div class="text-[10px] font-orbitron uppercase tracking-widest text-red-400">⚠️ BOSS FIGHT - STAGE 07</div>
                 <div class="flex items-center justify-center gap-4">
-                    <canvas id="bossPreviewCanvas" width="90" height="54" class="w-24 h-14 bg-black/60 rounded-xl border border-neutral-800"></canvas>
+                    <canvas id="bossPreviewCanvas" width="100" height="60" class="w-24 h-14 bg-black/60 rounded-xl border border-neutral-800"></canvas>
                     <div class="text-left">
                         <div id="boss-brief-name" class="font-orbitron text-lg font-black text-white">VEXAR-01</div>
-                        <div id="boss-brief-role" class="font-orbitron text-[10px] text-red-300">Sentinella Lunare</div>
+                        <div id="boss-brief-role" class="font-orbitron text-[10px] text-red-300">Sentinella della Luna Base</div>
                         <div class="font-orbitron text-xs text-yellow-400 mt-1">
                             🎯 Obiettivo Sfere: <span id="boss-brief-target" class="font-bold">12</span> ⭐
                         </div>
@@ -277,7 +277,7 @@
                 <h2 id="go-title" class="font-orbitron text-xl font-bold text-red-500">DISTRUTTO!</h2>
                 <p id="gameover-reason" class="text-neutral-300 text-xs">Sei stato colpito.</p>
                 <div class="text-[11px] font-orbitron text-red-300 bg-red-950/50 py-1.5 rounded-lg border border-red-500/20">
-                    Morti Livello: <span id="go-stage-deaths" class="font-bold">1</span> | Morti Totali: <span id="go-total-deaths" class="font-bold">1</span>
+                    Morti Livello: <span id="go-stage-deaths" class="font-bold">1</span> | Totali: <span id="go-total-deaths" class="font-bold">1</span>
                 </div>
                 <div class="flex gap-2 mt-1">
                     <button onclick="showStages(gameData.currentWorld)" id="btn-go-stages" class="flex-1 py-2.5 bg-neutral-800 hover:bg-neutral-700 font-orbitron text-xs rounded-xl text-neutral-200">LIVELLI</button>
@@ -304,8 +304,8 @@
                 keyName: { it: '🔑 CHIAVE ROSSA', en: '🔑 RED KEY' },
                 role: { it: 'Sentinella della Luna Base', en: 'Base Moon Sentinel' },
                 brief: {
-                    it: "Ti hanno visto! VEXAR-01 ha bloccato l'uscita della Luna Base. Raccogli almeno 12 sfere energetiche e sconfiggilo per ottenere la Chiave Rossa!",
-                    en: "You've been spotted! VEXAR-01 locked the Base Moon exit. Collect at least 12 energy orbs and defeat it to claim the Red Key!"
+                    it: "VEXAR-01 è in posizione a destra e ti lancia ostacoli mentre avanzi! Raccogli 12 sfere per sconfiggerlo e prendere la Chiave Rossa.",
+                    en: "VEXAR-01 stays on the right and launches obstacles at you as you advance! Collect 12 orbs to defeat it and claim the Red Key."
                 }
             },
             {
@@ -319,8 +319,8 @@
                 keyName: { it: '🔑 CHIAVE GIALLA', en: '🔑 YELLOW KEY' },
                 role: { it: 'Cacciatore Cremisi', en: 'Crimson Hunter' },
                 brief: {
-                    it: "KRAXON pattuglia i cieli della Luna Rossa! Raccogli 15 sfere luminose lungo la fuga e prendi la Chiave Gialla per aprire la prossima luna.",
-                    en: "KRAXON patrols the Red Moon skies! Collect 15 glowing orbs during the escape and grab the Yellow Key to open the next moon."
+                    it: "KRAXON ti insegue sulla destra lanciando raffiche ostili! Raccogli 15 sfere e conquista la Chiave Gialla.",
+                    en: "KRAXON stays on the right firing hostile bursts! Collect 15 orbs and win the Yellow Key."
                 }
             },
             {
@@ -334,8 +334,8 @@
                 keyName: { it: '🔑 CHIAVE VERDE', en: '🔑 GREEN KEY' },
                 role: { it: 'Inquisitore Solare', en: 'Solar Inquisitor' },
                 brief: {
-                    it: "L'energia di SOLARIS-X brucia l'orbita della Luna Gialla! Raccogli 18 sfere per caricare i tuoi scudi e conquista la Chiave Verde.",
-                    en: "SOLARIS-X's energy scorches the Yellow Moon orbit! Collect 18 orbs to charge your shields and win the Green Key."
+                    it: "SOLARIS-X lancia proiettili solari dalla destra! Raccogli 18 sfere e ottieni la Chiave Verde.",
+                    en: "SOLARIS-X launches solar projectiles from the right! Collect 18 orbs and get the Green Key."
                 }
             },
             {
@@ -349,8 +349,8 @@
                 keyName: { it: '🔑 CHIAVE AZZURRA', en: '🔑 BLUE KEY' },
                 role: { it: 'Predatore Tossico', en: 'Toxic Predator' },
                 brief: {
-                    it: "TOXICOR ha avvelenato i settori della Luna Verde! Raccogli 20 sfere e supera il suo sbarramento per ottenere la Chiave Azzurra.",
-                    en: "TOXICOR poisoned the Green Moon sectors! Collect 20 orbs and break past its blockade to get the Blue Key."
+                    it: "TOXICOR ti spara sfere tossiche dalla destra! Raccogli 20 sfere e sblocca la Chiave Azzurra.",
+                    en: "TOXICOR fires toxic orbs from the right! Collect 20 orbs and unlock the Blue Key."
                 }
             },
             {
@@ -364,8 +364,8 @@
                 keyName: { it: '🔑 CHIAVE VIOLA', en: '🔑 PURPLE KEY' },
                 role: { it: 'Custode Criogenico', en: 'Cryo Warden' },
                 brief: {
-                    it: "GLACIUS-9 congela l'aria attorno alla Luna Azzurra! Raccogli 22 sfere senza farti colpire e conquista la Chiave Viola.",
-                    en: "GLACIUS-9 freezes the air around the Blue Moon! Collect 22 orbs without getting hit and claim the Purple Key."
+                    it: "GLACIUS-9 lancia schegge criogeniche dalla destra! Raccogli 22 sfere e conquista la Chiave Viola.",
+                    en: "GLACIUS-9 launches cryo shards from the right! Collect 22 orbs and claim the Purple Key."
                 }
             },
             {
@@ -379,8 +379,8 @@
                 keyName: { it: '🔑 CHIAVE DELLA TERRA', en: '🔑 EARTH KEY' },
                 role: { it: "Signore dell'Ombra", en: 'Shadow Lord' },
                 brief: {
-                    it: "MALAKOR è l'ultimo guardiano prima della Terra! Raccogli 25 sfere energetiche e sconfiggilo per ottenere la Chiave della Terra.",
-                    en: "MALAKOR is the final guardian before Earth! Collect 25 energy orbs and defeat it to get the Earth Key."
+                    it: "MALAKOR ti bombarda dalla destra con energia oscura! Raccogli 25 sfere e prendi la Chiave della Terra.",
+                    en: "MALAKOR bombards you from the right with dark energy! Collect 25 orbs and get the Earth Key."
                 }
             },
             {
@@ -394,8 +394,8 @@
                 keyName: { it: '🏅 MEDAGLIA DELLA LIBERTÀ', en: '🏅 FREEDOM MEDAL' },
                 role: { it: 'Comandante Supremo', en: 'Supreme Commander' },
                 brief: {
-                    it: "OMEGA-PRIME in persona sbarra la strada verso la Terra! Raccogli 28 sfere per l'iper-salto finale e completa la fuga!",
-                    en: "OMEGA-PRIME itself blocks the path to Earth! Collect 28 orbs for the final hyper-jump and complete the escape!"
+                    it: "OMEGA-PRIME resta a destra e lancia attacchi continui! Raccogli 28 sfere per l'iper-salto finale verso la Terra!",
+                    en: "OMEGA-PRIME stays on the right launching heavy attacks! Collect 28 orbs for the final jump to Earth!"
                 }
             }
         ];
@@ -423,13 +423,13 @@
                 storyIntroTitle: "LA GRANDE FUGA DALL'IMPERO",
                 storyIntroText: "Sei un pilota ribelle a bordo del prototipo sperimentale ŮFØ. L'Impero Galattico ha bloccato tutte le rotte spaziali con laser, spuntoni e Boss alieni a guardia di ogni luna. Completa il livello 7 di ogni mondo per ottenere la chiave del colore successivo fino alla Terra!",
                 worldStories: [
-                    "Luna Classica: Evadi dalla base! Nel livello 7 ti aspetta VEXAR-01: raccogli 12 sfere per la Chiave Rossa.",
-                    "Luna Rossa: Sei entrato nella zona rossa! Nel livello 7 affronta KRAXON e raccogli 15 sfere per la Chiave Gialla.",
-                    "Luna Gialla: Tempeste solari! Nel livello 7 affronta SOLARIS-X e raccogli 18 sfere per la Chiave Verde.",
-                    "Luna Verde: Nebbie tossiche! Nel livello 7 affronta TOXICOR e raccogli 20 sfere per la Chiave Azzurra.",
-                    "Luna Azzurra: Ghiacci orbitali! Nel livello 7 affronta GLACIUS-9 e raccogli 22 sfere per la Chiave Viola.",
-                    "Luna Viola: Fortezza oscura! Nel livello 7 affronta MALAKOR e raccogli 25 sfere per la Chiave della Terra.",
-                    "Terra (Fuga): Ultimo sbarramento! Nel livello 7 affronta OMEGA-PRIME e raccogli 28 sfere per tornare sulla Terra!"
+                    "Luna Classica: Evadi dalla base! Nel livello 7 affronti VEXAR-01 a destra: raccogli 12 sfere per la Chiave Rossa.",
+                    "Luna Rossa: Sei entrato nella zona rossa! Nel livello 7 affronti KRAXON e raccogli 15 sfere per la Chiave Gialla.",
+                    "Luna Gialla: Tempeste solari! Nel livello 7 affronti SOLARIS-X e raccogli 18 sfere per la Chiave Verde.",
+                    "Luna Verde: Nebbie tossiche! Nel livello 7 affronti TOXICOR e raccogli 20 sfere per la Chiave Azzurra.",
+                    "Luna Azzurra: Ghiacci orbitali! Nel livello 7 affronti GLACIUS-9 e raccogli 22 sfere per la Chiave Viola.",
+                    "Luna Viola: Fortezza oscura! Nel livello 7 affronti MALAKOR e raccogli 25 sfere per la Chiave della Terra.",
+                    "Terra (Fuga): Ultimo sbarramento! Nel livello 7 affronti OMEGA-PRIME e raccogli 28 sfere per tornare sulla Terra!"
                 ],
                 worldEndTitles: [
                     "LUNA CLASSICA LIBERATA!",
@@ -472,7 +472,7 @@
                 storyIntroTitle: "THE GREAT ESCAPE",
                 storyIntroText: "You are a rogue pilot aboard the experimental ŮFØ prototype. The Galactic Empire blocked all space routes with lasers, spikes, and alien Bosses guarding every moon. Beat Stage 7 of each world to get the next color key all the way to Earth!",
                 worldStories: [
-                    "Classic Moon: Break out of the base! VEXAR-01 awaits in Stage 7: collect 12 orbs for the Red Key.",
+                    "Classic Moon: Break out of the base! Face VEXAR-01 on the right in Stage 7: collect 12 orbs for the Red Key.",
                     "Red Moon: You entered the red zone! Face KRAXON in Stage 7 and collect 15 orbs for the Yellow Key.",
                     "Yellow Moon: Solar storms! Face SOLARIS-X in Stage 7 and collect 18 orbs for the Green Key.",
                     "Green Moon: Toxic mists! Face TOXICOR in Stage 7 and collect 20 orbs for the Blue Key.",
@@ -637,7 +637,7 @@
             const bCanvas = document.getElementById('bossPreviewCanvas');
             const bCtx = bCanvas.getContext('2d');
             bCtx.clearRect(0, 0, bCanvas.width, bCanvas.height);
-            drawEnemyAlien(bCtx, 22, 14, 46, 28, boss);
+            drawBossShip(bCtx, 52, 32, 1.15, boss, 0);
         }
 
         function closeBossBriefing() {
@@ -877,6 +877,13 @@
                 gain.gain.setValueAtTime(0.12, now);
                 gain.gain.linearRampToValueAtTime(0.01, now + 0.15);
                 osc.start(now); osc.stop(now + 0.15);
+            } else if (type === 'shoot') {
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(340, now);
+                osc.frequency.exponentialRampToValueAtTime(110, now + 0.12);
+                gain.gain.setValueAtTime(0.09, now);
+                gain.gain.linearRampToValueAtTime(0.001, now + 0.12);
+                osc.start(now); osc.stop(now + 0.12);
             } else if (type === 'crash') {
                 osc.type = 'sawtooth';
                 osc.frequency.setValueAtTime(120, now);
@@ -994,38 +1001,57 @@
             ctx.restore();
         }
 
-        function drawEnemyAlien(ctx, x, y, width, height, bossData = null) {
+        // Disegna il Boss fisso a destra durante il Livello 7
+        function drawBossShip(ctx, centerX, centerY, scale, bossData, chargeRatio = 0) {
             const b = bossData || moonBosses[0];
             ctx.save();
-            ctx.translate(x + width / 2, y + height / 2);
+            ctx.translate(centerX, centerY);
+            ctx.scale(scale, scale);
 
+            // Aura e scia energetica
             ctx.strokeStyle = b.glowColor;
             ctx.shadowColor = b.glowColor;
-            ctx.shadowBlur = 14;
-            ctx.lineWidth = 2;
+            ctx.shadowBlur = 18 + chargeRatio * 14;
+            ctx.lineWidth = 2.5;
 
+            // Cupola aliena
             ctx.fillStyle = b.domeColor;
             ctx.beginPath();
-            ctx.arc(0, -4, Math.min(width, height) * 0.42, Math.PI, 0, false);
+            ctx.arc(0, -6, 18, Math.PI, 0, false);
             ctx.fill();
             ctx.stroke();
 
+            // Occhio / Sensore centrale
             ctx.fillStyle = b.eyeColor;
             ctx.beginPath();
-            ctx.arc(0, -7, 3.2, 0, Math.PI * 2);
+            ctx.arc(-3, -11, 4.5, 0, Math.PI * 2);
             ctx.fill();
 
+            // Scafo principale del Boss
             ctx.fillStyle = b.hullColor;
             ctx.beginPath();
-            ctx.ellipse(0, 3, width / 2, Math.max(7, height * 0.28), 0, 0, Math.PI * 2);
+            ctx.ellipse(0, 4, 30, 11, 0, 0, Math.PI * 2);
             ctx.fill();
             ctx.stroke();
 
+            // Cannone frontale a sinistra (verso il giocatore)
             ctx.fillStyle = b.glowColor;
-            for (let i = -1; i <= 1; i++) {
+            ctx.fillRect(-36, 1, 10, 6);
+
+            // Luci inferiori
+            for (let i = -2; i <= 2; i++) {
                 ctx.beginPath();
-                ctx.arc(i * (width * 0.22), 3, 2.2, 0, Math.PI * 2);
+                ctx.arc(i * 9, 4, 2.5, 0, Math.PI * 2);
                 ctx.fill();
+            }
+
+            // Barra di carica attacco sopra il boss
+            if (chargeRatio > 0) {
+                ctx.shadowBlur = 0;
+                ctx.fillStyle = 'rgba(0,0,0,0.65)';
+                ctx.fillRect(-26, -34, 52, 5);
+                ctx.fillStyle = chargeRatio > 0.75 ? '#ef4444' : b.glowColor;
+                ctx.fillRect(-25, -33, 50 * Math.min(1, chargeRatio), 3);
             }
 
             ctx.restore();
@@ -1146,7 +1172,7 @@
 
                 card.innerHTML = `
                     <div class="font-orbitron font-bold text-sm ${isBossStage ? 'text-red-400' : 'text-yellow-400'} mb-0.5">#0${s + 1}</div>
-                    <div class="text-[9px] font-orbitron text-neutral-300 truncate max-w-full">${isBossStage ? '👽 ' + bossName : (isUnlocked ? '⭐' : '🔒')}</div>
+                    <div class="text-[9px] font-orbitron text-neutral-300 truncate max-w-full">${isBossStage ? '👾 ' + bossName : (isUnlocked ? '⭐' : '🔒')}</div>
                     ${isUnlocked && sDeaths > 0 ? `<div class="text-[9px] font-orbitron text-red-400 mt-0.5">💀 ${sDeaths}</div>` : ''}
                 `;
 
@@ -1171,12 +1197,22 @@
 
         let ufo = { x: 120, y: 440, vy: 0, gravity: 0.52, lift: -9.2, radius: 18, angle: 0 };
         let obstacles = [];
+        let bossProjectiles = [];
         let stars = [];
         let particles = [];
         let distTraveled = 0;
         let levelLength = 7500;
         let starsCollected = 0;
         let currentWorldObj = null;
+
+        let bossState = {
+            active: false,
+            x: 845,
+            y: 270,
+            baseY: 270,
+            attackTimer: 0,
+            attackInterval: 88
+        };
 
         function updateBossHud() {
             const wrap = document.getElementById('hud-boss-target-wrap');
@@ -1211,6 +1247,16 @@
             const floorY = canvas.height - 50;
             ufo.x = 120; ufo.y = floorY - ufo.radius; ufo.vy = 0;
             distTraveled = 0; starsCollected = 0;
+            bossProjectiles = [];
+            particles = [];
+
+            bossState.active = (stageIdx === 6);
+            bossState.x = canvas.width - 110;
+            bossState.y = canvas.height / 2;
+            bossState.baseY = canvas.height / 2;
+            bossState.attackTimer = 0;
+            bossState.attackInterval = Math.max(54, 88 - worldIdx * 5);
+
             document.getElementById('hud-stars').innerText = starsCollected;
             document.getElementById('hud-progress-bar').style.width = '0%';
             updateBossHud();
@@ -1223,9 +1269,43 @@
             animationId = requestAnimationFrame(gameLoop);
         }
 
+        function spawnBossAttack() {
+            const boss = moonBosses[gameData.currentWorld] || moonBosses[0];
+            const modeRoll = Math.random();
+            const originX = bossState.x - 36;
+            const originY = bossState.y + 3;
+
+            if (modeRoll < 0.55) {
+                // Proiettile energetico lanciato verso sinistra (con leggera inclinazione)
+                const aimDy = (ufo.y - originY) * 0.012 + (Math.random() - 0.5) * 1.4;
+                bossProjectiles.push({
+                    x: originX,
+                    y: originY,
+                    vx: -(8.6 + gameData.currentWorld * 0.45),
+                    vy: Math.max(-2.6, Math.min(2.6, aimDy)),
+                    radius: 10,
+                    type: 'orb',
+                    color: boss.glowColor
+                });
+            } else {
+                // Ostacolo appuntito lanciato dal boss
+                bossProjectiles.push({
+                    x: originX,
+                    y: originY - 11,
+                    vx: -(9.2 + gameData.currentWorld * 0.4),
+                    vy: 0,
+                    width: 28,
+                    height: 22,
+                    type: 'dart',
+                    color: '#ef4444'
+                });
+            }
+            playSound('shoot');
+        }
+
         function generateFixedStage(wIdx, sIdx) {
             obstacles = []; stars = [];
-            levelLength = 8000 + (wIdx * 1300) + (sIdx * 450);
+            levelLength = 8200 + (wIdx * 1300) + (sIdx * 450);
             
             let seed = (wIdx + 1) * 137 + (sIdx + 1) * 73;
             function pseudoRandom() {
@@ -1233,46 +1313,43 @@
                 return seed / 233280;
             }
 
-            let spawnX = 550;
-            let density = 100 - (wIdx * 6) - (sIdx * 3);
-            if (density < 50) density = 50;
+            let spawnX = 560;
+            let density = 105 - (wIdx * 6) - (sIdx * 3);
+            if (density < 55) density = 55;
 
             while (spawnX < levelLength - 400) {
                 const r = pseudoRandom();
                 const floorHeight = 50;
                 const ceilingHeight = 45;
 
-                const spawnAlienChance = (sIdx === 6) ? 0.42 : (sIdx >= 4 ? 0.18 : 0);
-
-                if (pseudoRandom() < spawnAlienChance) {
-                    const startY = 120 + pseudoRandom() * 240;
-                    obstacles.push({
-                        x: spawnX,
-                        y: startY,
-                        baseY: startY,
-                        width: 42,
-                        height: 28,
-                        type: 'alien',
-                        phase: pseudoRandom() * Math.PI * 2,
-                        amp: 45 + pseudoRandom() * 45
-                    });
-                } else if (r < 0.3) {
-                    obstacles.push({ x: spawnX, y: canvas.height - floorHeight - 42, width: 32, height: 42, type: 'spike' });
-                } else if (r < 0.6) {
-                    obstacles.push({ x: spawnX, y: ceilingHeight, width: 32, height: 42, type: 'spike' });
-                } else if (r < 0.85) {
-                    obstacles.push({ x: spawnX, y: canvas.height / 2 - 45, width: 22, height: 95, type: 'laser' });
+                // Nello stage 7 il boss sta fisso a destra e lancia attacchi, quindi lasciamo più spazio per schivare
+                if (sIdx === 6) {
+                    if (r < 0.35) {
+                        obstacles.push({ x: spawnX, y: canvas.height - floorHeight - 36, width: 28, height: 36, type: 'spike' });
+                    } else if (r < 0.7) {
+                        obstacles.push({ x: spawnX, y: ceilingHeight, width: 28, height: 36, type: 'spike' });
+                    } else {
+                        obstacles.push({ x: spawnX, y: canvas.height / 2 - 38, width: 18, height: 76, type: 'laser' });
+                    }
+                    stars.push({ x: spawnX + 55, y: pseudoRandom() * 290 + 115, radius: 10, collected: false });
+                    spawnX += pseudoRandom() * 60 + 125;
                 } else {
-                    obstacles.push({ x: spawnX, y: canvas.height - floorHeight - 38, width: 28, height: 38, type: 'spike' });
-                    obstacles.push({ x: spawnX + 45, y: ceilingHeight, width: 28, height: 38, type: 'spike' });
-                }
+                    if (r < 0.3) {
+                        obstacles.push({ x: spawnX, y: canvas.height - floorHeight - 42, width: 32, height: 42, type: 'spike' });
+                    } else if (r < 0.6) {
+                        obstacles.push({ x: spawnX, y: ceilingHeight, width: 32, height: 42, type: 'spike' });
+                    } else if (r < 0.85) {
+                        obstacles.push({ x: spawnX, y: canvas.height / 2 - 45, width: 22, height: 95, type: 'laser' });
+                    } else {
+                        obstacles.push({ x: spawnX, y: canvas.height - floorHeight - 38, width: 28, height: 38, type: 'spike' });
+                        obstacles.push({ x: spawnX + 45, y: ceilingHeight, width: 28, height: 38, type: 'spike' });
+                    }
 
-                // Negli stage 7 generiamo sempre abbondanti sfere per poter raggiungere il target del Boss
-                const starChance = (sIdx === 6) ? 0.05 : 0.25;
-                if (pseudoRandom() > starChance) {
-                    stars.push({ x: spawnX + 65, y: pseudoRandom() * 300 + 110, radius: 10, collected: false });
+                    if (pseudoRandom() > 0.25) {
+                        stars.push({ x: spawnX + 70, y: pseudoRandom() * 300 + 110, radius: 10, collected: false });
+                    }
+                    spawnX += pseudoRandom() * 65 + density;
                 }
-                spawnX += pseudoRandom() * 65 + density;
             }
         }
 
@@ -1346,6 +1423,47 @@
                 return;
             }
 
+            // Aggiorna Boss fisso sulla destra e i suoi attacchi nel Livello 7
+            if (bossState.active) {
+                bossState.y = bossState.baseY + Math.sin(distTraveled * 0.012) * 115;
+                bossState.y = Math.max(ceilingY + 42, Math.min(floorY - 36, bossState.y));
+
+                bossState.attackTimer++;
+                if (bossState.attackTimer >= bossState.attackInterval) {
+                    bossState.attackTimer = 0;
+                    spawnBossAttack();
+                }
+
+                for (let i = bossProjectiles.length - 1; i >= 0; i--) {
+                    const proj = bossProjectiles[i];
+                    proj.x += proj.vx;
+                    proj.y += proj.vy;
+
+                    if (proj.y <= ceilingY + 8 || proj.y >= floorY - 8) {
+                        proj.vy *= -1;
+                    }
+
+                    if (proj.type === 'orb') {
+                        if (Math.hypot(ufo.x - proj.x, ufo.y - proj.y) < ufo.radius + proj.radius - 2) {
+                            const boss = moonBosses[gameData.currentWorld] || moonBosses[0];
+                            gameOver(`Colpito dal raggio di ${boss.name}!`);
+                            return;
+                        }
+                    } else {
+                        if (ufo.x + ufo.radius > proj.x && ufo.x - ufo.radius < proj.x + proj.width &&
+                            ufo.y + ufo.radius > proj.y && ufo.y - ufo.radius < proj.y + proj.height) {
+                            const boss = moonBosses[gameData.currentWorld] || moonBosses[0];
+                            gameOver(`Colpito dall'ostacolo lanciato da ${boss.name}!`);
+                            return;
+                        }
+                    }
+
+                    if (proj.x < -60) {
+                        bossProjectiles.splice(i, 1);
+                    }
+                }
+            }
+
             particles.forEach(p => { p.x += p.vx; p.y += p.vy; p.alpha -= 0.03; });
             particles = particles.filter(p => p.alpha > 0);
 
@@ -1362,18 +1480,10 @@
             });
 
             obstacles.forEach(obs => {
-                if (obs.type === 'alien') {
-                    obs.y = obs.baseY + Math.sin(distTraveled * 0.015 + obs.phase) * obs.amp;
-                    if (obs.y < ceilingY + 10) obs.y = ceilingY + 10;
-                    if (obs.y > floorY - obs.height - 10) obs.y = floorY - obs.height - 10;
-                }
-
                 const screenX = obs.x - distTraveled + ufo.x;
                 if (ufo.x + ufo.radius > screenX && ufo.x - ufo.radius < screenX + obs.width &&
                     ufo.y + ufo.radius > obs.y && ufo.y - ufo.radius < obs.y + obs.height) {
-                    const boss = moonBosses[gameData.currentWorld] || moonBosses[0];
-                    const msg = obs.type === 'alien' ? `Colpito dalle truppe di ${boss.name}!` : "Impatto con le difese aliene!";
-                    gameOver(msg);
+                    gameOver("Impatto con le difese aliene!");
                 }
             });
         }
@@ -1429,15 +1539,11 @@
                 }
             });
 
-            const bossData = moonBosses[gameData.currentWorld] || moonBosses[0];
-
             obstacles.forEach(obs => {
                 const screenX = obs.x - distTraveled + ufo.x;
                 if (screenX > -80 && screenX < canvas.width + 80) {
-                    if (obs.type === 'alien') {
-                        drawEnemyAlien(ctx, screenX, obs.y, obs.width, obs.height, bossData);
-                    } else if (obs.type === 'spike') {
-                        ctx.save();
+                    ctx.save();
+                    if (obs.type === 'spike') {
                         ctx.fillStyle = '#ef4444';
                         ctx.strokeStyle = '#f87171';
                         ctx.lineWidth = 2;
@@ -1447,19 +1553,52 @@
                         ctx.lineTo(screenX + obs.width, obs.y + obs.height);
                         ctx.closePath();
                         ctx.fill(); ctx.stroke();
-                        ctx.restore();
                     } else {
-                        ctx.save();
                         ctx.fillStyle = '#a855f7';
                         ctx.shadowColor = '#c084fc';
                         ctx.shadowBlur = 15;
                         ctx.fillRect(screenX, obs.y, obs.width, obs.height);
                         ctx.fillStyle = '#ffffff';
                         ctx.fillRect(screenX + 6, obs.y, obs.width - 12, obs.height);
-                        ctx.restore();
                     }
+                    ctx.restore();
                 }
             });
+
+            // Disegna i proiettili/ostacoli lanciati dal Boss
+            bossProjectiles.forEach(proj => {
+                ctx.save();
+                if (proj.type === 'orb') {
+                    ctx.fillStyle = proj.color;
+                    ctx.shadowColor = proj.color;
+                    ctx.shadowBlur = 14;
+                    ctx.beginPath();
+                    ctx.arc(proj.x, proj.y, proj.radius, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.fillStyle = '#ffffff';
+                    ctx.beginPath();
+                    ctx.arc(proj.x, proj.y, proj.radius * 0.42, 0, Math.PI * 2);
+                    ctx.fill();
+                } else {
+                    ctx.fillStyle = proj.color;
+                    ctx.shadowColor = proj.color;
+                    ctx.shadowBlur = 12;
+                    ctx.beginPath();
+                    ctx.moveTo(proj.x, proj.y + proj.height / 2);
+                    ctx.lineTo(proj.x + proj.width, proj.y);
+                    ctx.lineTo(proj.x + proj.width, proj.y + proj.height);
+                    ctx.closePath();
+                    ctx.fill();
+                }
+                ctx.restore();
+            });
+
+            // Disegna il Boss fisso sulla destra durante il Livello 7
+            if (bossState.active) {
+                const bossData = moonBosses[gameData.currentWorld] || moonBosses[0];
+                const chargeRatio = bossState.attackTimer / bossState.attackInterval;
+                drawBossShip(ctx, bossState.x, bossState.y, 1.35, bossData, chargeRatio);
+            }
 
             particles.forEach(p => {
                 ctx.save(); ctx.globalAlpha = p.alpha; ctx.fillStyle = p.color;
