@@ -6,7 +6,6 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <title>ŮFØ - LUNOYD</title>
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@400;600;800&display=swap');
@@ -20,7 +19,6 @@
             width: 100vw;
             height: 100vh;
             overflow: hidden;
-            touch-action: none;
             user-select: none;
             -webkit-user-select: none;
         }
@@ -40,6 +38,16 @@
         }
         .box-glow-yellow {
             box-shadow: 0 0 25px rgba(234, 179, 8, 0.5);
+        }
+
+        .scrollable-list {
+            overflow-y: auto;
+            touch-action: pan-y;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        #gameCanvas {
+            touch-action: none;
         }
 
         #rotate-warning {
@@ -72,36 +80,68 @@
     <!-- MAIN APP CONTAINER -->
     <div id="app" class="w-full h-full max-w-[960px] max-h-[540px] flex flex-col relative bg-[#07070b] shadow-2xl overflow-hidden border border-purple-900/40 rounded-2xl">
 
+        <!-- BOSS BRIEFING MODAL (STAGE 7) -->
+        <div id="screen-boss-briefing" class="absolute inset-0 hidden flex flex-col items-center justify-center p-6 z-50 bg-black/95 backdrop-blur-md">
+            <div class="max-w-lg w-full bg-neutral-900/95 border border-red-500/50 p-5 rounded-2xl text-center shadow-2xl flex flex-col gap-3">
+                <div class="text-[10px] font-orbitron uppercase tracking-widest text-red-400">⚠️ BOSS FIGHT CARTOON - STAGE 07</div>
+                <div class="flex items-center justify-center gap-4">
+                    <canvas id="bossPreviewCanvas" width="120" height="84" class="w-28 h-20 bg-black/60 rounded-xl border border-neutral-800"></canvas>
+                    <div class="text-left">
+                        <div id="boss-brief-name" class="font-orbitron text-lg font-black text-white">KODOS-X</div>
+                        <div id="boss-brief-role" class="font-orbitron text-[10px] text-lime-300">Alieno Cartone della Luna Base</div>
+                        <div class="font-orbitron text-xs text-yellow-400 mt-1">
+                            🎯 Obiettivo Stelle: <span id="boss-brief-target" class="font-bold">12</span> ⭐
+                        </div>
+                    </div>
+                </div>
+                <p id="boss-brief-story" class="text-neutral-200 text-xs leading-relaxed bg-black/40 p-3 rounded-xl border border-neutral-800"></p>
+                <div class="flex gap-2 mt-1">
+                    <button onclick="closeBossBriefing()" id="btn-boss-cancel" class="flex-1 py-2.5 bg-neutral-800 hover:bg-neutral-700 font-orbitron text-xs rounded-xl text-neutral-300">INDIETRO</button>
+                    <button onclick="launchBossStage()" id="btn-boss-start" class="flex-1 py-2.5 bg-gradient-to-r from-red-600 to-purple-600 hover:from-red-500 hover:to-purple-500 font-orbitron text-xs font-bold rounded-xl text-white shadow-lg">AFFRONTA ➔</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- STORY MODAL OVERLAY -->
+        <div id="screen-story" class="absolute inset-0 hidden flex flex-col items-center justify-center p-6 z-50 bg-black/95 backdrop-blur-md">
+            <div class="max-w-lg w-full bg-neutral-900/90 border border-purple-500/50 p-6 rounded-2xl text-center shadow-2xl flex flex-col gap-4 box-glow-purple">
+                <div id="story-icon" class="text-4xl animate-pulse">🛸📡</div>
+                <h2 id="story-title" class="font-orbitron text-lg md:text-xl font-bold text-yellow-400 tracking-wider">TRASMISSIONE INTERCETTATA</h2>
+                <p id="story-text" class="text-neutral-200 text-xs md:text-sm leading-relaxed font-normal"></p>
+                <div id="story-key-badge" class="hidden mx-auto px-4 py-2 rounded-xl bg-black/70 border border-yellow-500/40 font-orbitron text-xs font-bold text-yellow-300"></div>
+                <button onclick="closeStoryModal()" id="btn-story-continue" class="mt-2 py-2.5 px-6 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 font-orbitron text-xs font-bold rounded-xl text-white shadow-lg transition transform active:scale-95 mx-auto">
+                    CONTINUA MISSIONE ➔
+                </button>
+            </div>
+        </div>
+
         <!-- LOBBY SCREEN -->
         <div id="screen-lobby" class="absolute inset-0 flex flex-col justify-between p-6 z-20 bg-gradient-to-b from-[#120b24] via-[#07070b] to-[#020204]">
-            
-            <!-- Top Bar -->
             <div class="w-full flex justify-between items-center">
-                <div class="flex items-center gap-2">
-                    <span class="text-yellow-400 font-orbitron text-xs">⭐ <span id="lobby-stars">0</span></span>
+                <div class="flex items-center gap-3">
+                    <span class="text-yellow-400 font-orbitron text-xs bg-black/40 px-2.5 py-1 rounded-lg border border-yellow-500/30">⭐ <span id="lobby-stars">0</span></span>
+                    <span class="text-red-400 font-orbitron text-xs bg-black/40 px-2.5 py-1 rounded-lg border border-red-500/30">💀 <span id="lobby-deaths">0</span></span>
                 </div>
                 <div class="flex gap-2">
+                    <button onclick="openIntroStory()" id="btn-story-lobby" class="px-3 py-1 rounded-lg border border-yellow-500/40 bg-yellow-900/20 hover:bg-yellow-900/40 font-orbitron text-xs font-bold text-yellow-300 transition">📜 STORIA</button>
                     <button onclick="setLanguage('it')" id="lang-btn-it" class="px-3 py-1 rounded-lg border border-purple-500/50 bg-purple-900/40 font-orbitron text-xs font-bold transition flex items-center gap-1">🇮🇹 IT</button>
                     <button onclick="setLanguage('en')" id="lang-btn-en" class="px-3 py-1 rounded-lg border border-neutral-700 bg-neutral-900 font-orbitron text-xs font-bold text-neutral-400 transition flex items-center gap-1">🇬🇧 EN</button>
                 </div>
             </div>
 
-            <!-- Title & UFO Preview -->
             <div class="text-center my-auto">
                 <h1 class="font-orbitron text-6xl md:text-8xl font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-yellow-400 neon-purple">
                     ŮFØ
                 </h1>
                 <p id="txt-subtitle" class="text-purple-300/80 text-xs md:text-sm tracking-widest uppercase mt-1 font-orbitron">Geometry Space Escape</p>
                 
-                <!-- UFO Preview Canvas -->
                 <div class="flex justify-center my-3">
-                    <div class="w-24 h-12 relative flex items-center justify-center animate-pulse">
-                        <canvas id="previewCanvas" width="100" height="50" class="w-24 h-12"></canvas>
+                    <div class="w-16 h-8 relative flex items-center justify-center animate-pulse">
+                        <canvas id="previewCanvas" width="80" height="40" class="w-20 h-10"></canvas>
                     </div>
                 </div>
             </div>
 
-            <!-- Menu Buttons -->
             <div class="flex flex-row justify-center gap-3 w-full max-w-md mx-auto mb-2">
                 <button onclick="showWorldSelect()" id="btn-play" class="flex-1 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 font-orbitron font-bold text-sm rounded-xl shadow-lg box-glow-purple transition transform active:scale-95 text-white flex items-center justify-center gap-2">
                     🚀 GIOCA ORA
@@ -114,7 +154,6 @@
                 </button>
             </div>
 
-            <!-- Creator Credit Footer -->
             <div class="text-center">
                 <p class="font-orbitron text-xs text-yellow-400 tracking-wide neon-yellow flex items-center justify-center gap-2">
                     Created by <span class="flex items-center gap-1 text-purple-300">📺 Lunoyd_</span>
@@ -126,29 +165,32 @@
         <div id="screen-shop" class="absolute inset-0 hidden flex flex-col justify-between p-6 z-30 bg-[#050509]">
             <div class="flex items-center justify-between">
                 <button onclick="showLobby()" class="px-3 py-1.5 bg-neutral-800 hover:bg-neutral-700 text-neutral-300 rounded-lg text-xs font-orbitron">◀ MENU</button>
-                <h2 id="txt-shop-title" class="font-orbitron text-xl font-bold text-yellow-400">NEGOZIO SKIN ŮFØ (30 UFO)</h2>
+                <h2 id="txt-shop-title" class="font-orbitron text-xl font-bold text-yellow-400">NEGOZIO SKIN ŮFØ (30+ LEGENDARIE)</h2>
                 <div class="text-xs font-orbitron text-yellow-400">⭐ <span id="shop-stars">0</span></div>
             </div>
 
-            <div id="skins-container" class="grid grid-cols-2 md:grid-cols-4 gap-4 my-auto overflow-y-auto max-h-[360px] p-2"></div>
+            <div id="skins-container" class="scrollable-list grid grid-cols-2 md:grid-cols-4 gap-4 my-auto max-h-[360px] p-2"></div>
 
             <div class="text-center text-xs text-neutral-400 font-orbitron" id="shop-hint">
-                Inizia con 0 stelle e accumula ricchezze completando i livelli per sbloccare UFO esclusivi!
+                Inizia con 0 stelle e accumula ricchezze completando i livelli per sbloccare skin esclusive!
             </div>
         </div>
 
-        <!-- WORLD SELECT SCREEN (CON SCROLL VERTICALE AGGIUSTATO) -->
+        <!-- WORLD SELECT SCREEN -->
         <div id="screen-worlds" class="absolute inset-0 hidden flex flex-col justify-between p-6 z-30 bg-[#050509]/98">
             <div class="flex items-center justify-between">
                 <button onclick="showLobby()" class="px-3 py-1.5 bg-neutral-800 hover:bg-neutral-700 text-neutral-300 rounded-lg text-xs font-orbitron">◀ MENU</button>
                 <h2 id="txt-map-title" class="font-orbitron text-xl font-bold text-purple-300">SELEZIONA MONDO (7 MONDI)</h2>
-                <div class="text-xs font-orbitron text-yellow-400">⭐ <span id="world-stars">0</span></div>
+                <div class="flex items-center gap-3 text-xs font-orbitron">
+                    <span class="text-red-400">💀 <span id="world-deaths">0</span></span>
+                    <span class="text-yellow-400">⭐ <span id="world-stars">0</span></span>
+                </div>
             </div>
 
-            <div id="worlds-container" class="grid grid-cols-2 md:grid-cols-4 gap-4 my-auto overflow-y-auto max-h-[360px] p-2"></div>
+            <div id="worlds-container" class="scrollable-list grid grid-cols-2 md:grid-cols-4 gap-4 my-auto max-h-[360px] p-2"></div>
 
             <div id="txt-map-hint" class="text-center text-[10px] text-neutral-400 font-orbitron">
-                Clicca su una luna per accedere ai suoi 7 livelli fissi!
+                Scorri su e giù e clicca su una luna per accedere ai suoi 7 livelli fissi!
             </div>
         </div>
 
@@ -160,10 +202,10 @@
                 <div class="text-xs font-orbitron text-yellow-400">⭐ <span id="stages-stars">0</span></div>
             </div>
 
-            <div id="stages-container" class="grid grid-cols-7 gap-3 my-auto max-w-3xl mx-auto w-full overflow-y-auto max-h-[360px] p-2"></div>
+            <div id="stages-container" class="scrollable-list grid grid-cols-4 md:grid-cols-7 gap-3 my-auto max-w-3xl mx-auto w-full max-h-[360px] p-2"></div>
 
-            <div class="text-center text-[10px] text-neutral-400 font-orbitron">
-                Livelli lunghi, difficoltà progressiva avanzata con laser e spuntoni. Scegli lo stage!
+            <div id="stages-story-banner" class="text-center text-[11px] text-purple-300/90 font-orbitron bg-purple-950/30 py-1.5 px-3 rounded-lg border border-purple-500/20">
+                Obiettivo: Supera le difese aliene di questa luna per aprire il portale successivo!
             </div>
         </div>
 
@@ -175,20 +217,24 @@
                         <button onclick="returnToStages()" class="pointer-events-auto px-3 py-1 bg-neutral-900/80 hover:bg-neutral-800 text-white rounded-lg text-xs font-orbitron border border-neutral-700">🚪 ESCI</button>
                         <div>
                             <div id="hud-level-title" class="font-orbitron text-xs font-bold text-purple-300">Luna Classica - Stage 1</div>
-                            <div class="text-[10px] text-neutral-400">Morti: <span id="hud-deaths" class="text-red-400 font-bold">0</span></div>
+                            <div class="text-[10px] text-neutral-300 font-orbitron">
+                                Morti Livello: <span id="hud-deaths" class="text-red-400 font-bold">0</span> | 
+                                Totali: <span id="hud-total-deaths" class="text-red-500 font-bold">0</span>
+                            </div>
                         </div>
                     </div>
-                    <div class="flex items-center gap-3 bg-black/60 px-3 py-1.5 rounded-xl border border-purple-500/30">
+                    <div class="flex items-center gap-2 bg-black/60 px-3 py-1.5 rounded-xl border border-purple-500/30">
+                        <div id="hud-boss-target-wrap" class="hidden text-lime-300 font-orbitron text-[10px]">
+                            👾 <span id="hud-boss-name">BOSS</span>: <span id="hud-boss-progress">0/12 ⭐</span>
+                        </div>
                         <div class="text-yellow-400 font-orbitron text-xs">⭐ <span id="hud-stars">0</span></div>
                     </div>
                 </div>
-                <!-- Progress Bar -->
                 <div class="w-full bg-neutral-900/80 border border-purple-900/40 h-3 rounded-full overflow-hidden p-0.5">
                     <div id="hud-progress-bar" class="bg-gradient-to-r from-purple-500 to-yellow-400 h-full rounded-full transition-all duration-75" style="width: 0%"></div>
                 </div>
             </div>
 
-            <!-- Canvas -->
             <canvas id="gameCanvas" width="960" height="540" class="w-full h-full block bg-black cursor-pointer"></canvas>
 
             <div class="absolute bottom-2 left-0 right-0 text-center pointer-events-none md:hidden">
@@ -202,14 +248,19 @@
                 <div class="text-4xl animate-bounce">🏆⭐</div>
                 <h2 id="win-title" class="font-orbitron text-xl font-bold text-yellow-400">LIVELLO SUPERATO!</h2>
                 <p id="win-message" class="text-neutral-300 text-xs">Hai completato lo stage con successo!</p>
+                <div id="win-key-earned" class="hidden py-1.5 px-3 rounded-xl bg-yellow-500/15 border border-yellow-400/40 font-orbitron text-xs font-bold text-yellow-300"></div>
                 <div class="flex justify-around bg-neutral-950 p-3 rounded-xl">
                     <div>
-                        <div class="text-[10px] text-neutral-500 font-orbitron">STELLE RACCOLTE</div>
+                        <div class="text-[10px] text-neutral-500 font-orbitron">STELLE</div>
                         <div id="win-stars" class="text-sm font-bold text-yellow-400">10</div>
                     </div>
                     <div>
-                        <div class="text-[10px] text-neutral-500 font-orbitron">MORTI TOTALI</div>
+                        <div class="text-[10px] text-neutral-500 font-orbitron">MORTI LIVELLO</div>
                         <div id="win-deaths" class="text-sm font-bold text-red-400">0</div>
+                    </div>
+                    <div>
+                        <div class="text-[10px] text-neutral-500 font-orbitron">MORTI TOTALI</div>
+                        <div id="win-total-deaths" class="text-sm font-bold text-red-500">0</div>
                     </div>
                 </div>
                 <div class="flex gap-2 mt-1">
@@ -225,7 +276,10 @@
                 <div class="text-4xl animate-pulse">💥🛸</div>
                 <h2 id="go-title" class="font-orbitron text-xl font-bold text-red-500">DISTRUTTO!</h2>
                 <p id="gameover-reason" class="text-neutral-300 text-xs">Sei stato colpito.</p>
-                <div class="flex gap-2 mt-2">
+                <div class="text-[11px] font-orbitron text-red-300 bg-red-950/50 py-1.5 rounded-lg border border-red-500/20">
+                    Morti Livello: <span id="go-stage-deaths" class="font-bold">1</span> | Morti Totali: <span id="go-total-deaths" class="font-bold">1</span>
+                </div>
+                <div class="flex gap-2 mt-1">
                     <button onclick="showStages(gameData.currentWorld)" id="btn-go-stages" class="flex-1 py-2.5 bg-neutral-800 hover:bg-neutral-700 font-orbitron text-xs rounded-xl text-neutral-200">LIVELLI</button>
                     <button onclick="restartActiveStage()" id="btn-go-retry" class="flex-1 py-2.5 bg-red-600 hover:bg-red-500 font-orbitron text-xs font-bold rounded-xl text-white">RIPROVA ↺</button>
                 </div>
@@ -237,21 +291,154 @@
     <!-- GAME LOGIC SCRIPT -->
     <script>
         let currentLang = 'it';
+
+        // 7 alieni in stile cartoon colorato ispirati ai Simpson (Kang & Kodos style), ognuno unico
+        const moonBosses = [
+            {
+                id: 'kodosx',
+                variant: 'kang_tall',
+                name: 'KODOS-X',
+                skinColor: '#84cc16',
+                cheekColor: '#a3e635',
+                domeColor: 'rgba(132, 204, 22, 0.25)',
+                hullColor: '#facc15',
+                glowColor: '#a3e635',
+                eyeColor: '#ffffff',
+                pupilColor: '#dc2626',
+                targetStars: 12,
+                keyName: { it: '🔑 CHIAVE ROSSA', en: '🔑 RED KEY' },
+                role: { it: 'Alieno Verde della Luna Base', en: 'Base Moon Cartoon Alien' },
+                brief: {
+                    it: "Ti hanno visto! KODOS-X ti aspetta a destra e ti lancia ostacoli mentre avanzi. Raccogli almeno 12 stelle e fagli prendere il raggio finale per ottenere la Chiave Rossa!",
+                    en: "You've been spotted! KODOS-X waits on the right and launches obstacles as you advance. Collect at least 12 stars and blast it with your final beam to get the Red Key!"
+                }
+            },
+            {
+                id: 'zorpina',
+                variant: 'kodos_pink',
+                name: 'ZORPINA',
+                skinColor: '#ec4899',
+                cheekColor: '#f472b6',
+                domeColor: 'rgba(236, 72, 153, 0.25)',
+                hullColor: '#38bdf8',
+                glowColor: '#f472b6',
+                eyeColor: '#fef08a',
+                pupilColor: '#7e22ce',
+                targetStars: 15,
+                keyName: { it: '🔑 CHIAVE GIALLA', en: '🔑 YELLOW KEY' },
+                role: { it: 'Aliena Rosa della Luna Rossa', en: 'Red Moon Cartoon Alien' },
+                brief: {
+                    it: "ZORPINA pattuglia la Luna Rossa con i suoi riccioli tentacolari! Raccogli almeno 15 stelle, schiva i suoi lanci e colpiscila col raggio per la Chiave Gialla.",
+                    en: "ZORPINA patrols the Red Moon with tentacle curls! Collect at least 15 stars, dodge her shots, and blast her with your beam for the Yellow Key."
+                }
+            },
+            {
+                id: 'blorgo',
+                variant: 'bulb_orange',
+                name: 'BLORGO',
+                skinColor: '#f97316',
+                cheekColor: '#fb923c',
+                domeColor: 'rgba(249, 115, 22, 0.25)',
+                hullColor: '#a855f7',
+                glowColor: '#fb923c',
+                eyeColor: '#ffffff',
+                pupilColor: '#0f172a',
+                targetStars: 18,
+                keyName: { it: '🔑 CHIAVE VERDE', en: '🔑 GREEN KEY' },
+                role: { it: 'Alieno Lampadina della Luna Gialla', en: 'Yellow Moon Cartoon Alien' },
+                brief: {
+                    it: "BLORGO brilla come una lampada aliena sulla Luna Gialla! Raccogli almeno 18 stelle e distruggilo col raggio del tuo UFO per la Chiave Verde.",
+                    en: "BLORGO glows like an alien bulb over the Yellow Moon! Collect at least 18 stars and blast it with your UFO beam for the Green Key."
+                }
+            },
+            {
+                id: 'goobz',
+                variant: 'slime_cyan',
+                name: 'GOOBZ',
+                skinColor: '#06b6d4',
+                cheekColor: '#22d3ee',
+                domeColor: 'rgba(6, 182, 212, 0.25)',
+                hullColor: '#ef4444',
+                glowColor: '#22d3ee',
+                eyeColor: '#fef08a',
+                pupilColor: '#b91c1c',
+                targetStars: 21,
+                keyName: { it: '🔑 CHIAVE AZZURRA', en: '🔑 BLUE KEY' },
+                role: { it: 'Alieno Gommoso della Luna Verde', en: 'Green Moon Cartoon Alien' },
+                brief: {
+                    it: "GOOBZ rimbalza e lancia bolle tossiche sulla Luna Verde! Raccogli almeno 21 stelle e colpiscilo col raggio finale per la Chiave Azzurra.",
+                    en: "GOOBZ bounces and launches toxic blobs on the Green Moon! Collect at least 21 stars and blast it with the final beam for the Blue Key."
+                }
+            },
+            {
+                id: 'snorble',
+                variant: 'horns_violet',
+                name: 'SNORBLE',
+                skinColor: '#a855f7',
+                cheekColor: '#c084fc',
+                domeColor: 'rgba(168, 85, 247, 0.25)',
+                hullColor: '#22c55e',
+                glowColor: '#c084fc',
+                eyeColor: '#ffffff',
+                pupilColor: '#4c1d95',
+                targetStars: 24,
+                keyName: { it: '🔑 CHIAVE VIOLA', en: '🔑 PURPLE KEY' },
+                role: { it: 'Alieno Cornuto della Luna Azzurra', en: 'Blue Moon Cartoon Alien' },
+                brief: {
+                    it: "SNORBLE ha due corna giganti e ti spara schegge sulla Luna Azzurra! Raccogli almeno 24 stelle e fulminalo col raggio per la Chiave Viola.",
+                    en: "SNORBLE has giant horns and fires shards on the Blue Moon! Collect at least 24 stars and zap it with your beam for the Purple Key."
+                }
+            },
+            {
+                id: 'mumbo',
+                variant: 'three_eye_gold',
+                name: 'MUMBO-3',
+                skinColor: '#eab308',
+                cheekColor: '#fde047',
+                domeColor: 'rgba(234, 179, 8, 0.25)',
+                hullColor: '#ec4899',
+                glowColor: '#fde047',
+                eyeColor: '#ffffff',
+                pupilColor: '#991b1b',
+                targetStars: 27,
+                keyName: { it: '🔑 CHIAVE DELLA TERRA', en: '🔑 EARTH KEY' },
+                role: { it: 'Alieno a 3 Occhi della Luna Viola', en: 'Purple Moon 3-Eyed Alien' },
+                brief: {
+                    it: "MUMBO-3 ti osserva con tre occhi sulla Luna Viola! Raccogli almeno 27 stelle e colpiscilo col raggio del tuo UFO per ottenere la Chiave della Terra.",
+                    en: "MUMBO-3 watches you with three eyes on the Purple Moon! Collect at least 27 stars and blast it with your UFO beam for the Earth Key."
+                }
+            },
+            {
+                id: 'king_klax',
+                variant: 'crown_lime_red',
+                name: 'RE KLAX',
+                skinColor: '#10b981',
+                cheekColor: '#fb7185',
+                domeColor: 'rgba(16, 185, 129, 0.25)',
+                hullColor: '#f59e0b',
+                glowColor: '#34d399',
+                eyeColor: '#fef08a',
+                pupilColor: '#dc2626',
+                targetStars: 30,
+                keyName: { it: '🏅 MEDAGLIA DELLA LIBERTÀ', en: '🏅 FREEDOM MEDAL' },
+                role: { it: 'Re Cartone Finale verso la Terra', en: 'Final Cartoon King to Earth' },
+                brief: {
+                    it: "RE KLAX è l'ultimo alieno prima della Terra! Raccogli almeno 30 stelle e spazzalo via col raggio finale del tuo ŮFØ per tornare a casa!",
+                    en: "KING KLAX is the final alien before Earth! Collect at least 30 stars and wipe it out with your ŮFØ's final beam to return home!"
+                }
+            }
+        ];
+
         const translations = {
             it: {
                 subtitle: "Geometry Space Escape",
                 playBtn: "🚀 GIOCA ORA",
                 shopBtn: "🛒 NEGOZIO",
-                shopTitle: "NEGOZIO SKIN ŮFØ (30 UFO)",
+                storyBtn: "📜 STORIA",
+                shopTitle: "NEGOZIO SKIN ŮFØ (30+ LEGENDARIE)",
                 shopHint: "Inizia con 0 stelle e accumula ricchezze completando i livelli!",
                 mapTitle: "SELEZIONA MONDO (7 MONDI)",
-                mapHint: "Clicca su una luna per accedere ai suoi 7 livelli fissi!",
-                menuBtn: "◀ MENU",
-                stagesTitle: "Livelli - Mondo",
-                startRun: "VIA ALLA FUGA ➔",
-                backMap: "◀ Mondi",
-                exit: "🚪 ESCI",
-                progress: "Progresso:",
+                mapHint: "Scorri su e giù e clicca su una luna per accedere ai suoi 7 livelli fissi!",
                 touchHint: "Tocca per fluttuare (Pavimento sicuro, soffitto solido)",
                 winTitle: "LIVELLO SUPERATO!",
                 winMsg: "Hai completato lo stage con successo!",
@@ -261,22 +448,46 @@
                 retry: "RIPROVA ↺",
                 warnTitle: "RUOTA IL DISPOSITIVO",
                 warnDesc: "ŮFØ è progettato in orientamento orizzontale (landscape) per un'esperienza perfetta!",
-                worlds: ["Luna Classica", "Luna Rossa", "Luna Gialla", "Luna Verde", "Luna Azzurra", "Luna Viola", "Terra (Fuga)"]
+                worlds: ["Luna Classica", "Luna Rossa", "Luna Gialla", "Luna Verde", "Luna Azzurra", "Luna Viola", "Terra (Fuga)"],
+                storyIntroTitle: "LA GRANDE FUGA DALL'IMPERO",
+                storyIntroText: "Sei un pilota ribelle a bordo del prototipo sperimentale ŮFØ. L'Impero Galattico ha bloccato tutte le rotte spaziali con laser, spuntoni e Boss alieni a cartone a guardia di ogni luna. Raccogli le stelle, spara il raggio finale e conquista la chiave di ogni luna fino alla Terra!",
+                worldStories: [
+                    "Luna Classica: Evadi dalla base! Nel livello 7 affronti KODOS-X: raccogli 12 stelle per la Chiave Rossa.",
+                    "Luna Rossa: Zona rossa! Nel livello 7 affronti ZORPINA e raccogli 15 stelle per la Chiave Gialla.",
+                    "Luna Gialla: Tempeste solari! Nel livello 7 affronti BLORGO e raccogli 18 stelle per la Chiave Verde.",
+                    "Luna Verde: Nebbie tossiche! Nel livello 7 affronti GOOBZ e raccogli 21 stelle per la Chiave Azzurra.",
+                    "Luna Azzurra: Ghiacci orbitali! Nel livello 7 affronti SNORBLE e raccogli 24 stelle per la Chiave Viola.",
+                    "Luna Viola: Fortezza oscura! Nel livello 7 affronti MUMBO-3 e raccogli 27 stelle per la Chiave della Terra.",
+                    "Terra (Fuga): Ultimo scontro! Nel livello 7 affronti RE KLAX e raccogli 30 stelle per tornare sulla Terra!"
+                ],
+                worldEndTitles: [
+                    "KODOS-X POLVERIZZATO!",
+                    "ZORPINA SCONFITTA!",
+                    "BLORGO IN FRANTUMI!",
+                    "GOOBZ ESPLOSO!",
+                    "SNORBLE ABBATTUTO!",
+                    "MUMBO-3 SPENTO!",
+                    "RE KLAX SCONFITTO: SEI SULLA TERRA!"
+                ],
+                worldEndStories: [
+                    "Il tuo raggio ha centrato KODOS-X e ora hai la Chiave Rossa! La strada verso la Luna Rossa è aperta.",
+                    "ZORPINA è stata colpita in pieno dal raggio e hai ottenuto la Chiave Gialla! Rotta sulla Luna Gialla.",
+                    "BLORGO è esploso sotto il tuo raggio e hai preso la Chiave Verde! Prossima meta: Luna Verde.",
+                    "GOOBZ non ha retto al raggio dell'ŮFØ e hai ottenuto la Chiave Azzurra! Avanti verso la Luna Azzurra.",
+                    "SNORBLE è stato spazzato via dal raggio e hai conquistato la Chiave Viola! Ultima luna in vista.",
+                    "MUMBO-3 è stato sconfitto dal tuo raggio e hai ottenuto la Chiave della Terra! Casa è vicinissima.",
+                    "RE KLAX è esploso in mille pezzi! L'ŮFØ atterra trionfante sulla Terra: missione compiuta!"
+                ]
             },
             en: {
                 subtitle: "Geometry Space Escape",
                 playBtn: "🚀 PLAY NOW",
                 shopBtn: "🛒 SHOP",
-                shopTitle: "ŮFØ SKIN SHOP (30 UFOS)",
+                storyBtn: "📜 STORY",
+                shopTitle: "ŮFØ SKIN SHOP (30+ LEGENDARY)",
                 shopHint: "Start with 0 stars and accumulate wealth by beating levels!",
                 mapTitle: "SELECT WORLD (7 WORLDS)",
-                mapHint: "Click on a moon to access its 7 fixed stages!",
-                menuBtn: "◀ MENU",
-                stagesTitle: "Stages - World",
-                startRun: "START ESCAPE ➔",
-                backMap: "◀ Worlds",
-                exit: "🚪 EXIT",
-                progress: "Progress:",
+                mapHint: "Scroll up and down and click on a moon to access its 7 fixed stages!",
                 touchHint: "Tap to float (Safe ground, solid ceiling)",
                 winTitle: "STAGE CLEARED!",
                 winMsg: "You successfully completed the stage!",
@@ -286,7 +497,36 @@
                 retry: "RETRY ↺",
                 warnTitle: "ROTATE DEVICE",
                 warnDesc: "ŮFØ is designed in landscape orientation for the ultimate gameplay experience!",
-                worlds: ["Classic Moon", "Red Moon", "Yellow Moon", "Green Moon", "Blue Moon", "Purple Moon", "Earth (Escape)"]
+                worlds: ["Classic Moon", "Red Moon", "Yellow Moon", "Green Moon", "Blue Moon", "Purple Moon", "Earth (Escape)"],
+                storyIntroTitle: "THE GREAT ESCAPE",
+                storyIntroText: "You are a rogue pilot aboard the experimental ŮFØ prototype. The Galactic Empire blocked all space routes with lasers, spikes, and cartoon alien Bosses guarding every moon. Collect stars, fire the final beam, and claim each moon's key all the way to Earth!",
+                worldStories: [
+                    "Classic Moon: Break out of the base! Face KODOS-X in Stage 7: collect 12 stars for the Red Key.",
+                    "Red Moon: Red zone! Face ZORPINA in Stage 7 and collect 15 stars for the Yellow Key.",
+                    "Yellow Moon: Solar storms! Face BLORGO in Stage 7 and collect 18 stars for the Green Key.",
+                    "Green Moon: Toxic mists! Face GOOBZ in Stage 7 and collect 21 stars for the Blue Key.",
+                    "Blue Moon: Orbital ice! Face SNORBLE in Stage 7 and collect 24 stars for the Purple Key.",
+                    "Purple Moon: Dark fortress! Face MUMBO-3 in Stage 7 and collect 27 stars for the Earth Key.",
+                    "Earth (Escape): Final clash! Face KING KLAX in Stage 7 and collect 30 stars to return to Earth!"
+                ],
+                worldEndTitles: [
+                    "KODOS-X VAPORIZED!",
+                    "ZORPINA DEFEATED!",
+                    "BLORGO SHATTERED!",
+                    "GOOBZ EXPLODED!",
+                    "SNORBLE TAKEN DOWN!",
+                    "MUMBO-3 SHUT DOWN!",
+                    "KING KLAX DEFEATED: YOU ARE ON EARTH!"
+                ],
+                worldEndStories: [
+                    "Your beam hit KODOS-X dead on and you got the Red Key! The path to the Red Moon is open.",
+                    "ZORPINA took a direct beam hit and you got the Yellow Key! Heading to the Yellow Moon.",
+                    "BLORGO exploded under your beam and you got the Green Key! Next stop: Green Moon.",
+                    "GOOBZ couldn't survive the ŮFØ beam and you got the Blue Key! Onward to the Blue Moon.",
+                    "SNORBLE was blasted away by your beam and you claimed the Purple Key! Final moon ahead.",
+                    "MUMBO-3 was defeated by your beam and you got the Earth Key! Home is right there.",
+                    "KING KLAX blew up into pieces! ŮFØ lands triumphantly on Earth: mission accomplished!"
+                ]
             }
         };
 
@@ -302,6 +542,7 @@
             document.getElementById('txt-subtitle').innerText = t.subtitle;
             document.getElementById('btn-play').innerHTML = t.playBtn;
             document.getElementById('btn-shop').innerHTML = t.shopBtn;
+            document.getElementById('btn-story-lobby').innerHTML = t.storyBtn;
             document.getElementById('txt-shop-title').innerText = t.shopTitle;
             document.getElementById('shop-hint').innerText = t.shopHint;
             document.getElementById('txt-map-title').innerText = t.mapTitle;
@@ -319,36 +560,36 @@
         }
 
         const skinsConfig = [
-            { id: 'classic', name: 'Classic Grey UFO', ufoStyle: 'classic', price: 0, bodyColor: '#9ca3af', lightColor: '#a855f7', haloColor: '#eab308' },
-            { id: 'cyber', name: 'Cyber Saucer', ufoStyle: 'fins', price: 40, bodyColor: '#1f2937', lightColor: '#06b6d4', haloColor: '#38bdf8' },
-            { id: 'golden', name: 'Golden Disc', ufoStyle: 'wide', price: 80, bodyColor: '#78350f', lightColor: '#f59e0b', haloColor: '#fbbf24' },
-            { id: 'emerald', name: 'Emerald Hopper', ufoStyle: 'pod', price: 130, bodyColor: '#065f46', lightColor: '#10b981', haloColor: '#34d399' },
-            { id: 'ruby', name: 'Ruby Interceptor', ufoStyle: 'spikes', price: 190, bodyColor: '#991b1b', lightColor: '#ef4444', haloColor: '#f87171' },
-            { id: 'plasma', name: 'Plasma Orbiter', ufoStyle: 'ring', price: 260, bodyColor: '#3b0764', lightColor: '#c084fc', haloColor: '#e879f9' },
-            { id: 'obsidian', name: 'Obsidian Sleek', ufoStyle: 'sleek', price: 340, bodyColor: '#09090b', lightColor: '#71717a', haloColor: '#a1a1aa' },
-            { id: 'stalker', name: 'Neon Stalker UFO', ufoStyle: 'twin_dome', price: 430, bodyColor: '#18181b', lightColor: '#22c55e', haloColor: '#4ade80' },
-            { id: 'royal', name: 'Royal Saucer', ufoStyle: 'crown_ufo', price: 530, bodyColor: '#4c1d95', lightColor: '#8b5cf6', haloColor: '#c4b5fd' },
-            { id: 'solar', name: 'Solar Thruster', ufoStyle: 'thrusters', price: 640, bodyColor: '#7c2d12', lightColor: '#f97316', haloColor: '#fb923c' },
-            { id: 'frost', name: 'Cosmic Frost UFO', ufoStyle: 'antenna', price: 760, bodyColor: '#0c4a6e', lightColor: '#38bdf8', haloColor: '#7dd3fc' },
-            { id: 'quantum', name: 'Quantum Disk', ufoStyle: 'beam_dish', price: 890, bodyColor: '#134e4a', lightColor: '#2dd4bf', haloColor: '#5eead4' },
-            { id: 'titanium', name: 'Titanium Bunker', ufoStyle: 'heavy', price: 1030, bodyColor: '#334155', lightColor: '#94a3b8', haloColor: '#cbd5e1' },
-            { id: 'darkmatter', name: 'Dark Matter UFO', ufoStyle: 'crescent_hull', price: 1180, bodyColor: '#020617', lightColor: '#6366f1', haloColor: '#818cf8' },
-            { id: 'drifter', name: 'Starlight Cruiser', ufoStyle: 'wings', price: 1340, bodyColor: '#3b82f6', lightColor: '#60a5fa', haloColor: '#bfdbfe' },
-            { id: 'crimson', name: 'Crimson Striker', ufoStyle: 'nose_cone', price: 1510, bodyColor: '#450a0a', lightColor: '#dc2626', haloColor: '#fca5a5' },
-            { id: 'phantom', name: 'Astral Ghost UFO', ufoStyle: 'tall_dome', price: 1690, bodyColor: '#2e1065', lightColor: '#a855f7', haloColor: '#d8b4fe' },
-            { id: 'supernova', name: 'Supernova Saucer', ufoStyle: 'star_rim', price: 1880, bodyColor: '#581c87', lightColor: '#ec4899', haloColor: '#f472b6' },
-            { id: 'eclipse', name: 'Eclipse Ring UFO', ufoStyle: 'double_ring', price: 2080, bodyColor: '#172554', lightColor: '#3b82f6', haloColor: '#93c5fd' },
-            { id: 'galaxy', name: 'Galaxy Warden UFO', ufoStyle: 'horns_ufo', price: 2300, bodyColor: '#030712', lightColor: '#eab308', haloColor: '#fef08a' },
-            { id: 'nebula', name: 'Nebula Capsule', ufoStyle: 'bubble_ufo', price: 2550, bodyColor: '#311042', lightColor: '#d946ef', haloColor: '#f0abfc' },
-            { id: 'vortex', name: 'Vortex Spinner', ufoStyle: 'blades_ufo', price: 2820, bodyColor: '#042f2e', lightColor: '#14b8a6', haloColor: '#5fdba7' },
-            { id: 'inferno', name: 'Inferno Reactor', ufoStyle: 'reactor_ufo', price: 3110, bodyColor: '#431407', lightColor: '#ea580c', haloColor: '#fdba74' },
-            { id: 'zenith', name: 'Zenith Dart UFO', ufoStyle: 'delta_ufo', price: 3420, bodyColor: '#1e1b4b', lightColor: '#6366f1', haloColor: '#a5b4fc' },
-            { id: 'neutron', name: 'Neutron Beacon', ufoStyle: 'beacon_ufo', price: 3750, bodyColor: '#111827', lightColor: '#facc15', haloColor: '#fef08a' },
-            { id: 'hyperion', name: 'Hyperion Claws', ufoStyle: 'claws_ufo', price: 4100, bodyColor: '#27272a', lightColor: '#f43f5e', haloColor: '#fda4af' },
-            { id: 'pulsar', name: 'Pulsar Wave UFO', ufoStyle: 'wave_ufo', price: 4480, bodyColor: '#064e3b', lightColor: '#34d399', haloColor: '#a7f3d0' },
-            { id: 'quasar', name: 'Quasar Prism UFO', ufoStyle: 'prism_ufo', price: 4890, bodyColor: '#4a044e', lightColor: '#e879f9', haloColor: '#f5d0fe' },
-            { id: 'singularity', name: 'Singularity Core', ufoStyle: 'core_ufo', price: 5330, bodyColor: '#000000', lightColor: '#ffffff', haloColor: '#cbd5e1' },
-            { id: 'lunoyd', name: 'Lunoyd Prime UFO', ufoStyle: 'lunoyd_ufo', price: 6000, bodyColor: '#1e1b4b', lightColor: '#a855f7', haloColor: '#eab308' }
+            { id: 'classic', name: 'Classic Grey', price: 0, bodyColor: '#9ca3af', lightColor: '#a855f7', haloColor: '#eab308' },
+            { id: 'cyber', name: 'Cyber Neon', price: 40, bodyColor: '#1f2937', lightColor: '#06b6d4', haloColor: '#38bdf8' },
+            { id: 'golden', name: 'Golden Star', price: 80, bodyColor: '#78350f', lightColor: '#f59e0b', haloColor: '#fbbf24' },
+            { id: 'emerald', name: 'Emerald Beast', price: 130, bodyColor: '#065f46', lightColor: '#10b981', haloColor: '#34d399' },
+            { id: 'ruby', name: 'Ruby Pulse', price: 190, bodyColor: '#991b1b', lightColor: '#ef4444', haloColor: '#f87171' },
+            { id: 'plasma', name: 'Plasma Ghost', price: 260, bodyColor: '#3b0764', lightColor: '#c084fc', haloColor: '#e879f9' },
+            { id: 'obsidian', name: 'Obsidian Void', price: 340, bodyColor: '#09090b', lightColor: '#71717a', haloColor: '#a1a1aa' },
+            { id: 'stalker', name: 'Neon Stalker', price: 430, bodyColor: '#18181b', lightColor: '#22c55e', haloColor: '#4ade80' },
+            { id: 'royal', name: 'Royal Crown', price: 530, bodyColor: '#4c1d95', lightColor: '#8b5cf6', haloColor: '#c4b5fd' },
+            { id: 'solar', name: 'Solar Flare', price: 640, bodyColor: '#7c2d12', lightColor: '#f97316', haloColor: '#fb923c' },
+            { id: 'frost', name: 'Cosmic Frost', price: 760, bodyColor: '#0c4a6e', lightColor: '#38bdf8', haloColor: '#7dd3fc' },
+            { id: 'quantum', name: 'Quantum Spark', price: 890, bodyColor: '#134e4a', lightColor: '#2dd4bf', haloColor: '#5eead4' },
+            { id: 'titanium', name: 'Titanium Shield', price: 1030, bodyColor: '#334155', lightColor: '#94a3b8', haloColor: '#cbd5e1' },
+            { id: 'darkmatter', name: 'Dark Matter', price: 1180, bodyColor: '#020617', lightColor: '#6366f1', haloColor: '#818cf8' },
+            { id: 'drifter', name: 'Starlight Drifter', price: 1340, bodyColor: '#3b82f6', lightColor: '#60a5fa', haloColor: '#bfdbfe' },
+            { id: 'crimson', name: 'Crimson Blaze', price: 1510, bodyColor: '#450a0a', lightColor: '#dc2626', haloColor: '#fca5a5' },
+            { id: 'phantom', name: 'Astral Phantom', price: 1690, bodyColor: '#2e1065', lightColor: '#a855f7', haloColor: '#d8b4fe' },
+            { id: 'supernova', name: 'Supernova King', price: 1880, bodyColor: '#581c87', lightColor: '#ec4899', haloColor: '#f472b6' },
+            { id: 'eclipse', name: 'Eclipse Shadow', price: 2080, bodyColor: '#172554', lightColor: '#3b82f6', haloColor: '#93c5fd' },
+            { id: 'galaxy', name: 'Galaxy Warden', price: 2300, bodyColor: '#030712', lightColor: '#eab308', haloColor: '#fef08a' },
+            { id: 'nebula', name: 'Nebula Storm', price: 2550, bodyColor: '#311042', lightColor: '#d946ef', haloColor: '#f0abfc' },
+            { id: 'vortex', name: 'Vortex Abyss', price: 2820, bodyColor: '#042f2e', lightColor: '#14b8a6', haloColor: '#5fdba7' },
+            { id: 'inferno', name: 'Inferno Core', price: 3110, bodyColor: '#431407', lightColor: '#ea580c', haloColor: '#fdba74' },
+            { id: 'zenith', name: 'Zenith Apex', price: 3420, bodyColor: '#1e1b4b', lightColor: '#6366f1', haloColor: '#a5b4fc' },
+            { id: 'neutron', name: 'Neutron Star', price: 3750, bodyColor: '#111827', lightColor: '#facc15', haloColor: '#fef08a' },
+            { id: 'hyperion', name: 'Hyperion Titan', price: 4100, bodyColor: '#27272a', lightColor: '#f43f5e', haloColor: '#fda4af' },
+            { id: 'pulsar', name: 'Pulsar Beam', price: 4480, bodyColor: '#064e3b', lightColor: '#34d399', haloColor: '#a7f3d0' },
+            { id: 'quasar', name: 'Quasar Blast', price: 4890, bodyColor: '#4a044e', lightColor: '#e879f9', haloColor: '#f5d0fe' },
+            { id: 'singularity', name: 'Singularity', price: 5330, bodyColor: '#000000', lightColor: '#ffffff', haloColor: '#cbd5e1' },
+            { id: 'lunoyd', name: 'Lunoyd Prime', price: 6000, bodyColor: '#1e1b4b', lightColor: '#a855f7', haloColor: '#eab308' }
         ];
 
         const worldsConfig = [
@@ -368,12 +609,29 @@
             progress: JSON.parse(localStorage.getItem('unoyd_ufo_ultimate_v6_progress')) || {
                 unlockedWorlds: [0],
                 unlockedStages: { 0: [0] },
+                keysEarned: [],
                 stars: 0,
+                totalDeaths: 0,
+                stageDeaths: {},
+                storySeen: false,
                 skins: ['classic'],
                 activeSkin: 'classic'
-            },
-            stats: { deaths: 0 }
+            }
         };
+
+        if (typeof gameData.progress.totalDeaths !== 'number') {
+            gameData.progress.totalDeaths = 0;
+        }
+        if (!gameData.progress.stageDeaths || typeof gameData.progress.stageDeaths !== 'object') {
+            gameData.progress.stageDeaths = {};
+        }
+        if (!Array.isArray(gameData.progress.keysEarned)) {
+            gameData.progress.keysEarned = [];
+        }
+
+        function saveProgress() {
+            localStorage.setItem('unoyd_ufo_ultimate_v6_progress', JSON.stringify(gameData.progress));
+        }
 
         function syncProgress() {
             worldsConfig.forEach((w, idx) => {
@@ -383,13 +641,80 @@
             document.getElementById('shop-stars').innerText = gameData.progress.stars;
             document.getElementById('world-stars').innerText = gameData.progress.stars;
             document.getElementById('stages-stars').innerText = gameData.progress.stars;
+
+            document.getElementById('lobby-deaths').innerText = gameData.progress.totalDeaths;
+            document.getElementById('world-deaths').innerText = gameData.progress.totalDeaths;
+            document.getElementById('hud-total-deaths').innerText = gameData.progress.totalDeaths;
         }
         syncProgress();
 
+        // BOSS BRIEFING MODAL
+        let pendingBossWorld = 0;
+        let pendingBossStage = 6;
+
+        function openBossBriefing(worldIdx, stageIdx) {
+            pendingBossWorld = worldIdx;
+            pendingBossStage = stageIdx;
+            const boss = moonBosses[worldIdx] || moonBosses[0];
+
+            document.getElementById('boss-brief-name').innerText = boss.name;
+            document.getElementById('boss-brief-role').innerText = boss.role[currentLang];
+            document.getElementById('boss-brief-target').innerText = boss.targetStars;
+            document.getElementById('boss-brief-story').innerText = boss.brief[currentLang];
+            document.getElementById('screen-boss-briefing').classList.remove('hidden');
+
+            const bCanvas = document.getElementById('bossPreviewCanvas');
+            const bCtx = bCanvas.getContext('2d');
+            bCtx.clearRect(0, 0, bCanvas.width, bCanvas.height);
+            drawCartoonAlienBoss(bCtx, 62, 44, 0.95, boss, 0, 0, false);
+        }
+
+        function closeBossBriefing() {
+            document.getElementById('screen-boss-briefing').classList.add('hidden');
+        }
+
+        function launchBossStage() {
+            closeBossBriefing();
+            startActiveStage(pendingBossWorld, pendingBossStage);
+        }
+
+        // SISTEMA STORIA
+        let afterStoryCallback = null;
+
+        function showStoryModal(icon, title, text, keyText = null, callback = null) {
+            document.getElementById('story-icon').innerText = icon;
+            document.getElementById('story-title').innerText = title;
+            document.getElementById('story-text').innerText = text;
+            const badge = document.getElementById('story-key-badge');
+            if (keyText) {
+                badge.innerText = keyText;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+            afterStoryCallback = callback;
+            document.getElementById('screen-story').classList.remove('hidden');
+        }
+
+        function closeStoryModal() {
+            document.getElementById('screen-story').classList.add('hidden');
+            if (afterStoryCallback) {
+                const cb = afterStoryCallback;
+                afterStoryCallback = null;
+                cb();
+            }
+        }
+
+        function openIntroStory() {
+            const t = translations[currentLang];
+            showStoryModal("🛸📡", t.storyIntroTitle, t.storyIntroText);
+        }
+
+        // SISTEMA AUDIO DINAMICO STILE GEOMETRY DASH
         let audioCtx = null;
-        let ambientMusicInterval = null;
+        let lobbyMusicInterval = null;
         let gameMusicInterval = null;
-        let gameMusicTimer = 0;
+        let beatStep = 0;
 
         function initAudio() {
             if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -397,6 +722,158 @@
                 audioCtx.resume();
             }
         }
+
+        const chillChords = [
+            [174.61, 220.00, 261.63, 329.63],
+            [164.81, 196.00, 246.94, 293.66],
+            [146.83, 174.61, 220.00, 261.63],
+            [130.81, 196.00, 246.94, 329.63]
+        ];
+        let chillStep = 0;
+
+        function startAmbientMusic() {
+            stopAllMusic();
+            if (!gameData.soundEnabled) return;
+            
+            lobbyMusicInterval = setInterval(() => {
+                if (!gameData.soundEnabled) return;
+                initAudio();
+                if (!audioCtx) return;
+                try {
+                    const now = audioCtx.currentTime;
+                    const chord = chillChords[chillStep % chillChords.length];
+                    chord.forEach((freq, i) => {
+                        const osc = audioCtx.createOscillator();
+                        const gain = audioCtx.createGain();
+                        osc.type = i === 0 ? 'sine' : 'triangle';
+                        osc.frequency.setValueAtTime(freq, now);
+                        
+                        gain.gain.setValueAtTime(0.0001, now);
+                        gain.gain.linearRampToValueAtTime(i === 0 ? 0.05 : 0.025, now + 0.8);
+                        gain.gain.exponentialRampToValueAtTime(0.0001, now + 3.4);
+
+                        osc.connect(gain);
+                        gain.connect(audioCtx.destination);
+                        osc.start(now);
+                        osc.stop(now + 3.5);
+                    });
+                    chillStep++;
+                } catch (e) {}
+            }, 3500);
+        }
+
+        const dashTracks = [
+            [220, 246, 293, 329, 392, 440], [247, 293, 330, 392, 440, 494], [196, 220, 261, 293, 349, 392],
+            [261, 293, 330, 349, 392, 523], [220, 277, 330, 415, 440, 554], [185, 220, 247, 293, 370, 440], [207, 247, 293, 330, 415, 494],
+            [174, 196, 220, 261, 293, 349], [196, 233, 261, 311, 349, 392], [164, 196, 220, 246, 330, 392],
+            [220, 247, 293, 370, 440, 494], [155, 185, 220, 233, 277, 370], [185, 207, 247, 277, 370, 415], [207, 233, 277, 330, 415, 466],
+            [261, 330, 392, 440, 523, 659], [293, 349, 440, 493, 587, 698], [246, 293, 370, 440, 494, 587],
+            [330, 392, 493, 587, 659, 783], [277, 330, 415, 494, 554, 659], [220, 293, 370, 440, 587, 740], [311, 370, 466, 554, 622, 740],
+            [164, 196, 246, 293, 330, 392], [185, 220, 277, 330, 370, 440], [146, 174, 220, 261, 293, 349],
+            [207, 247, 311, 370, 415, 494], [130, 164, 196, 246, 330, 392], [174, 207, 261, 311, 349, 415], [196, 233, 293, 349, 392, 466],
+            [293, 370, 440, 587, 659, 783], [329, 415, 493, 659, 740, 880], [261, 330, 392, 523, 587, 783],
+            [370, 440, 554, 659, 740, 880], [246, 311, 370, 493, 554, 740], [330, 392, 493, 587, 659, 783], [293, 349, 440, 523, 587, 698],
+            [220, 261, 349, 392, 440, 523], [247, 293, 392, 440, 494, 587], [196, 233, 311, 349, 392, 466],
+            [277, 330, 440, 494, 554, 659], [174, 220, 293, 330, 370, 440], [207, 261, 349, 392, 415, 523], [233, 277, 370, 415, 466, 554],
+            [329, 392, 523, 659, 783, 880], [370, 440, 587, 740, 880, 1046], [293, 370, 493, 587, 740, 880],
+            [440, 523, 659, 783, 880, 1046], [330, 415, 554, 659, 783, 987], [392, 493, 622, 740, 880, 1108], [415, 523, 659, 830, 932, 1174]
+        ];
+
+        function startGameMusic() {
+            stopAllMusic();
+            if (!gameData.soundEnabled) return;
+            beatStep = 0;
+
+            const trackIdx = (gameData.currentWorld * 7 + gameData.currentStage) % dashTracks.length;
+            const scale = dashTracks[trackIdx];
+            const tempo = 175;
+
+            gameMusicInterval = setInterval(() => {
+                if (!gameData.soundEnabled) return;
+                initAudio();
+                if (!audioCtx) return;
+                try {
+                    const now = audioCtx.currentTime;
+
+                    if (beatStep % 4 === 0) {
+                        const kick = audioCtx.createOscillator();
+                        const kickGain = audioCtx.createGain();
+                        kick.type = 'sawtooth';
+                        kick.frequency.setValueAtTime(140, now);
+                        kick.frequency.exponentialRampToValueAtTime(30, now + 0.12);
+                        kickGain.gain.setValueAtTime(0.3, now);
+                        kickGain.gain.linearRampToValueAtTime(0.001, now + 0.14);
+                        kick.connect(kickGain);
+                        kickGain.connect(audioCtx.destination);
+                        kick.start(now);
+                        kick.stop(now + 0.14);
+                    }
+
+                    if (beatStep % 2 !== 0) {
+                        const hat = audioCtx.createOscillator();
+                        const hatGain = audioCtx.createGain();
+                        hat.type = 'square';
+                        hat.frequency.setValueAtTime(4000, now);
+                        hatGain.gain.setValueAtTime(0.04, now);
+                        hatGain.gain.linearRampToValueAtTime(0.001, now + 0.04);
+                        hat.connect(hatGain);
+                        hatGain.connect(audioCtx.destination);
+                        hat.start(now);
+                        hat.stop(now + 0.04);
+                    }
+
+                    const synth = audioCtx.createOscillator();
+                    const synthGain = audioCtx.createGain();
+                    synth.type = (beatStep % 8 < 4) ? 'sawtooth' : 'square';
+                    
+                    const noteIdx = (beatStep * 2 + (gameData.currentStage * 3)) % scale.length;
+                    const freq = scale[noteIdx];
+                    synth.frequency.setValueAtTime(freq, now);
+
+                    synthGain.gain.setValueAtTime(0.1, now);
+                    synthGain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+
+                    synth.connect(synthGain);
+                    synthGain.connect(audioCtx.destination);
+                    synth.start(now);
+                    synth.stop(now + 0.16);
+
+                    beatStep++;
+                } catch (e) {}
+            }, tempo);
+        }
+
+        function stopAllMusic() {
+            if (lobbyMusicInterval) {
+                clearInterval(lobbyMusicInterval);
+                lobbyMusicInterval = null;
+            }
+            if (gameMusicInterval) {
+                clearInterval(gameMusicInterval);
+                gameMusicInterval = null;
+            }
+        }
+
+        function toggleSound() {
+            gameData.soundEnabled = !gameData.soundEnabled;
+            document.getElementById('sound-btn').innerText = gameData.soundEnabled ? '🔊' : '🔇';
+            if (gameData.soundEnabled) {
+                if (gameRunning) startGameMusic();
+                else startAmbientMusic();
+            } else {
+                stopAllMusic();
+            }
+            playSound('click');
+        }
+
+        document.addEventListener('click', (e) => {
+            if (e.target.tagName === 'BUTTON') {
+                playSound('click');
+                if (gameData.soundEnabled && !gameRunning && !lobbyMusicInterval) {
+                    startAmbientMusic();
+                }
+            }
+        });
 
         function playSound(type) {
             if (!gameData.soundEnabled) return;
@@ -419,7 +896,7 @@
                 osc.type = 'triangle';
                 osc.frequency.setValueAtTime(220, now);
                 osc.frequency.exponentialRampToValueAtTime(520, now + 0.1);
-                gain.gain.setValueAtTime(0.18, now);
+                gain.gain.setValueAtTime(0.15, now);
                 gain.gain.linearRampToValueAtTime(0.01, now + 0.1);
                 osc.start(now); osc.stop(now + 0.1);
             } else if (type === 'star') {
@@ -429,6 +906,27 @@
                 gain.gain.setValueAtTime(0.12, now);
                 gain.gain.linearRampToValueAtTime(0.01, now + 0.15);
                 osc.start(now); osc.stop(now + 0.15);
+            } else if (type === 'shoot') {
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(340, now);
+                osc.frequency.exponentialRampToValueAtTime(110, now + 0.12);
+                gain.gain.setValueAtTime(0.09, now);
+                gain.gain.linearRampToValueAtTime(0.001, now + 0.12);
+                osc.start(now); osc.stop(now + 0.12);
+            } else if (type === 'beam') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(880, now);
+                osc.frequency.exponentialRampToValueAtTime(180, now + 0.45);
+                gain.gain.setValueAtTime(0.22, now);
+                gain.gain.linearRampToValueAtTime(0.001, now + 0.45);
+                osc.start(now); osc.stop(now + 0.45);
+            } else if (type === 'boss_boom') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(160, now);
+                osc.frequency.exponentialRampToValueAtTime(22, now + 0.65);
+                gain.gain.setValueAtTime(0.35, now);
+                gain.gain.linearRampToValueAtTime(0.001, now + 0.65);
+                osc.start(now); osc.stop(now + 0.65);
             } else if (type === 'crash') {
                 osc.type = 'sawtooth';
                 osc.frequency.setValueAtTime(120, now);
@@ -448,144 +946,21 @@
             }
         }
 
-        const lofiChords = [
-            [130.81, 196.00, 246.94, 329.63],
-            [110.00, 164.81, 207.65, 293.66],
-            [98.00,  146.83, 185.00, 261.63],
-            [146.83, 220.00, 261.63, 329.63]
-        ];
-        let lofiStep = 0;
-        function startAmbientMusic() {
-            stopAllMusic();
-            ambientMusicInterval = setInterval(() => {
-                if (!gameData.soundEnabled) return;
-                initAudio();
-                if (!audioCtx) return;
-                try {
-                    const chord = lofiChords[lofiStep % lofiChords.length];
-                    chord.forEach((freq, idx) => {
-                        const osc = audioCtx.createOscillator();
-                        const gain = audioCtx.createGain();
-                        osc.type = idx === 0 ? 'sine' : 'triangle';
-                        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-
-                        gain.gain.setValueAtTime(0.0001, audioCtx.currentTime);
-                        gain.gain.linearRampToValueAtTime(0.04, audioCtx.currentTime + 0.5);
-                        gain.gain.linearRampToValueAtTime(0.0001, audioCtx.currentTime + 3.2);
-
-                        osc.connect(gain);
-                        gain.connect(audioCtx.destination);
-                        osc.start();
-                        osc.stop(audioCtx.currentTime + 3.2);
-                    });
-                    lofiStep++;
-                } catch (e) {}
-            }, 3000);
-        }
-
-        const thasupIntroNotes = [330, 392, 440, 523.25];
-        const thasupDropMelody = [440, 523.25, 587.33, 659.25, 523.25, 392, 440, 587.33];
-        let thasupBeatStep = 0;
-
-        function startGameMusic() {
-            stopAllMusic();
-            gameMusicTimer = 0;
-            thasupBeatStep = 0;
-
-            gameMusicInterval = setInterval(() => {
-                if (!gameData.soundEnabled) return;
-                initAudio();
-                if (!audioCtx) return;
-                try {
-                    const now = audioCtx.currentTime;
-                    gameMusicTimer += 0.18;
-                    const isDrop = gameMusicTimer >= 6.0;
-
-                    if (isDrop) {
-                        if (thasupBeatStep % 4 === 0) {
-                            const bassOsc = audioCtx.createOscillator();
-                            const bassGain = audioCtx.createGain();
-                            bassOsc.type = 'sawtooth';
-                            bassOsc.frequency.setValueAtTime(120, now);
-                            bassOsc.frequency.exponentialRampToValueAtTime(45, now + 0.3);
-                            bassGain.gain.setValueAtTime(0.26, now);
-                            bassGain.gain.linearRampToValueAtTime(0.001, now + 0.32);
-                            bassOsc.connect(bassGain);
-                            bassGain.connect(audioCtx.destination);
-                            bassOsc.start(now); bassOsc.stop(now + 0.32);
-                        }
-
-                        const hatOsc = audioCtx.createOscillator();
-                        const hatGain = audioCtx.createGain();
-                        hatOsc.type = 'square';
-                        hatOsc.frequency.setValueAtTime(4000, now);
-                        hatGain.gain.setValueAtTime(thasupBeatStep % 2 === 0 ? 0.05 : 0.02, now);
-                        hatGain.gain.linearRampToValueAtTime(0.001, now + 0.04);
-                        hatOsc.connect(hatGain);
-                        hatGain.connect(audioCtx.destination);
-                        hatOsc.start(now); hatOsc.stop(now + 0.04);
-
-                        const synthOsc = audioCtx.createOscillator();
-                        const synthGain = audioCtx.createGain();
-                        synthOsc.type = 'triangle';
-                        const note = thasupDropMelody[thasupBeatStep % thasupDropMelody.length];
-                        synthOsc.frequency.setValueAtTime(note, now);
-                        synthGain.gain.setValueAtTime(0.09, now);
-                        synthGain.gain.linearRampToValueAtTime(0.001, now + 0.16);
-                        synthOsc.connect(synthGain);
-                        synthGain.connect(audioCtx.destination);
-                        synthOsc.start(now); synthOsc.stop(now + 0.16);
-
-                    } else {
-                        const introOsc = audioCtx.createOscillator();
-                        const introGain = audioCtx.createGain();
-                        introOsc.type = 'sine';
-                        const note = thasupIntroNotes[Math.floor(thasupBeatStep / 2) % thasupIntroNotes.length];
-                        introOsc.frequency.setValueAtTime(note, now);
-                        introGain.gain.setValueAtTime(0.05, now);
-                        introGain.gain.linearRampToValueAtTime(0.001, now + 0.3);
-                        introOsc.connect(introGain);
-                        introGain.connect(audioCtx.destination);
-                        introOsc.start(now); introOsc.stop(now + 0.3);
-                    }
-
-                    thasupBeatStep++;
-                } catch (e) {}
-            }, 180);
-        }
-
-        function stopAllMusic() {
-            if (ambientMusicInterval) { clearInterval(ambientMusicInterval); ambientMusicInterval = null; }
-            if (gameMusicInterval) { clearInterval(gameMusicInterval); gameMusicInterval = null; }
-        }
-
-        function toggleSound() {
-            gameData.soundEnabled = !gameData.soundEnabled;
-            document.getElementById('sound-btn').innerText = gameData.soundEnabled ? '🔊' : '🔇';
-            if (gameData.soundEnabled) {
-                startAmbientMusic();
-            } else {
-                stopAllMusic();
-            }
-            playSound('click');
-        }
-
-        document.addEventListener('click', (e) => {
-            if (e.target.tagName === 'BUTTON') {
-                playSound('click');
-            }
-        });
-
         function showLobby() {
-            startAmbientMusic();
             hideAllScreens();
+            syncProgress();
+            startAmbientMusic();
             document.getElementById('screen-lobby').classList.remove('hidden');
             renderPreviewUFO();
+            if (!gameData.progress.storySeen) {
+                gameData.progress.storySeen = true;
+                saveProgress();
+                openIntroStory();
+            }
         }
         function showShop() {
             syncProgress();
-            buildShopOnce();
-            refreshShopState();
+            renderShop();
             hideAllScreens();
             document.getElementById('screen-shop').classList.remove('hidden');
         }
@@ -600,6 +975,8 @@
             syncProgress();
             renderStagesGrid(worldIdx);
             hideAllScreens();
+            const t = translations[currentLang];
+            document.getElementById('stages-story-banner').innerText = t.worldStories[worldIdx] || "";
             document.getElementById('screen-stages').classList.remove('hidden');
         }
         function hideAllScreens() {
@@ -610,6 +987,7 @@
             document.getElementById('screen-game').classList.add('hidden');
             document.getElementById('screen-win').classList.add('hidden');
             document.getElementById('screen-gameover').classList.add('hidden');
+            document.getElementById('screen-boss-briefing').classList.add('hidden');
             stopGameLoopOnly();
         }
 
@@ -618,7 +996,7 @@
             const pCtx = pCanvas.getContext('2d');
             pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height);
             const activeSkin = skinsConfig.find(s => s.id === gameData.progress.activeSkin) || skinsConfig[0];
-            drawUFO(pCtx, 50, 28, 16, 0, activeSkin);
+            drawUFO(pCtx, 40, 22, 16, 0, activeSkin);
         }
 
         function drawUFO(ctx, x, y, radius, angle, skin) {
@@ -626,202 +1004,241 @@
             ctx.translate(x, y);
             ctx.rotate(angle);
 
-            const st = skin.ufoStyle || 'classic';
-            const bc = skin.bodyColor;
-            const lc = skin.lightColor;
-            const hc = skin.haloColor;
-
-            // Halo sopra la cupola
-            ctx.strokeStyle = hc;
-            ctx.shadowColor = hc;
+            ctx.strokeStyle = skin.haloColor;
+            ctx.shadowColor = skin.haloColor;
             ctx.shadowBlur = 10;
-            ctx.lineWidth = st === 'double_ring' ? 3.5 : 2.5;
+            ctx.lineWidth = 3;
             ctx.beginPath();
-            ctx.ellipse(0, -19, st === 'wide' ? 17 : 13, 4.5, 0, 0, Math.PI * 2);
+            ctx.ellipse(0, -22, 14, 5, 0, 0, Math.PI * 2);
             ctx.stroke();
 
-            if (st === 'double_ring') {
-                ctx.strokeStyle = lc;
-                ctx.lineWidth = 1.5;
-                ctx.beginPath();
-                ctx.ellipse(0, -24, 9, 3, 0, 0, Math.PI * 2);
-                ctx.stroke();
-            }
-
-            if (st === 'crown_ufo' || st === 'lunoyd_ufo') {
-                ctx.fillStyle = '#facc15';
-                ctx.beginPath();
-                ctx.moveTo(-8, -15); ctx.lineTo(-10, -23); ctx.lineTo(-3, -18);
-                ctx.lineTo(0, -25); ctx.lineTo(3, -18); ctx.lineTo(10, -23); ctx.lineTo(8, -15);
-                ctx.closePath();
-                ctx.fill();
-            }
-
-            if (st === 'antenna' || st === 'beacon_ufo') {
-                ctx.strokeStyle = lc;
-                ctx.lineWidth = 2;
-                ctx.beginPath(); ctx.moveTo(0, -13); ctx.lineTo(0, -22); ctx.stroke();
-                ctx.fillStyle = hc;
-                ctx.beginPath(); ctx.arc(0, -23, 3, 0, Math.PI * 2); ctx.fill();
-            }
-
-            // Appendici / ali / pinne / propulsori specifici del tipo di UFO
-            if (st === 'fins' || st === 'wings' || st === 'delta_ufo') {
-                ctx.fillStyle = lc + '66';
-                ctx.strokeStyle = lc;
-                ctx.lineWidth = 1.6;
-                ctx.beginPath();
-                ctx.moveTo(radius * 0.8, 3);
-                ctx.lineTo(-radius - 8, st === 'delta_ufo' ? -9 : -5);
-                ctx.lineTo(-radius - 4, 4);
-                ctx.lineTo(-radius - 8, st === 'delta_ufo' ? 11 : 8);
-                ctx.closePath();
-                ctx.fill(); ctx.stroke();
-            } else if (st === 'spikes' || st === 'horns_ufo' || st === 'claws_ufo') {
-                ctx.fillStyle = hc;
-                ctx.beginPath();
-                ctx.moveTo(radius * 0.7, 2); ctx.lineTo(radius + 9, -3); ctx.lineTo(radius * 0.5, 6);
-                ctx.moveTo(-radius * 0.7, 2); ctx.lineTo(-radius - 9, -3); ctx.lineTo(-radius * 0.5, 6);
-                ctx.fill();
-            } else if (st === 'ring' || st === 'crescent_hull' || st === 'wave_ufo') {
-                ctx.strokeStyle = hc;
-                ctx.lineWidth = 2.2;
-                ctx.beginPath();
-                ctx.ellipse(0, 4, radius + 7, 4.5, -0.18, 0, Math.PI * 2);
-                ctx.stroke();
-            } else if (st === 'thrusters' || st === 'reactor_ufo') {
-                ctx.fillStyle = lc;
-                ctx.beginPath();
-                ctx.moveTo(-radius, 2); ctx.lineTo(-radius - 11, -3); ctx.lineTo(-radius - 11, 8);
-                ctx.closePath();
-                ctx.fill();
-            } else if (st === 'blades_ufo' || st === 'star_rim') {
-                ctx.fillStyle = hc;
-                for (let i = -2; i <= 2; i++) {
-                    ctx.beginPath();
-                    ctx.arc(i * 6.5, 11, 2.2, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-            }
-
-            // Cupola dell'UFO
-            const domeRx = st === 'pod' || st === 'bubble_ufo' ? 13 : (st === 'tall_dome' ? 10 : 11);
-            const domeRy = st === 'tall_dome' || st === 'bubble_ufo' ? 13 : (st === 'sleek' ? 7 : 9.5);
-            ctx.fillStyle = lc + '44';
-            ctx.strokeStyle = lc;
+            ctx.fillStyle = 'rgba(168, 85, 247, 0.35)';
+            ctx.strokeStyle = skin.lightColor;
             ctx.lineWidth = 2;
             ctx.beginPath();
-            ctx.ellipse(0, -2, domeRx, domeRy, 0, Math.PI, 0, false);
-            ctx.closePath();
+            ctx.arc(0, -4, 11, Math.PI, 0, false);
             ctx.fill();
             ctx.stroke();
 
-            if (st === 'twin_dome') {
-                ctx.beginPath();
-                ctx.ellipse(7, -1, 6, 6, 0, Math.PI, 0, false);
-                ctx.fill(); ctx.stroke();
-            }
-
-            // Disco / Scafo principale dell'UFO
-            const hullRx = st === 'wide' ? radius + 5 : (st === 'heavy' ? radius + 2 : radius);
-            const hullRy = st === 'heavy' ? 9.5 : (st === 'sleek' ? 5.5 : 7.5);
-            const grad = ctx.createLinearGradient(-hullRx, 0, hullRx, 0);
+            const grad = ctx.createLinearGradient(-radius, 0, radius, 0);
             grad.addColorStop(0, '#1f2937');
-            grad.addColorStop(0.5, bc);
+            grad.addColorStop(0.5, skin.bodyColor);
             grad.addColorStop(1, '#111827');
-
             ctx.fillStyle = grad;
-            ctx.strokeStyle = st === 'prism_ufo' || st === 'core_ufo' ? hc : '#e5e7eb';
-            ctx.lineWidth = st === 'heavy' ? 2.5 : 1.5;
-
-            if (st === 'nose_cone') {
-                ctx.beginPath();
-                ctx.moveTo(hullRx + 7, 4);
-                ctx.quadraticCurveTo(0, -3, -hullRx, 4);
-                ctx.quadraticCurveTo(0, 11, hullRx + 7, 4);
-                ctx.closePath();
-            } else {
-                ctx.beginPath();
-                ctx.ellipse(0, 4, hullRx, hullRy, 0, 0, Math.PI * 2);
-            }
+            ctx.strokeStyle = '#e5e7eb';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.ellipse(0, 4, radius, 7.5, 0, 0, Math.PI * 2);
             ctx.fill();
             ctx.stroke();
 
-            // Luci lampeggianti sul disco
-            ctx.fillStyle = lc;
-            ctx.shadowColor = lc;
+            ctx.fillStyle = skin.lightColor;
+            ctx.shadowColor = skin.lightColor;
             ctx.shadowBlur = 12;
-            const lightCount = st === 'beam_dish' ? 3 : 5;
-            for (let i = 0; i < lightCount; i++) {
-                const lx = (i - (lightCount - 1) / 2) * (hullRx * 0.42);
+            for (let i = -2; i <= 2; i++) {
                 ctx.beginPath();
-                ctx.arc(lx, 4, st === 'beam_dish' ? 2.6 : 1.8, 0, Math.PI * 2);
+                ctx.arc(i * 7, 4, 1.8, 0, Math.PI * 2);
                 ctx.fill();
             }
 
             ctx.restore();
         }
 
-        let shopBuilt = false;
+        // Disegna Boss Alieno in stile cartoon colorato (ispirato a Kang & Kodos dei Simpson)
+        function drawCartoonAlienBoss(ctx, centerX, centerY, scale, bossData, chargeRatio = 0, hitShake = 0, isExploded = false) {
+            if (isExploded) return;
+            const b = bossData || moonBosses[0];
+            const shakeX = hitShake > 0 ? (Math.random() - 0.5) * hitShake * 10 : 0;
+            const shakeY = hitShake > 0 ? (Math.random() - 0.5) * hitShake * 10 : 0;
 
-        function buildShopOnce() {
-            if (shopBuilt) return;
-            const container = document.getElementById('skins-container');
-            container.innerHTML = '';
+            ctx.save();
+            ctx.translate(centerX + shakeX, centerY + shakeY);
+            ctx.scale(scale, scale);
 
-            skinsConfig.forEach(skin => {
-                const card = document.createElement('div');
-                card.id = `skin-card-${skin.id}`;
-                card.className = 'p-3 rounded-xl border flex flex-col items-center justify-between relative bg-neutral-900 border-neutral-800';
+            // Navicella a cupola inferiore stile cartone
+            ctx.strokeStyle = '#09090b';
+            ctx.lineWidth = 3;
+            ctx.fillStyle = b.domeColor;
+            ctx.beginPath();
+            ctx.ellipse(0, 12, 34, 14, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
 
-                const nameEl = document.createElement('div');
-                nameEl.className = 'font-orbitron font-bold text-[10px] text-white text-center truncate w-full mb-1';
-                nameEl.innerText = skin.name;
+            ctx.fillStyle = b.hullColor;
+            ctx.beginPath();
+            ctx.ellipse(0, 18, 38, 9, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
 
-                const prevWrap = document.createElement('div');
-                prevWrap.className = 'w-20 h-11 flex items-center justify-center my-1';
-                const scCanvas = document.createElement('canvas');
-                scCanvas.width = 80;
-                scCanvas.height = 44;
-                const scCtx = scCanvas.getContext('2d');
-                drawUFO(scCtx, 40, 24, 13, 0, skin);
-                prevWrap.appendChild(scCanvas);
+            // Testa / Corpo alieno cartoon con contorno nero spesso
+            ctx.fillStyle = b.skinColor;
+            ctx.strokeStyle = '#09090b';
+            ctx.lineWidth = 3.2;
 
-                const actionEl = document.createElement('div');
-                actionEl.id = `skin-action-${skin.id}`;
-                actionEl.className = 'w-full mt-2';
+            if (b.variant === 'kang_tall' || b.variant === 'kodos_pink' || b.variant === 'crown_lime_red') {
+                // Testa alta a goccia stile Kang & Kodos
+                ctx.beginPath();
+                ctx.moveTo(-16, 10);
+                ctx.quadraticCurveTo(-24, -22, 0, -34);
+                ctx.quadraticCurveTo(24, -22, 16, 10);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+            } else if (b.variant === 'bulb_orange') {
+                // Testa rotonda a bulbo
+                ctx.beginPath();
+                ctx.ellipse(0, -10, 22, 20, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+            } else if (b.variant === 'slime_cyan') {
+                // Testa larga e gommosa
+                ctx.beginPath();
+                ctx.ellipse(0, -7, 25, 16, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+            } else {
+                // Testa ovale espressiva
+                ctx.beginPath();
+                ctx.ellipse(0, -10, 21, 18, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+            }
 
-                card.appendChild(nameEl);
-                card.appendChild(prevWrap);
-                card.appendChild(actionEl);
-                container.appendChild(card);
-            });
+            // Dettagli unici per variante cartoon
+            if (b.variant === 'kodos_pink') {
+                // Riccioli laterali stile Kodos
+                ctx.fillStyle = b.cheekColor;
+                ctx.beginPath();
+                ctx.arc(-20, -14, 7, 0, Math.PI * 2);
+                ctx.arc(20, -14, 7, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+            } else if (b.variant === 'horns_violet') {
+                // Corna cartoon
+                ctx.fillStyle = '#fde047';
+                ctx.beginPath();
+                ctx.moveTo(-14, -22); ctx.lineTo(-22, -38); ctx.lineTo(-6, -26); ctx.closePath();
+                ctx.fill(); ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(14, -22); ctx.lineTo(22, -38); ctx.lineTo(6, -26); ctx.closePath();
+                ctx.fill(); ctx.stroke();
+            } else if (b.variant === 'crown_lime_red') {
+                // Corona reale
+                ctx.fillStyle = '#facc15';
+                ctx.beginPath();
+                ctx.moveTo(-15, -31); ctx.lineTo(-18, -44); ctx.lineTo(-6, -36);
+                ctx.lineTo(0, -47); ctx.lineTo(6, -36); ctx.lineTo(18, -44); ctx.lineTo(15, -31);
+                ctx.closePath();
+                ctx.fill(); ctx.stroke();
+            } else {
+                // Antennina cartoon
+                ctx.strokeStyle = '#09090b';
+                ctx.lineWidth = 2.5;
+                ctx.beginPath();
+                ctx.moveTo(0, -26);
+                ctx.lineTo(0, -37);
+                ctx.stroke();
+                ctx.fillStyle = b.glowColor;
+                ctx.beginPath();
+                ctx.arc(0, -39, 4.5, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+            }
 
-            shopBuilt = true;
+            // Bolle/guance colorate
+            ctx.fillStyle = b.cheekColor;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(-11, -3, 3.5, 0, Math.PI * 2);
+            ctx.arc(11, -3, 3.5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            // Occhi espressivi da cartone animato
+            function drawEye(ex, ey, r) {
+                ctx.fillStyle = b.eyeColor;
+                ctx.strokeStyle = '#09090b';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(ex, ey, r, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+
+                ctx.fillStyle = b.pupilColor;
+                ctx.beginPath();
+                ctx.arc(ex - r * 0.25, ey, r * 0.42, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            if (b.variant === 'three_eye_gold') {
+                drawEye(-8, -11, 5.2);
+                drawEye(8, -11, 5.2);
+                drawEye(0, -19, 4.8);
+            } else {
+                drawEye(-7, -11, 5.8);
+                drawEye(7, -11, 5.8);
+            }
+
+            // Sopracciglia aggrottate
+            ctx.strokeStyle = '#09090b';
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            ctx.moveTo(-13, -17); ctx.lineTo(-2, -14);
+            ctx.moveTo(13, -17); ctx.lineTo(2, -14);
+            ctx.stroke();
+
+            // Bocca ghignante da cartone
+            ctx.strokeStyle = '#09090b';
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            ctx.moveTo(-10, 4);
+            ctx.quadraticCurveTo(0, 9, 10, 3);
+            ctx.stroke();
+
+            // Barra di carica attacco sopra il boss
+            if (chargeRatio > 0) {
+                ctx.fillStyle = 'rgba(0,0,0,0.7)';
+                ctx.fillRect(-26, -54, 52, 6);
+                ctx.fillStyle = chargeRatio > 0.75 ? '#ef4444' : b.glowColor;
+                ctx.fillRect(-25, -53, 50 * Math.min(1, chargeRatio), 4);
+            }
+
+            ctx.restore();
         }
 
-        function refreshShopState() {
+        function renderShop() {
+            const container = document.getElementById('skins-container');
+            container.innerHTML = '';
             skinsConfig.forEach(skin => {
                 const isOwned = gameData.progress.skins.includes(skin.id);
                 const isActive = gameData.progress.activeSkin === skin.id;
-                const card = document.getElementById(`skin-card-${skin.id}`);
-                const actionEl = document.getElementById(`skin-action-${skin.id}`);
 
-                if (card) {
-                    card.className = isActive
-                        ? 'p-3 rounded-xl border flex flex-col items-center justify-between relative bg-purple-950/60 border-purple-500 shadow-lg'
-                        : 'p-3 rounded-xl border flex flex-col items-center justify-between relative bg-neutral-900 border-neutral-800';
-                }
+                const card = document.createElement('div');
+                card.className = `p-3 rounded-xl border flex flex-col items-center justify-between transition relative ${
+                    isActive ? 'bg-purple-950/60 border-purple-500 shadow-lg' : 'bg-neutral-900 border-neutral-800'
+                }`;
 
-                if (actionEl) {
-                    if (isActive) {
-                        actionEl.innerHTML = '<span class="block text-center font-orbitron text-[9px] text-purple-400 py-1">ATTIVA</span>';
-                    } else if (isOwned) {
-                        actionEl.innerHTML = `<button onclick="selectSkin('${skin.id}')" class="w-full py-1 bg-neutral-800 hover:bg-neutral-700 text-white font-orbitron text-[9px] rounded-lg">USA</button>`;
-                    } else {
-                        actionEl.innerHTML = `<button onclick="buySkin('${skin.id}')" class="w-full py-1 bg-yellow-600 hover:bg-yellow-500 text-black font-orbitron font-bold text-[9px] rounded-lg">⭐ ${skin.price}</button>`;
+                card.innerHTML = `
+                    <div class="font-orbitron font-bold text-[10px] text-white text-center truncate w-full mb-1">${skin.name}</div>
+                    <div class="w-16 h-10 flex items-center justify-center my-1" id="skin-prev-${skin.id}"></div>
+                    <div class="w-full mt-2">
+                        ${isActive ? '<span class="block text-center font-orbitron text-[9px] text-purple-400 py-1">ATTIVA</span>' :
+                          isOwned ? `<button onclick="selectSkin('${skin.id}')" class="w-full py-1 bg-neutral-800 hover:bg-neutral-700 text-white font-orbitron text-[9px] rounded-lg">USA</button>` :
+                          `<button onclick="buySkin('${skin.id}')" class="w-full py-1 bg-yellow-600 hover:bg-yellow-500 text-black font-orbitron font-bold text-[9px] rounded-lg">⭐ ${skin.price}</button>`}
+                    </div>
+                `;
+                container.appendChild(card);
+
+                setTimeout(() => {
+                    const scEl = document.getElementById(`skin-prev-${skin.id}`);
+                    if (scEl) {
+                        const scCanvas = document.createElement('canvas');
+                        scCanvas.width = 60; scCanvas.height = 30;
+                        const scCtx = scCanvas.getContext('2d');
+                        drawUFO(scCtx, 30, 15, 12, 0, skin);
+                        scEl.appendChild(scCanvas);
                     }
-                }
+                }, 50);
             });
         }
 
@@ -829,13 +1246,11 @@
             const skin = skinsConfig.find(s => s.id === skinId);
             if (gameData.progress.stars >= skin.price) {
                 gameData.progress.stars -= skin.price;
-                if (!gameData.progress.skins.includes(skinId)) {
-                    gameData.progress.skins.push(skinId);
-                }
+                gameData.progress.skins.push(skinId);
                 gameData.progress.activeSkin = skinId;
-                localStorage.setItem('unoyd_ufo_ultimate_v6_progress', JSON.stringify(gameData.progress));
+                saveProgress();
                 syncProgress();
-                refreshShopState();
+                renderShop();
                 playSound('win');
             } else {
                 playSound('crash');
@@ -844,8 +1259,8 @@
 
         function selectSkin(skinId) {
             gameData.progress.activeSkin = skinId;
-            localStorage.setItem('unoyd_ufo_ultimate_v6_progress', JSON.stringify(gameData.progress));
-            refreshShopState();
+            saveProgress();
+            renderShop();
         }
 
         function renderWorldsGrid() {
@@ -855,6 +1270,9 @@
 
             worldsConfig.forEach((w, idx) => {
                 const worldName = t.worlds[idx];
+                const hasKey = gameData.progress.keysEarned.includes(idx);
+                const keyLabel = hasKey ? moonBosses[idx].keyName[currentLang] : (w.unlocked ? '7 Livelli Lunghi' : '🔒');
+
                 const card = document.createElement('div');
                 card.className = `p-3 rounded-xl border flex flex-col justify-between transition relative h-28 ${
                     w.unlocked ? 'bg-neutral-900 border-purple-500/40 hover:border-purple-400 cursor-pointer shadow-lg' : 'bg-neutral-950/90 border-neutral-800 opacity-60 cursor-not-allowed filter grayscale'
@@ -865,19 +1283,19 @@
                         <span class="font-orbitron text-[9px] text-purple-400">W0${idx + 1}</span>
                         <span class="text-sm">${w.unlocked ? '🔓' : '🔒'}</span>
                     </div>
-                    <div class="text-center my-1">
+                    <div class="text-center my-0.5">
                         <div class="text-2xl mb-0.5">${w.icon}</div>
                         <h3 class="font-orbitron font-bold text-[11px] text-white truncate">${worldName}</h3>
                     </div>
-                    <div class="mt-1 pt-1 border-t border-neutral-800 text-[9px] text-neutral-400 text-center font-orbitron">
-                        7 Livelli Lunghi
+                    <div class="mt-1 pt-1 border-t border-neutral-800 text-[9px] ${hasKey ? 'text-yellow-300 font-bold' : 'text-neutral-400'} text-center font-orbitron truncate">
+                        ${keyLabel}
                     </div>
                 `;
 
                 if (w.unlocked) card.onclick = () => showStages(idx);
                 container.appendChild(card);
             });
-            document.getElementById('world-stars').innerText = gameData.progress.stars;
+            syncProgress();
         }
 
         function renderStagesGrid(worldIdx) {
@@ -891,22 +1309,34 @@
 
             for (let s = 0; s < 7; s++) {
                 const isUnlocked = unlockedStages.includes(s) || (worldIdx === 0 && s === 0);
+                const stageKey = `${worldIdx}-${s}`;
+                const sDeaths = gameData.progress.stageDeaths[stageKey] || 0;
+                const isBossStage = (s === 6);
+                const bossName = moonBosses[worldIdx].name;
+
                 const card = document.createElement('div');
-                card.className = `p-3 rounded-xl border flex flex-col items-center justify-center transition relative h-20 ${
-                    isUnlocked ? 'bg-neutral-900 border-purple-500/50 hover:border-purple-400 cursor-pointer shadow-lg' : 'bg-neutral-950/90 border-neutral-800 opacity-50 cursor-not-allowed'
+                card.className = `p-2.5 rounded-xl border flex flex-col items-center justify-center transition relative h-22 ${
+                    isUnlocked ? (isBossStage ? 'bg-red-950/40 border-red-500/60 hover:border-red-400 cursor-pointer shadow-lg' : 'bg-neutral-900 border-purple-500/50 hover:border-purple-400 cursor-pointer shadow-lg') : 'bg-neutral-950/90 border-neutral-800 opacity-50 cursor-not-allowed'
                 }`;
 
                 card.innerHTML = `
-                    <div class="font-orbitron font-bold text-sm text-yellow-400 mb-1">#0${s + 1}</div>
-                    <div class="text-xs">${isUnlocked ? '⭐' : '🔒'}</div>
+                    <div class="font-orbitron font-bold text-sm ${isBossStage ? 'text-red-400' : 'text-yellow-400'} mb-0.5">#0${s + 1}</div>
+                    <div class="text-[9px] font-orbitron text-neutral-300 truncate max-w-full">${isBossStage ? '👾 ' + bossName : (isUnlocked ? '⭐' : '🔒')}</div>
+                    ${isUnlocked && sDeaths > 0 ? `<div class="text-[9px] font-orbitron text-red-400 mt-0.5">💀 ${sDeaths}</div>` : ''}
                 `;
 
                 if (isUnlocked) {
-                    card.onclick = () => startActiveStage(worldIdx, s);
+                    card.onclick = () => {
+                        if (isBossStage) {
+                            openBossBriefing(worldIdx, s);
+                        } else {
+                            startActiveStage(worldIdx, s);
+                        }
+                    };
                 }
                 container.appendChild(card);
             }
-            document.getElementById('stages-stars').innerText = gameData.progress.stars;
+            syncProgress();
         }
 
         const canvas = document.getElementById('gameCanvas');
@@ -916,18 +1346,47 @@
 
         let ufo = { x: 120, y: 440, vy: 0, gravity: 0.52, lift: -9.2, radius: 18, angle: 0 };
         let obstacles = [];
+        let bossProjectiles = [];
         let stars = [];
         let particles = [];
+        let explosionRings = [];
         let distTraveled = 0;
         let levelLength = 7500;
         let starsCollected = 0;
         let currentWorldObj = null;
-        let deathCount = 0;
+
+        let bossState = {
+            active: false,
+            x: 845,
+            y: 270,
+            baseY: 270,
+            attackTimer: 0,
+            attackInterval: 88,
+            dyingSequence: false,
+            dyingTimer: 0,
+            exploded: false,
+            hitShake: 0
+        };
+
+        function updateBossHud() {
+            const wrap = document.getElementById('hud-boss-target-wrap');
+            if (gameData.currentStage === 6) {
+                const boss = moonBosses[gameData.currentWorld] || moonBosses[0];
+                wrap.classList.remove('hidden');
+                document.getElementById('hud-boss-name').innerText = boss.name;
+                document.getElementById('hud-boss-progress').innerText = `${starsCollected}/${boss.targetStars} ⭐`;
+            } else {
+                wrap.classList.add('hidden');
+            }
+        }
 
         function startActiveStage(worldIdx, stageIdx) {
             gameData.currentWorld = worldIdx;
             gameData.currentStage = stageIdx;
             currentWorldObj = worldsConfig[worldIdx] || worldsConfig[0];
+
+            const stageKey = `${worldIdx}-${stageIdx}`;
+            const currentStageDeaths = gameData.progress.stageDeaths[stageKey] || 0;
 
             hideAllScreens();
             document.getElementById('screen-game').classList.remove('hidden');
@@ -936,14 +1395,30 @@
             const worldName = t.worlds[worldIdx] || "Mondo";
             document.getElementById('hud-level-title').innerText = `${worldName} - Stage ${stageIdx + 1}`;
             
-            deathCount = 0;
-            document.getElementById('hud-deaths').innerText = deathCount;
+            document.getElementById('hud-deaths').innerText = currentStageDeaths;
+            document.getElementById('hud-total-deaths').innerText = gameData.progress.totalDeaths;
 
             const floorY = canvas.height - 50;
             ufo.x = 120; ufo.y = floorY - ufo.radius; ufo.vy = 0;
             distTraveled = 0; starsCollected = 0;
+            bossProjectiles = [];
+            particles = [];
+            explosionRings = [];
+
+            bossState.active = (stageIdx === 6);
+            bossState.x = canvas.width - 115;
+            bossState.y = canvas.height / 2;
+            bossState.baseY = canvas.height / 2;
+            bossState.attackTimer = 0;
+            bossState.attackInterval = Math.max(54, 88 - worldIdx * 5);
+            bossState.dyingSequence = false;
+            bossState.dyingTimer = 0;
+            bossState.exploded = false;
+            bossState.hitShake = 0;
+
             document.getElementById('hud-stars').innerText = starsCollected;
             document.getElementById('hud-progress-bar').style.width = '0%';
+            updateBossHud();
 
             generateFixedStage(worldIdx, stageIdx);
             gameRunning = true;
@@ -953,9 +1428,41 @@
             animationId = requestAnimationFrame(gameLoop);
         }
 
+        function spawnBossAttack() {
+            const boss = moonBosses[gameData.currentWorld] || moonBosses[0];
+            const modeRoll = Math.random();
+            const originX = bossState.x - 36;
+            const originY = bossState.y + 4;
+
+            if (modeRoll < 0.55) {
+                const aimDy = (ufo.y - originY) * 0.012 + (Math.random() - 0.5) * 1.4;
+                bossProjectiles.push({
+                    x: originX,
+                    y: originY,
+                    vx: -(8.6 + gameData.currentWorld * 0.45),
+                    vy: Math.max(-2.6, Math.min(2.6, aimDy)),
+                    radius: 10,
+                    type: 'orb',
+                    color: boss.glowColor
+                });
+            } else {
+                bossProjectiles.push({
+                    x: originX,
+                    y: originY - 11,
+                    vx: -(9.2 + gameData.currentWorld * 0.4),
+                    vy: 0,
+                    width: 28,
+                    height: 22,
+                    type: 'dart',
+                    color: '#ef4444'
+                });
+            }
+            playSound('shoot');
+        }
+
         function generateFixedStage(wIdx, sIdx) {
             obstacles = []; stars = [];
-            levelLength = 8000 + (wIdx * 1300) + (sIdx * 450);
+            levelLength = 8200 + (wIdx * 1300) + (sIdx * 450);
             
             let seed = (wIdx + 1) * 137 + (sIdx + 1) * 73;
             function pseudoRandom() {
@@ -963,35 +1470,47 @@
                 return seed / 233280;
             }
 
-            let spawnX = 600;
-            let density = 100 - (wIdx * 6) - (sIdx * 3);
-            if (density < 50) density = 50;
+            let spawnX = 560;
+            let density = 105 - (wIdx * 6) - (sIdx * 3);
+            if (density < 55) density = 55;
 
             while (spawnX < levelLength - 400) {
                 const r = pseudoRandom();
                 const floorHeight = 50;
                 const ceilingHeight = 45;
 
-                if (r < 0.3) {
-                    obstacles.push({ x: spawnX, y: canvas.height - floorHeight - 42, width: 32, height: 42, type: 'spike' });
-                } else if (r < 0.6) {
-                    obstacles.push({ x: spawnX, y: ceilingHeight, width: 32, height: 42, type: 'spike' });
-                } else if (r < 0.85) {
-                    obstacles.push({ x: spawnX, y: canvas.height / 2 - 45, width: 22, height: 95, type: 'laser' });
+                if (sIdx === 6) {
+                    if (r < 0.35) {
+                        obstacles.push({ x: spawnX, y: canvas.height - floorHeight - 36, width: 28, height: 36, type: 'spike' });
+                    } else if (r < 0.7) {
+                        obstacles.push({ x: spawnX, y: ceilingHeight, width: 28, height: 36, type: 'spike' });
+                    } else {
+                        obstacles.push({ x: spawnX, y: canvas.height / 2 - 38, width: 18, height: 76, type: 'laser' });
+                    }
+                    stars.push({ x: spawnX + 55, y: pseudoRandom() * 290 + 115, radius: 10, collected: false });
+                    spawnX += pseudoRandom() * 60 + 125;
                 } else {
-                    obstacles.push({ x: spawnX, y: canvas.height - floorHeight - 38, width: 28, height: 38, type: 'spike' });
-                    obstacles.push({ x: spawnX + 45, y: ceilingHeight, width: 28, height: 38, type: 'spike' });
-                }
+                    if (r < 0.3) {
+                        obstacles.push({ x: spawnX, y: canvas.height - floorHeight - 42, width: 32, height: 42, type: 'spike' });
+                    } else if (r < 0.6) {
+                        obstacles.push({ x: spawnX, y: ceilingHeight, width: 32, height: 42, type: 'spike' });
+                    } else if (r < 0.85) {
+                        obstacles.push({ x: spawnX, y: canvas.height / 2 - 45, width: 22, height: 95, type: 'laser' });
+                    } else {
+                        obstacles.push({ x: spawnX, y: canvas.height - floorHeight - 38, width: 28, height: 38, type: 'spike' });
+                        obstacles.push({ x: spawnX + 45, y: ceilingHeight, width: 28, height: 38, type: 'spike' });
+                    }
 
-                if (pseudoRandom() > 0.25) {
-                    stars.push({ x: spawnX + 70, y: pseudoRandom() * 300 + 110, radius: 10, collected: false });
+                    if (pseudoRandom() > 0.25) {
+                        stars.push({ x: spawnX + 70, y: pseudoRandom() * 300 + 110, radius: 10, collected: false });
+                    }
+                    spawnX += pseudoRandom() * 65 + density;
                 }
-                spawnX += pseudoRandom() * 65 + density;
             }
         }
 
         function triggerJump() {
-            if (!gameRunning) return;
+            if (!gameRunning || bossState.dyingSequence) return;
             ufo.vy = ufo.lift;
             playSound('jump');
 
@@ -1017,6 +1536,47 @@
             triggerJump();
         });
 
+        function startBossDeathSequence() {
+            bossState.dyingSequence = true;
+            bossState.dyingTimer = 0;
+            bossState.hitShake = 1;
+            bossProjectiles = [];
+            ufo.vy = 0;
+            ufo.angle = 0;
+            playSound('beam');
+        }
+
+        function triggerBossExplosion() {
+            if (bossState.exploded) return;
+            bossState.exploded = true;
+            playSound('boss_boom');
+
+            const boss = moonBosses[gameData.currentWorld] || moonBosses[0];
+            explosionRings.push({
+                x: bossState.x,
+                y: bossState.y,
+                radius: 12,
+                maxRadius: 130,
+                alpha: 1,
+                color: boss.glowColor
+            });
+
+            const burstColors = [boss.skinColor, boss.glowColor, '#facc15', '#ec4899', '#38bdf8', '#ffffff'];
+            for (let i = 0; i < 55; i++) {
+                const ang = Math.random() * Math.PI * 2;
+                const spd = 2 + Math.random() * 8.5;
+                particles.push({
+                    x: bossState.x,
+                    y: bossState.y,
+                    vx: Math.cos(ang) * spd,
+                    vy: Math.sin(ang) * spd,
+                    alpha: 1,
+                    color: burstColors[i % burstColors.length],
+                    size: 3 + Math.random() * 4
+                });
+            }
+        }
+
         function gameLoop() {
             if (!gameRunning) return;
             updateGame();
@@ -1025,12 +1585,43 @@
         }
 
         function updateGame() {
+            const floorY = canvas.height - 50;
+            const ceilingY = 45;
+
+            // Scena finale in cui il raggio del nostro UFO colpisce e fa esplodere l'alieno
+            if (bossState.dyingSequence) {
+                bossState.dyingTimer++;
+                ufo.y += (canvas.height / 2 - ufo.y) * 0.08;
+
+                if (bossState.dyingTimer === 48) {
+                    triggerBossExplosion();
+                }
+
+                for (let i = particles.length - 1; i >= 0; i--) {
+                    const p = particles[i];
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.alpha -= 0.022;
+                    if (p.alpha <= 0) particles.splice(i, 1);
+                }
+
+                for (let i = explosionRings.length - 1; i >= 0; i--) {
+                    const r = explosionRings[i];
+                    r.radius += 5.5;
+                    r.alpha -= 0.035;
+                    if (r.alpha <= 0) explosionRings.splice(i, 1);
+                }
+
+                if (bossState.dyingTimer >= 92) {
+                    bossState.dyingSequence = false;
+                    stageWin();
+                }
+                return;
+            }
+
             ufo.vy += ufo.gravity;
             ufo.y += ufo.vy;
             ufo.angle = Math.min(Math.max(ufo.vy * 0.035, -0.35), 0.35);
-
-            const floorY = canvas.height - 50;
-            const ceilingY = 45;
 
             if (ufo.y >= floorY - ufo.radius) {
                 ufo.y = floorY - ufo.radius;
@@ -1049,8 +1640,57 @@
             document.getElementById('hud-progress-bar').style.width = percent + '%';
 
             if (distTraveled >= levelLength) {
+                if (gameData.currentStage === 6) {
+                    const boss = moonBosses[gameData.currentWorld] || moonBosses[0];
+                    if (starsCollected < boss.targetStars) {
+                        gameOver(`Ti servivano almeno ${boss.targetStars} stelle per attivare il raggio contro ${boss.name}! (Raccolte: ${starsCollected})`);
+                        return;
+                    }
+                    startBossDeathSequence();
+                    return;
+                }
                 stageWin();
                 return;
+            }
+
+            if (bossState.active) {
+                bossState.y = bossState.baseY + Math.sin(distTraveled * 0.012) * 115;
+                bossState.y = Math.max(ceilingY + 46, Math.min(floorY - 38, bossState.y));
+
+                bossState.attackTimer++;
+                if (bossState.attackTimer >= bossState.attackInterval) {
+                    bossState.attackTimer = 0;
+                    spawnBossAttack();
+                }
+
+                for (let i = bossProjectiles.length - 1; i >= 0; i--) {
+                    const proj = bossProjectiles[i];
+                    proj.x += proj.vx;
+                    proj.y += proj.vy;
+
+                    if (proj.y <= ceilingY + 8 || proj.y >= floorY - 8) {
+                        proj.vy *= -1;
+                    }
+
+                    if (proj.type === 'orb') {
+                        if (Math.hypot(ufo.x - proj.x, ufo.y - proj.y) < ufo.radius + proj.radius - 2) {
+                            const boss = moonBosses[gameData.currentWorld] || moonBosses[0];
+                            gameOver(`Colpito dal colpo lanciato da ${boss.name}!`);
+                            return;
+                        }
+                    } else {
+                        if (ufo.x + ufo.radius > proj.x && ufo.x - ufo.radius < proj.x + proj.width &&
+                            ufo.y + ufo.radius > proj.y && ufo.y - ufo.radius < proj.y + proj.height) {
+                            const boss = moonBosses[gameData.currentWorld] || moonBosses[0];
+                            gameOver(`Colpito dall'ostacolo lanciato da ${boss.name}!`);
+                            return;
+                        }
+                    }
+
+                    if (proj.x < -60) {
+                        bossProjectiles.splice(i, 1);
+                    }
+                }
             }
 
             particles.forEach(p => { p.x += p.vx; p.y += p.vy; p.alpha -= 0.03; });
@@ -1062,6 +1702,7 @@
                     if (Math.hypot(ufo.x - screenX, ufo.y - st.y) < ufo.radius + st.radius) {
                         st.collected = true; starsCollected++;
                         document.getElementById('hud-stars').innerText = starsCollected;
+                        updateBossHud();
                         playSound('star');
                     }
                 }
@@ -1153,27 +1794,107 @@
                 }
             });
 
-            particles.forEach(p => {
-                ctx.save(); ctx.globalAlpha = p.alpha; ctx.fillStyle = p.color;
-                ctx.beginPath(); ctx.arc(p.x, p.y, 2, 0, Math.PI * 2); ctx.fill();
+            bossProjectiles.forEach(proj => {
+                ctx.save();
+                if (proj.type === 'orb') {
+                    ctx.fillStyle = proj.color;
+                    ctx.shadowColor = proj.color;
+                    ctx.shadowBlur = 14;
+                    ctx.beginPath();
+                    ctx.arc(proj.x, proj.y, proj.radius, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.fillStyle = '#ffffff';
+                    ctx.beginPath();
+                    ctx.arc(proj.x, proj.y, proj.radius * 0.42, 0, Math.PI * 2);
+                    ctx.fill();
+                } else {
+                    ctx.fillStyle = proj.color;
+                    ctx.shadowColor = proj.color;
+                    ctx.shadowBlur = 12;
+                    ctx.beginPath();
+                    ctx.moveTo(proj.x, proj.y + proj.height / 2);
+                    ctx.lineTo(proj.x + proj.width, proj.y);
+                    ctx.lineTo(proj.x + proj.width, proj.y + proj.height);
+                    ctx.closePath();
+                    ctx.fill();
+                }
                 ctx.restore();
             });
 
             const activeSkin = skinsConfig.find(s => s.id === gameData.progress.activeSkin) || skinsConfig[0];
+
+            // Raggio finale che parte dal nostro UFO e colpisce l'alieno a destra
+            if (bossState.dyingSequence && !bossState.exploded) {
+                ctx.save();
+                const pulse = 10 + Math.sin(bossState.dyingTimer * 0.7) * 5;
+                ctx.strokeStyle = activeSkin.lightColor;
+                ctx.shadowColor = activeSkin.haloColor;
+                ctx.shadowBlur = 24;
+                ctx.lineWidth = pulse;
+                ctx.beginPath();
+                ctx.moveTo(ufo.x + 18, ufo.y + 4);
+                ctx.lineTo(bossState.x, bossState.y);
+                ctx.stroke();
+
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = Math.max(3, pulse * 0.35);
+                ctx.beginPath();
+                ctx.moveTo(ufo.x + 18, ufo.y + 4);
+                ctx.lineTo(bossState.x, bossState.y);
+                ctx.stroke();
+                ctx.restore();
+            }
+
+            // Anelli d'onda dell'esplosione finale
+            explosionRings.forEach(r => {
+                ctx.save();
+                ctx.globalAlpha = Math.max(0, r.alpha);
+                ctx.strokeStyle = r.color;
+                ctx.shadowColor = r.color;
+                ctx.shadowBlur = 20;
+                ctx.lineWidth = 5;
+                ctx.beginPath();
+                ctx.arc(r.x, r.y, r.radius, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.restore();
+            });
+
+            // Disegna il Boss alieno cartoon fisso a destra
+            if (bossState.active) {
+                const bossData = moonBosses[gameData.currentWorld] || moonBosses[0];
+                const chargeRatio = bossState.dyingSequence ? 0 : (bossState.attackTimer / bossState.attackInterval);
+                drawCartoonAlienBoss(ctx, bossState.x, bossState.y, 1.35, bossData, chargeRatio, bossState.hitShake, bossState.exploded);
+            }
+
+            particles.forEach(p => {
+                ctx.save(); ctx.globalAlpha = Math.max(0, p.alpha); ctx.fillStyle = p.color;
+                ctx.beginPath(); ctx.arc(p.x, p.y, p.size || 2, 0, Math.PI * 2); ctx.fill();
+                ctx.restore();
+            });
+
             drawUFO(ctx, ufo.x, ufo.y, ufo.radius, ufo.angle, activeSkin);
         }
 
         function stopGameLoopOnly() {
             gameRunning = false;
-            stopAllMusic();
             if (animationId) { cancelAnimationFrame(animationId); animationId = null; }
         }
 
         function gameOver(reason) {
             stopGameLoopOnly();
+            stopAllMusic();
             playSound('crash');
-            deathCount++;
-            document.getElementById('hud-deaths').innerText = deathCount;
+
+            const stageKey = `${gameData.currentWorld}-${gameData.currentStage}`;
+            gameData.progress.stageDeaths[stageKey] = (gameData.progress.stageDeaths[stageKey] || 0) + 1;
+            gameData.progress.totalDeaths++;
+            saveProgress();
+            syncProgress();
+
+            const sDeaths = gameData.progress.stageDeaths[stageKey];
+            document.getElementById('hud-deaths').innerText = sDeaths;
+            document.getElementById('go-stage-deaths').innerText = sDeaths;
+            document.getElementById('go-total-deaths').innerText = gameData.progress.totalDeaths;
             document.getElementById('gameover-reason').innerText = reason;
             document.getElementById('screen-gameover').classList.remove('hidden');
         }
@@ -1185,15 +1906,19 @@
 
         function returnToStages() {
             stopGameLoopOnly();
+            stopAllMusic();
             showStages(gameData.currentWorld);
+            startAmbientMusic();
         }
 
         function stageWin() {
             stopGameLoopOnly();
+            stopAllMusic();
             playSound('win');
 
             const wIdx = gameData.currentWorld;
             const sIdx = gameData.currentStage;
+            const stageKey = `${wIdx}-${sIdx}`;
 
             if (!gameData.progress.unlockedStages[wIdx]) {
                 gameData.progress.unlockedStages[wIdx] = [0];
@@ -1209,14 +1934,36 @@
                 }
             }
 
+            const keyBadgeWin = document.getElementById('win-key-earned');
+            let earnedKeyLabel = null;
+
+            if (sIdx === 6) {
+                earnedKeyLabel = moonBosses[wIdx].keyName[currentLang];
+                if (!gameData.progress.keysEarned.includes(wIdx)) {
+                    gameData.progress.keysEarned.push(wIdx);
+                }
+                keyBadgeWin.innerText = earnedKeyLabel;
+                keyBadgeWin.classList.remove('hidden');
+            } else {
+                keyBadgeWin.classList.add('hidden');
+            }
+
             const rewardStars = starsCollected + 12 + (wIdx * 4);
             gameData.progress.stars = (gameData.progress.stars || 0) + rewardStars;
-            localStorage.setItem('unoyd_ufo_ultimate_v6_progress', JSON.stringify(gameData.progress));
+            saveProgress();
             syncProgress();
 
+            const sDeaths = gameData.progress.stageDeaths[stageKey] || 0;
             document.getElementById('win-stars').innerText = rewardStars;
-            document.getElementById('win-deaths').innerText = deathCount;
+            document.getElementById('win-deaths').innerText = sDeaths;
+            document.getElementById('win-total-deaths').innerText = gameData.progress.totalDeaths;
             document.getElementById('screen-win').classList.remove('hidden');
+
+            if (sIdx === 6) {
+                const t = translations[currentLang];
+                const icon = (wIdx === 6) ? "🌍🏆" : worldsConfig[wIdx].icon;
+                showStoryModal(icon, t.worldEndTitles[wIdx], t.worldEndStories[wIdx], earnedKeyLabel);
+            }
         }
 
         function proceedNextStage() {
@@ -1228,6 +1975,7 @@
                 startActiveStage(wIdx + 1, 0);
             } else {
                 showWorldSelect();
+                startAmbientMusic();
             }
         }
 
