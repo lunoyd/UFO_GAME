@@ -80,12 +80,35 @@
     <!-- MAIN APP CONTAINER -->
     <div id="app" class="w-full h-full max-w-[960px] max-h-[540px] flex flex-col relative bg-[#07070b] shadow-2xl overflow-hidden border border-purple-900/40 rounded-2xl">
 
+        <!-- BOSS BRIEFING MODAL (STAGE 7) -->
+        <div id="screen-boss-briefing" class="absolute inset-0 hidden flex flex-col items-center justify-center p-6 z-50 bg-black/95 backdrop-blur-md">
+            <div class="max-w-lg w-full bg-neutral-900/95 border border-red-500/50 p-5 rounded-2xl text-center shadow-2xl flex flex-col gap-3">
+                <div class="text-[10px] font-orbitron uppercase tracking-widest text-red-400">⚠️ ALLERTA BOSS - STAGE 07</div>
+                <div class="flex items-center justify-center gap-4">
+                    <canvas id="bossPreviewCanvas" width="90" height="54" class="w-24 h-14 bg-black/60 rounded-xl border border-neutral-800"></canvas>
+                    <div class="text-left">
+                        <div id="boss-brief-name" class="font-orbitron text-lg font-black text-white">VEXAR-01</div>
+                        <div id="boss-brief-role" class="font-orbitron text-[10px] text-red-300">Sentinella Lunare</div>
+                        <div class="font-orbitron text-xs text-yellow-400 mt-1">
+                            🎯 Obiettivo Sfere: <span id="boss-brief-target" class="font-bold">12</span> ⭐
+                        </div>
+                    </div>
+                </div>
+                <p id="boss-brief-story" class="text-neutral-200 text-xs leading-relaxed bg-black/40 p-3 rounded-xl border border-neutral-800"></p>
+                <div class="flex gap-2 mt-1">
+                    <button onclick="closeBossBriefing()" id="btn-boss-cancel" class="flex-1 py-2.5 bg-neutral-800 hover:bg-neutral-700 font-orbitron text-xs rounded-xl text-neutral-300">INDIETRO</button>
+                    <button onclick="launchBossStage()" id="btn-boss-start" class="flex-1 py-2.5 bg-gradient-to-r from-red-600 to-purple-600 hover:from-red-500 hover:to-purple-500 font-orbitron text-xs font-bold rounded-xl text-white shadow-lg">AFFRONTA ➔</button>
+                </div>
+            </div>
+        </div>
+
         <!-- STORY MODAL OVERLAY -->
         <div id="screen-story" class="absolute inset-0 hidden flex flex-col items-center justify-center p-6 z-50 bg-black/95 backdrop-blur-md">
             <div class="max-w-lg w-full bg-neutral-900/90 border border-purple-500/50 p-6 rounded-2xl text-center shadow-2xl flex flex-col gap-4 box-glow-purple">
                 <div id="story-icon" class="text-4xl animate-pulse">🛸📡</div>
                 <h2 id="story-title" class="font-orbitron text-lg md:text-xl font-bold text-yellow-400 tracking-wider">TRASMISSIONE INTERCETTATA</h2>
                 <p id="story-text" class="text-neutral-200 text-xs md:text-sm leading-relaxed font-normal"></p>
+                <div id="story-key-badge" class="hidden mx-auto px-4 py-2 rounded-xl bg-black/70 border border-yellow-500/40 font-orbitron text-xs font-bold text-yellow-300"></div>
                 <button onclick="closeStoryModal()" id="btn-story-continue" class="mt-2 py-2.5 px-6 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 font-orbitron text-xs font-bold rounded-xl text-white shadow-lg transition transform active:scale-95 mx-auto">
                     CONTINUA MISSIONE ➔
                 </button>
@@ -195,12 +218,15 @@
                         <div>
                             <div id="hud-level-title" class="font-orbitron text-xs font-bold text-purple-300">Luna Classica - Stage 1</div>
                             <div class="text-[10px] text-neutral-300 font-orbitron">
-                                Morti Stage: <span id="hud-deaths" class="text-red-400 font-bold">0</span> | 
-                                Morti Totali: <span id="hud-total-deaths" class="text-red-500 font-bold">0</span>
+                                Morti Livello: <span id="hud-deaths" class="text-red-400 font-bold">0</span> | 
+                                Totali: <span id="hud-total-deaths" class="text-red-500 font-bold">0</span>
                             </div>
                         </div>
                     </div>
-                    <div class="flex items-center gap-3 bg-black/60 px-3 py-1.5 rounded-xl border border-purple-500/30">
+                    <div class="flex items-center gap-2 bg-black/60 px-3 py-1.5 rounded-xl border border-purple-500/30">
+                        <div id="hud-boss-target-wrap" class="hidden text-red-300 font-orbitron text-[10px]">
+                            🎯 <span id="hud-boss-name">BOSS</span>: <span id="hud-boss-progress">0/12</span>
+                        </div>
                         <div class="text-yellow-400 font-orbitron text-xs">⭐ <span id="hud-stars">0</span></div>
                     </div>
                 </div>
@@ -222,13 +248,14 @@
                 <div class="text-4xl animate-bounce">🏆⭐</div>
                 <h2 id="win-title" class="font-orbitron text-xl font-bold text-yellow-400">LIVELLO SUPERATO!</h2>
                 <p id="win-message" class="text-neutral-300 text-xs">Hai completato lo stage con successo!</p>
+                <div id="win-key-earned" class="hidden py-1.5 px-3 rounded-xl bg-yellow-500/15 border border-yellow-400/40 font-orbitron text-xs font-bold text-yellow-300"></div>
                 <div class="flex justify-around bg-neutral-950 p-3 rounded-xl">
                     <div>
                         <div class="text-[10px] text-neutral-500 font-orbitron">STELLE</div>
                         <div id="win-stars" class="text-sm font-bold text-yellow-400">10</div>
                     </div>
                     <div>
-                        <div class="text-[10px] text-neutral-500 font-orbitron">MORTI STAGE</div>
+                        <div class="text-[10px] text-neutral-500 font-orbitron">MORTI LIVELLO</div>
                         <div id="win-deaths" class="text-sm font-bold text-red-400">0</div>
                     </div>
                     <div>
@@ -250,7 +277,7 @@
                 <h2 id="go-title" class="font-orbitron text-xl font-bold text-red-500">DISTRUTTO!</h2>
                 <p id="gameover-reason" class="text-neutral-300 text-xs">Sei stato colpito.</p>
                 <div class="text-[11px] font-orbitron text-red-300 bg-red-950/50 py-1.5 rounded-lg border border-red-500/20">
-                    Morti Stage: <span id="go-stage-deaths" class="font-bold">1</span> | Morti Totali: <span id="go-total-deaths" class="font-bold">1</span>
+                    Morti Livello: <span id="go-stage-deaths" class="font-bold">1</span> | Morti Totali: <span id="go-total-deaths" class="font-bold">1</span>
                 </div>
                 <div class="flex gap-2 mt-1">
                     <button onclick="showStages(gameData.currentWorld)" id="btn-go-stages" class="flex-1 py-2.5 bg-neutral-800 hover:bg-neutral-700 font-orbitron text-xs rounded-xl text-neutral-200">LIVELLI</button>
@@ -264,6 +291,115 @@
     <!-- GAME LOGIC SCRIPT -->
     <script>
         let currentLang = 'it';
+
+        const moonBosses = [
+            {
+                id: 'vexar',
+                name: 'VEXAR-01',
+                domeColor: 'rgba(34, 197, 94, 0.55)',
+                hullColor: '#374151',
+                glowColor: '#22c55e',
+                eyeColor: '#fef08a',
+                targetStars: 12,
+                keyName: { it: '🔑 CHIAVE ROSSA', en: '🔑 RED KEY' },
+                role: { it: 'Sentinella della Luna Base', en: 'Base Moon Sentinel' },
+                brief: {
+                    it: "Ti hanno visto! VEXAR-01 ha bloccato l'uscita della Luna Base. Raccogli almeno 12 sfere energetiche e sconfiggilo per ottenere la Chiave Rossa!",
+                    en: "You've been spotted! VEXAR-01 locked the Base Moon exit. Collect at least 12 energy orbs and defeat it to claim the Red Key!"
+                }
+            },
+            {
+                id: 'kraxon',
+                name: 'KRAXON',
+                domeColor: 'rgba(239, 68, 68, 0.55)',
+                hullColor: '#7f1d1d',
+                glowColor: '#ef4444',
+                eyeColor: '#fca5a5',
+                targetStars: 15,
+                keyName: { it: '🔑 CHIAVE GIALLA', en: '🔑 YELLOW KEY' },
+                role: { it: 'Cacciatore Cremisi', en: 'Crimson Hunter' },
+                brief: {
+                    it: "KRAXON pattuglia i cieli della Luna Rossa! Raccogli 15 sfere luminose lungo la fuga e prendi la Chiave Gialla per aprire la prossima luna.",
+                    en: "KRAXON patrols the Red Moon skies! Collect 15 glowing orbs during the escape and grab the Yellow Key to open the next moon."
+                }
+            },
+            {
+                id: 'solaris',
+                name: 'SOLARIS-X',
+                domeColor: 'rgba(250, 204, 21, 0.6)',
+                hullColor: '#78350f',
+                glowColor: '#eab308',
+                eyeColor: '#ffffff',
+                targetStars: 18,
+                keyName: { it: '🔑 CHIAVE VERDE', en: '🔑 GREEN KEY' },
+                role: { it: 'Inquisitore Solare', en: 'Solar Inquisitor' },
+                brief: {
+                    it: "L'energia di SOLARIS-X brucia l'orbita della Luna Gialla! Raccogli 18 sfere per caricare i tuoi scudi e conquista la Chiave Verde.",
+                    en: "SOLARIS-X's energy scorches the Yellow Moon orbit! Collect 18 orbs to charge your shields and win the Green Key."
+                }
+            },
+            {
+                id: 'toxicor',
+                name: 'TOXICOR',
+                domeColor: 'rgba(16, 185, 129, 0.6)',
+                hullColor: '#064e3b',
+                glowColor: '#10b981',
+                eyeColor: '#bef264',
+                targetStars: 20,
+                keyName: { it: '🔑 CHIAVE AZZURRA', en: '🔑 BLUE KEY' },
+                role: { it: 'Predatore Tossico', en: 'Toxic Predator' },
+                brief: {
+                    it: "TOXICOR ha avvelenato i settori della Luna Verde! Raccogli 20 sfere e supera il suo sbarramento per ottenere la Chiave Azzurra.",
+                    en: "TOXICOR poisoned the Green Moon sectors! Collect 20 orbs and break past its blockade to get the Blue Key."
+                }
+            },
+            {
+                id: 'glacius',
+                name: 'GLACIUS-9',
+                domeColor: 'rgba(56, 189, 248, 0.6)',
+                hullColor: '#0c4a6e',
+                glowColor: '#38bdf8',
+                eyeColor: '#e0f2fe',
+                targetStars: 22,
+                keyName: { it: '🔑 CHIAVE VIOLA', en: '🔑 PURPLE KEY' },
+                role: { it: 'Custode Criogenico', en: 'Cryo Warden' },
+                brief: {
+                    it: "GLACIUS-9 congela l'aria attorno alla Luna Azzurra! Raccogli 22 sfere senza farti colpire e conquista la Chiave Viola.",
+                    en: "GLACIUS-9 freezes the air around the Blue Moon! Collect 22 orbs without getting hit and claim the Purple Key."
+                }
+            },
+            {
+                id: 'malakor',
+                name: 'MALAKOR',
+                domeColor: 'rgba(192, 132, 252, 0.6)',
+                hullColor: '#3b0764',
+                glowColor: '#a855f7',
+                eyeColor: '#f5d0fe',
+                targetStars: 25,
+                keyName: { it: '🔑 CHIAVE DELLA TERRA', en: '🔑 EARTH KEY' },
+                role: { it: "Signore dell'Ombra", en: 'Shadow Lord' },
+                brief: {
+                    it: "MALAKOR è l'ultimo guardiano prima della Terra! Raccogli 25 sfere energetiche e sconfiggilo per ottenere la Chiave della Terra.",
+                    en: "MALAKOR is the final guardian before Earth! Collect 25 energy orbs and defeat it to get the Earth Key."
+                }
+            },
+            {
+                id: 'omega',
+                name: 'OMEGA-PRIME',
+                domeColor: 'rgba(244, 63, 94, 0.65)',
+                hullColor: '#111827',
+                glowColor: '#f43f5e',
+                eyeColor: '#fde047',
+                targetStars: 28,
+                keyName: { it: '🏅 MEDAGLIA DELLA LIBERTÀ', en: '🏅 FREEDOM MEDAL' },
+                role: { it: 'Comandante Supremo', en: 'Supreme Commander' },
+                brief: {
+                    it: "OMEGA-PRIME in persona sbarra la strada verso la Terra! Raccogli 28 sfere per l'iper-salto finale e completa la fuga!",
+                    en: "OMEGA-PRIME itself blocks the path to Earth! Collect 28 orbs for the final hyper-jump and complete the escape!"
+                }
+            }
+        ];
+
         const translations = {
             it: {
                 subtitle: "Geometry Space Escape",
@@ -285,18 +421,34 @@
                 warnDesc: "ŮFØ è progettato in orientamento orizzontale (landscape) per un'esperienza perfetta!",
                 worlds: ["Luna Classica", "Luna Rossa", "Luna Gialla", "Luna Verde", "Luna Azzurra", "Luna Viola", "Terra (Fuga)"],
                 storyIntroTitle: "LA GRANDE FUGA DALL'IMPERO",
-                storyIntroText: "Sei un pilota ribelle a bordo del prototipo sperimentale ŮFØ. L'Impero Galattico ha bloccato tutte le rotte spaziali con campi laser e spuntoni orbitali. Attraversa le 6 Lune sorvegliate, raccogli le stelle energetiche e raggiungi la Terra per metterti in salvo!",
+                storyIntroText: "Sei un pilota ribelle a bordo del prototipo sperimentale ŮFØ. L'Impero Galattico ha bloccato tutte le rotte spaziali con laser, spuntoni e Boss alieni a guardia di ogni luna. Completa il livello 7 di ogni mondo per ottenere la chiave del colore successivo fino alla Terra!",
                 worldStories: [
-                    "Sector 01 - Luna Classica: Sei appena evaso dalla base lunare. Le difese sono ancora in fase di attivazione.",
-                    "Sector 02 - Luna Rossa: L'allarme è scattato! I cannoni laser rossi stanno pattugliando l'atmosfera.",
-                    "Sector 03 - Luna Gialla: Tempeste solari e trappole ad alta velocità bloccano il passaggio verso lo spazio profondo.",
-                    "Sector 04 - Luna Verde: Sei entrato nella zona tossica dell'Impero. I riflessi devono essere fulminei.",
-                    "Sector 05 - Luna Azzurra: Campo criogenico ad alta densità. Mancano solo due salti dimensionali alla Terra!",
-                    "Sector 06 - Luna Viola: La fortezza oscura dell'Imperatore. Supera l'ultimo sbarramento prima dell'atmosfera terrestre!",
-                    "Sector 07 - TERRA (FUGA FINALE): Ci sei quasi! Attraversa l'ultimo scudo orbitale e torna finalmente a casa!"
+                    "Luna Classica: Evadi dalla base! Nel livello 7 ti aspetta VEXAR-01: raccogli 12 sfere per la Chiave Rossa.",
+                    "Luna Rossa: Sei entrato nella zona rossa! Nel livello 7 affronta KRAXON e raccogli 15 sfere per la Chiave Gialla.",
+                    "Luna Gialla: Tempeste solari! Nel livello 7 affronta SOLARIS-X e raccogli 18 sfere per la Chiave Verde.",
+                    "Luna Verde: Nebbie tossiche! Nel livello 7 affronta TOXICOR e raccogli 20 sfere per la Chiave Azzurra.",
+                    "Luna Azzurra: Ghiacci orbitali! Nel livello 7 affronta GLACIUS-9 e raccogli 22 sfere per la Chiave Viola.",
+                    "Luna Viola: Fortezza oscura! Nel livello 7 affronta MALAKOR e raccogli 25 sfere per la Chiave della Terra.",
+                    "Terra (Fuga): Ultimo sbarramento! Nel livello 7 affronta OMEGA-PRIME e raccogli 28 sfere per tornare sulla Terra!"
                 ],
-                storyWinGameTitle: "MISSIONE COMPIUTA: SEI LIBERO!",
-                storyWinGameText: "Incredibile! Hai attraversato tutte le 6 Lune e superato lo scudo terrestre. L'ŮFØ è atterrato sano e salvo sulla Terra!"
+                worldEndTitles: [
+                    "LUNA CLASSICA LIBERATA!",
+                    "LUNA ROSSA LIBERATA!",
+                    "LUNA GIALLA LIBERATA!",
+                    "LUNA VERDE LIBERATA!",
+                    "LUNA AZZURRA ESPUGNATA!",
+                    "LUNA VIOLA ESPUGNATA!",
+                    "FUGA COMPLETATA: SEI SULLA TERRA!"
+                ],
+                worldEndStories: [
+                    "Hai sconfitto VEXAR-01 e ottenuto la Chiave Rossa! La strada verso la Luna Rossa è ora aperta.",
+                    "Hai battuto KRAXON e ottenuto la Chiave Gialla! L'ŮFØ può ora puntare sulla Luna Gialla.",
+                    "Hai superato SOLARIS-X e ottenuto la Chiave Verde! Prossima destinazione: Luna Verde.",
+                    "Hai sconfitto TOXICOR e ottenuto la Chiave Azzurra! L'orbita della Luna Azzurra ti attende.",
+                    "Hai battuto GLACIUS-9 e ottenuto la Chiave Viola! L'ultima luna prima della Terra è sbloccata.",
+                    "Hai sconfitto MALAKOR e ottenuto la Chiave della Terra! L'atmosfera terrestre è finalmente a portata di mano.",
+                    "OMEGA-PRIME è sconfitto! L'ŮFØ atterra trionfante sulla Terra: missione compiuta!"
+                ]
             },
             en: {
                 subtitle: "Geometry Space Escape",
@@ -318,18 +470,34 @@
                 warnDesc: "ŮFØ is designed in landscape orientation for the ultimate gameplay experience!",
                 worlds: ["Classic Moon", "Red Moon", "Yellow Moon", "Green Moon", "Blue Moon", "Purple Moon", "Earth (Escape)"],
                 storyIntroTitle: "THE GREAT ESCAPE",
-                storyIntroText: "You are a rogue pilot aboard the experimental ŮFØ prototype. The Galactic Empire has locked down all space routes with laser grids and orbital spikes. Cross the 6 guarded Moons, collect energy stars, and reach Earth to escape!",
+                storyIntroText: "You are a rogue pilot aboard the experimental ŮFØ prototype. The Galactic Empire blocked all space routes with lasers, spikes, and alien Bosses guarding every moon. Beat Stage 7 of each world to get the next color key all the way to Earth!",
                 worldStories: [
-                    "Sector 01 - Classic Moon: You just broke out of the lunar base. Defenses are still powering up.",
-                    "Sector 02 - Red Moon: The alarm is triggered! Red laser cannons are patrolling the atmosphere.",
-                    "Sector 03 - Yellow Moon: Solar storms and high-speed traps block the way to deep space.",
-                    "Sector 04 - Green Moon: You entered the Empire's toxic zone. Your reflexes must be lightning fast.",
-                    "Sector 05 - Blue Moon: High-density cryogenic field. Only two dimensional jumps left to Earth!",
-                    "Sector 06 - Purple Moon: The Emperor's dark fortress. Break through the final blockade before Earth!",
-                    "Sector 07 - EARTH (FINAL ESCAPE): You're almost there! Cross the final orbital shield and return home!"
+                    "Classic Moon: Break out of the base! VEXAR-01 awaits in Stage 7: collect 12 orbs for the Red Key.",
+                    "Red Moon: You entered the red zone! Face KRAXON in Stage 7 and collect 15 orbs for the Yellow Key.",
+                    "Yellow Moon: Solar storms! Face SOLARIS-X in Stage 7 and collect 18 orbs for the Green Key.",
+                    "Green Moon: Toxic mists! Face TOXICOR in Stage 7 and collect 20 orbs for the Blue Key.",
+                    "Blue Moon: Orbital ice! Face GLACIUS-9 in Stage 7 and collect 22 orbs for the Purple Key.",
+                    "Purple Moon: Dark fortress! Face MALAKOR in Stage 7 and collect 25 orbs for the Earth Key.",
+                    "Earth (Escape): Final blockade! Face OMEGA-PRIME in Stage 7 and collect 28 orbs to return to Earth!"
                 ],
-                storyWinGameTitle: "MISSION ACCOMPLISHED: YOU ARE FREE!",
-                storyWinGameText: "Unbelievable! You crossed all 6 Moons and broke through Earth's shield. The ŮFØ has safely landed on Earth!"
+                worldEndTitles: [
+                    "CLASSIC MOON CLEARED!",
+                    "RED MOON CLEARED!",
+                    "YELLOW MOON CLEARED!",
+                    "GREEN MOON CLEARED!",
+                    "BLUE MOON CONQUERED!",
+                    "PURPLE MOON CONQUERED!",
+                    "ESCAPE COMPLETE: YOU ARE ON EARTH!"
+                ],
+                worldEndStories: [
+                    "You defeated VEXAR-01 and got the Red Key! The path to the Red Moon is now open.",
+                    "You beat KRAXON and got the Yellow Key! ŮFØ can now head to the Yellow Moon.",
+                    "You cleared SOLARIS-X and got the Green Key! Next destination: Green Moon.",
+                    "You defeated TOXICOR and got the Blue Key! The Blue Moon orbit awaits.",
+                    "You beat GLACIUS-9 and got the Purple Key! The last moon before Earth is unlocked.",
+                    "You defeated MALAKOR and got the Earth Key! Earth's atmosphere is finally within reach.",
+                    "OMEGA-PRIME is defeated! ŮFØ lands triumphantly on Earth: mission accomplished!"
+                ]
             }
         };
 
@@ -412,8 +580,10 @@
             progress: JSON.parse(localStorage.getItem('unoyd_ufo_ultimate_v6_progress')) || {
                 unlockedWorlds: [0],
                 unlockedStages: { 0: [0] },
+                keysEarned: [],
                 stars: 0,
                 totalDeaths: 0,
+                stageDeaths: {},
                 storySeen: false,
                 skins: ['classic'],
                 activeSkin: 'classic'
@@ -422,6 +592,12 @@
 
         if (typeof gameData.progress.totalDeaths !== 'number') {
             gameData.progress.totalDeaths = 0;
+        }
+        if (!gameData.progress.stageDeaths || typeof gameData.progress.stageDeaths !== 'object') {
+            gameData.progress.stageDeaths = {};
+        }
+        if (!Array.isArray(gameData.progress.keysEarned)) {
+            gameData.progress.keysEarned = [];
         }
 
         function saveProgress() {
@@ -443,13 +619,50 @@
         }
         syncProgress();
 
+        // BOSS BRIEFING MODAL
+        let pendingBossWorld = 0;
+        let pendingBossStage = 6;
+
+        function openBossBriefing(worldIdx, stageIdx) {
+            pendingBossWorld = worldIdx;
+            pendingBossStage = stageIdx;
+            const boss = moonBosses[worldIdx] || moonBosses[0];
+
+            document.getElementById('boss-brief-name').innerText = boss.name;
+            document.getElementById('boss-brief-role').innerText = boss.role[currentLang];
+            document.getElementById('boss-brief-target').innerText = boss.targetStars;
+            document.getElementById('boss-brief-story').innerText = boss.brief[currentLang];
+            document.getElementById('screen-boss-briefing').classList.remove('hidden');
+
+            const bCanvas = document.getElementById('bossPreviewCanvas');
+            const bCtx = bCanvas.getContext('2d');
+            bCtx.clearRect(0, 0, bCanvas.width, bCanvas.height);
+            drawEnemyAlien(bCtx, 22, 14, 46, 28, boss);
+        }
+
+        function closeBossBriefing() {
+            document.getElementById('screen-boss-briefing').classList.add('hidden');
+        }
+
+        function launchBossStage() {
+            closeBossBriefing();
+            startActiveStage(pendingBossWorld, pendingBossStage);
+        }
+
         // SISTEMA STORIA
         let afterStoryCallback = null;
 
-        function showStoryModal(icon, title, text, callback = null) {
+        function showStoryModal(icon, title, text, keyText = null, callback = null) {
             document.getElementById('story-icon').innerText = icon;
             document.getElementById('story-title').innerText = title;
             document.getElementById('story-text').innerText = text;
+            const badge = document.getElementById('story-key-badge');
+            if (keyText) {
+                badge.innerText = keyText;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
             afterStoryCallback = callback;
             document.getElementById('screen-story').classList.remove('hidden');
         }
@@ -468,7 +681,7 @@
             showStoryModal("🛸📡", t.storyIntroTitle, t.storyIntroText);
         }
 
-        // SISTEMA AUDIO DINAMICO STILE GEOMETRY DASH (OGNI STAGE HA LA SUA CANZONE UNICA)
+        // SISTEMA AUDIO DINAMICO STILE GEOMETRY DASH
         let audioCtx = null;
         let lobbyMusicInterval = null;
         let gameMusicInterval = null;
@@ -481,7 +694,6 @@
             }
         }
 
-        // 1. Musica Chill per la Lobby
         const chillChords = [
             [174.61, 220.00, 261.63, 329.63],
             [164.81, 196.00, 246.94, 293.66],
@@ -521,27 +733,19 @@
             }, 3500);
         }
 
-        // 2. Banco di scale musicali uniche per OGNI STAGE (da 0 a 48) in pieno stile Geometry Dash
         const dashTracks = [
-            // Mondo 0 (Stage 0-6)
             [220, 246, 293, 329, 392, 440], [247, 293, 330, 392, 440, 494], [196, 220, 261, 293, 349, 392],
             [261, 293, 330, 349, 392, 523], [220, 277, 330, 415, 440, 554], [185, 220, 247, 293, 370, 440], [207, 247, 293, 330, 415, 494],
-            // Mondo 1 (Stage 7-13)
             [174, 196, 220, 261, 293, 349], [196, 233, 261, 311, 349, 392], [164, 196, 220, 246, 330, 392],
             [220, 247, 293, 370, 440, 494], [155, 185, 220, 233, 277, 370], [185, 207, 247, 277, 370, 415], [207, 233, 277, 330, 415, 466],
-            // Mondo 2 (Stage 14-20)
             [261, 330, 392, 440, 523, 659], [293, 349, 440, 493, 587, 698], [246, 293, 370, 440, 494, 587],
             [330, 392, 493, 587, 659, 783], [277, 330, 415, 494, 554, 659], [220, 293, 370, 440, 587, 740], [311, 370, 466, 554, 622, 740],
-            // Mondo 3 (Stage 21-27)
             [164, 196, 246, 293, 330, 392], [185, 220, 277, 330, 370, 440], [146, 174, 220, 261, 293, 349],
             [207, 247, 311, 370, 415, 494], [130, 164, 196, 246, 330, 392], [174, 207, 261, 311, 349, 415], [196, 233, 293, 349, 392, 466],
-            // Mondo 4 (Stage 28-34)
             [293, 370, 440, 587, 659, 783], [329, 415, 493, 659, 740, 880], [261, 330, 392, 523, 587, 783],
             [370, 440, 554, 659, 740, 880], [246, 311, 370, 493, 554, 740], [330, 392, 493, 587, 659, 783], [293, 349, 440, 523, 587, 698],
-            // Mondo 5 (Stage 35-41)
             [220, 261, 349, 392, 440, 523], [247, 293, 392, 440, 494, 587], [196, 233, 311, 349, 392, 466],
             [277, 330, 440, 494, 554, 659], [174, 220, 293, 330, 370, 440], [207, 261, 349, 392, 415, 523], [233, 277, 370, 415, 466, 554],
-            // Mondo 6 (Stage 42-48)
             [329, 392, 523, 659, 783, 880], [370, 440, 587, 740, 880, 1046], [293, 370, 493, 587, 740, 880],
             [440, 523, 659, 783, 880, 1046], [330, 415, 554, 659, 783, 987], [392, 493, 622, 740, 880, 1108], [415, 523, 659, 830, 932, 1174]
         ];
@@ -551,10 +755,9 @@
             if (!gameData.soundEnabled) return;
             beatStep = 0;
 
-            // Indice univoco per lo stage attuale (da 0 a 48)
             const trackIdx = (gameData.currentWorld * 7 + gameData.currentStage) % dashTracks.length;
             const scale = dashTracks[trackIdx];
-            const tempo = 175; // BPM energetico da platform game
+            const tempo = 175;
 
             gameMusicInterval = setInterval(() => {
                 if (!gameData.soundEnabled) return;
@@ -563,7 +766,6 @@
                 try {
                     const now = audioCtx.currentTime;
 
-                    // Cassa elettronica pesante (Kick)
                     if (beatStep % 4 === 0) {
                         const kick = audioCtx.createOscillator();
                         const kickGain = audioCtx.createGain();
@@ -578,7 +780,6 @@
                         kick.stop(now + 0.14);
                     }
 
-                    // Hi-Hat ritmato
                     if (beatStep % 2 !== 0) {
                         const hat = audioCtx.createOscillator();
                         const hatGain = audioCtx.createGain();
@@ -592,7 +793,6 @@
                         hat.stop(now + 0.04);
                     }
 
-                    // Melodia Synth Lead unica per questo livello
                     const synth = audioCtx.createOscillator();
                     const synthGain = audioCtx.createGain();
                     synth.type = (beatStep % 8 < 4) ? 'sawtooth' : 'square';
@@ -737,6 +937,7 @@
             document.getElementById('screen-game').classList.add('hidden');
             document.getElementById('screen-win').classList.add('hidden');
             document.getElementById('screen-gameover').classList.add('hidden');
+            document.getElementById('screen-boss-briefing').classList.add('hidden');
             stopGameLoopOnly();
         }
 
@@ -787,6 +988,43 @@
             for (let i = -2; i <= 2; i++) {
                 ctx.beginPath();
                 ctx.arc(i * 7, 4, 1.8, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            ctx.restore();
+        }
+
+        function drawEnemyAlien(ctx, x, y, width, height, bossData = null) {
+            const b = bossData || moonBosses[0];
+            ctx.save();
+            ctx.translate(x + width / 2, y + height / 2);
+
+            ctx.strokeStyle = b.glowColor;
+            ctx.shadowColor = b.glowColor;
+            ctx.shadowBlur = 14;
+            ctx.lineWidth = 2;
+
+            ctx.fillStyle = b.domeColor;
+            ctx.beginPath();
+            ctx.arc(0, -4, Math.min(width, height) * 0.42, Math.PI, 0, false);
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.fillStyle = b.eyeColor;
+            ctx.beginPath();
+            ctx.arc(0, -7, 3.2, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = b.hullColor;
+            ctx.beginPath();
+            ctx.ellipse(0, 3, width / 2, Math.max(7, height * 0.28), 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.fillStyle = b.glowColor;
+            for (let i = -1; i <= 1; i++) {
+                ctx.beginPath();
+                ctx.arc(i * (width * 0.22), 3, 2.2, 0, Math.PI * 2);
                 ctx.fill();
             }
 
@@ -857,6 +1095,9 @@
 
             worldsConfig.forEach((w, idx) => {
                 const worldName = t.worlds[idx];
+                const hasKey = gameData.progress.keysEarned.includes(idx);
+                const keyLabel = hasKey ? moonBosses[idx].keyName[currentLang] : (w.unlocked ? '7 Livelli Lunghi' : '🔒');
+
                 const card = document.createElement('div');
                 card.className = `p-3 rounded-xl border flex flex-col justify-between transition relative h-28 ${
                     w.unlocked ? 'bg-neutral-900 border-purple-500/40 hover:border-purple-400 cursor-pointer shadow-lg' : 'bg-neutral-950/90 border-neutral-800 opacity-60 cursor-not-allowed filter grayscale'
@@ -867,12 +1108,12 @@
                         <span class="font-orbitron text-[9px] text-purple-400">W0${idx + 1}</span>
                         <span class="text-sm">${w.unlocked ? '🔓' : '🔒'}</span>
                     </div>
-                    <div class="text-center my-1">
+                    <div class="text-center my-0.5">
                         <div class="text-2xl mb-0.5">${w.icon}</div>
                         <h3 class="font-orbitron font-bold text-[11px] text-white truncate">${worldName}</h3>
                     </div>
-                    <div class="mt-1 pt-1 border-t border-neutral-800 text-[9px] text-neutral-400 text-center font-orbitron">
-                        7 Livelli Lunghi
+                    <div class="mt-1 pt-1 border-t border-neutral-800 text-[9px] ${hasKey ? 'text-yellow-300 font-bold' : 'text-neutral-400'} text-center font-orbitron truncate">
+                        ${keyLabel}
                     </div>
                 `;
 
@@ -893,18 +1134,30 @@
 
             for (let s = 0; s < 7; s++) {
                 const isUnlocked = unlockedStages.includes(s) || (worldIdx === 0 && s === 0);
+                const stageKey = `${worldIdx}-${s}`;
+                const sDeaths = gameData.progress.stageDeaths[stageKey] || 0;
+                const isBossStage = (s === 6);
+                const bossName = moonBosses[worldIdx].name;
+
                 const card = document.createElement('div');
-                card.className = `p-3 rounded-xl border flex flex-col items-center justify-center transition relative h-20 ${
-                    isUnlocked ? 'bg-neutral-900 border-purple-500/50 hover:border-purple-400 cursor-pointer shadow-lg' : 'bg-neutral-950/90 border-neutral-800 opacity-50 cursor-not-allowed'
+                card.className = `p-2.5 rounded-xl border flex flex-col items-center justify-center transition relative h-22 ${
+                    isUnlocked ? (isBossStage ? 'bg-red-950/40 border-red-500/60 hover:border-red-400 cursor-pointer shadow-lg' : 'bg-neutral-900 border-purple-500/50 hover:border-purple-400 cursor-pointer shadow-lg') : 'bg-neutral-950/90 border-neutral-800 opacity-50 cursor-not-allowed'
                 }`;
 
                 card.innerHTML = `
-                    <div class="font-orbitron font-bold text-sm text-yellow-400 mb-1">#0${s + 1}</div>
-                    <div class="text-xs">${isUnlocked ? '⭐' : '🔒'}</div>
+                    <div class="font-orbitron font-bold text-sm ${isBossStage ? 'text-red-400' : 'text-yellow-400'} mb-0.5">#0${s + 1}</div>
+                    <div class="text-[9px] font-orbitron text-neutral-300 truncate max-w-full">${isBossStage ? '👽 ' + bossName : (isUnlocked ? '⭐' : '🔒')}</div>
+                    ${isUnlocked && sDeaths > 0 ? `<div class="text-[9px] font-orbitron text-red-400 mt-0.5">💀 ${sDeaths}</div>` : ''}
                 `;
 
                 if (isUnlocked) {
-                    card.onclick = () => startActiveStage(worldIdx, s);
+                    card.onclick = () => {
+                        if (isBossStage) {
+                            openBossBriefing(worldIdx, s);
+                        } else {
+                            startActiveStage(worldIdx, s);
+                        }
+                    };
                 }
                 container.appendChild(card);
             }
@@ -924,19 +1177,26 @@
         let levelLength = 7500;
         let starsCollected = 0;
         let currentWorldObj = null;
-        let stageDeathCount = 0;
-        let lastStageKey = "";
+
+        function updateBossHud() {
+            const wrap = document.getElementById('hud-boss-target-wrap');
+            if (gameData.currentStage === 6) {
+                const boss = moonBosses[gameData.currentWorld] || moonBosses[0];
+                wrap.classList.remove('hidden');
+                document.getElementById('hud-boss-name').innerText = boss.name;
+                document.getElementById('hud-boss-progress').innerText = `${starsCollected}/${boss.targetStars}`;
+            } else {
+                wrap.classList.add('hidden');
+            }
+        }
 
         function startActiveStage(worldIdx, stageIdx) {
-            const stageKey = `${worldIdx}-${stageIdx}`;
-            if (lastStageKey !== stageKey) {
-                stageDeathCount = 0;
-                lastStageKey = stageKey;
-            }
-
             gameData.currentWorld = worldIdx;
             gameData.currentStage = stageIdx;
             currentWorldObj = worldsConfig[worldIdx] || worldsConfig[0];
+
+            const stageKey = `${worldIdx}-${stageIdx}`;
+            const currentStageDeaths = gameData.progress.stageDeaths[stageKey] || 0;
 
             hideAllScreens();
             document.getElementById('screen-game').classList.remove('hidden');
@@ -945,7 +1205,7 @@
             const worldName = t.worlds[worldIdx] || "Mondo";
             document.getElementById('hud-level-title').innerText = `${worldName} - Stage ${stageIdx + 1}`;
             
-            document.getElementById('hud-deaths').innerText = stageDeathCount;
+            document.getElementById('hud-deaths').innerText = currentStageDeaths;
             document.getElementById('hud-total-deaths').innerText = gameData.progress.totalDeaths;
 
             const floorY = canvas.height - 50;
@@ -953,6 +1213,7 @@
             distTraveled = 0; starsCollected = 0;
             document.getElementById('hud-stars').innerText = starsCollected;
             document.getElementById('hud-progress-bar').style.width = '0%';
+            updateBossHud();
 
             generateFixedStage(worldIdx, stageIdx);
             gameRunning = true;
@@ -972,7 +1233,7 @@
                 return seed / 233280;
             }
 
-            let spawnX = 600;
+            let spawnX = 550;
             let density = 100 - (wIdx * 6) - (sIdx * 3);
             if (density < 50) density = 50;
 
@@ -981,7 +1242,21 @@
                 const floorHeight = 50;
                 const ceilingHeight = 45;
 
-                if (r < 0.3) {
+                const spawnAlienChance = (sIdx === 6) ? 0.42 : (sIdx >= 4 ? 0.18 : 0);
+
+                if (pseudoRandom() < spawnAlienChance) {
+                    const startY = 120 + pseudoRandom() * 240;
+                    obstacles.push({
+                        x: spawnX,
+                        y: startY,
+                        baseY: startY,
+                        width: 42,
+                        height: 28,
+                        type: 'alien',
+                        phase: pseudoRandom() * Math.PI * 2,
+                        amp: 45 + pseudoRandom() * 45
+                    });
+                } else if (r < 0.3) {
                     obstacles.push({ x: spawnX, y: canvas.height - floorHeight - 42, width: 32, height: 42, type: 'spike' });
                 } else if (r < 0.6) {
                     obstacles.push({ x: spawnX, y: ceilingHeight, width: 32, height: 42, type: 'spike' });
@@ -992,8 +1267,10 @@
                     obstacles.push({ x: spawnX + 45, y: ceilingHeight, width: 28, height: 38, type: 'spike' });
                 }
 
-                if (pseudoRandom() > 0.25) {
-                    stars.push({ x: spawnX + 70, y: pseudoRandom() * 300 + 110, radius: 10, collected: false });
+                // Negli stage 7 generiamo sempre abbondanti sfere per poter raggiungere il target del Boss
+                const starChance = (sIdx === 6) ? 0.05 : 0.25;
+                if (pseudoRandom() > starChance) {
+                    stars.push({ x: spawnX + 65, y: pseudoRandom() * 300 + 110, radius: 10, collected: false });
                 }
                 spawnX += pseudoRandom() * 65 + density;
             }
@@ -1058,6 +1335,13 @@
             document.getElementById('hud-progress-bar').style.width = percent + '%';
 
             if (distTraveled >= levelLength) {
+                if (gameData.currentStage === 6) {
+                    const boss = moonBosses[gameData.currentWorld] || moonBosses[0];
+                    if (starsCollected < boss.targetStars) {
+                        gameOver(`Ti servivano almeno ${boss.targetStars} sfere per sconfiggere ${boss.name}! (Raccolte: ${starsCollected})`);
+                        return;
+                    }
+                }
                 stageWin();
                 return;
             }
@@ -1071,16 +1355,25 @@
                     if (Math.hypot(ufo.x - screenX, ufo.y - st.y) < ufo.radius + st.radius) {
                         st.collected = true; starsCollected++;
                         document.getElementById('hud-stars').innerText = starsCollected;
+                        updateBossHud();
                         playSound('star');
                     }
                 }
             });
 
             obstacles.forEach(obs => {
+                if (obs.type === 'alien') {
+                    obs.y = obs.baseY + Math.sin(distTraveled * 0.015 + obs.phase) * obs.amp;
+                    if (obs.y < ceilingY + 10) obs.y = ceilingY + 10;
+                    if (obs.y > floorY - obs.height - 10) obs.y = floorY - obs.height - 10;
+                }
+
                 const screenX = obs.x - distTraveled + ufo.x;
                 if (ufo.x + ufo.radius > screenX && ufo.x - ufo.radius < screenX + obs.width &&
                     ufo.y + ufo.radius > obs.y && ufo.y - ufo.radius < obs.y + obs.height) {
-                    gameOver("Impatto con le difese aliene!");
+                    const boss = moonBosses[gameData.currentWorld] || moonBosses[0];
+                    const msg = obs.type === 'alien' ? `Colpito dalle truppe di ${boss.name}!` : "Impatto con le difese aliene!";
+                    gameOver(msg);
                 }
             });
         }
@@ -1136,11 +1429,15 @@
                 }
             });
 
+            const bossData = moonBosses[gameData.currentWorld] || moonBosses[0];
+
             obstacles.forEach(obs => {
                 const screenX = obs.x - distTraveled + ufo.x;
                 if (screenX > -80 && screenX < canvas.width + 80) {
-                    ctx.save();
-                    if (obs.type === 'spike') {
+                    if (obs.type === 'alien') {
+                        drawEnemyAlien(ctx, screenX, obs.y, obs.width, obs.height, bossData);
+                    } else if (obs.type === 'spike') {
+                        ctx.save();
                         ctx.fillStyle = '#ef4444';
                         ctx.strokeStyle = '#f87171';
                         ctx.lineWidth = 2;
@@ -1150,15 +1447,17 @@
                         ctx.lineTo(screenX + obs.width, obs.y + obs.height);
                         ctx.closePath();
                         ctx.fill(); ctx.stroke();
+                        ctx.restore();
                     } else {
+                        ctx.save();
                         ctx.fillStyle = '#a855f7';
                         ctx.shadowColor = '#c084fc';
                         ctx.shadowBlur = 15;
                         ctx.fillRect(screenX, obs.y, obs.width, obs.height);
                         ctx.fillStyle = '#ffffff';
                         ctx.fillRect(screenX + 6, obs.y, obs.width - 12, obs.height);
+                        ctx.restore();
                     }
-                    ctx.restore();
                 }
             });
 
@@ -1182,13 +1481,15 @@
             stopAllMusic();
             playSound('crash');
 
-            stageDeathCount++;
+            const stageKey = `${gameData.currentWorld}-${gameData.currentStage}`;
+            gameData.progress.stageDeaths[stageKey] = (gameData.progress.stageDeaths[stageKey] || 0) + 1;
             gameData.progress.totalDeaths++;
             saveProgress();
             syncProgress();
 
-            document.getElementById('hud-deaths').innerText = stageDeathCount;
-            document.getElementById('go-stage-deaths').innerText = stageDeathCount;
+            const sDeaths = gameData.progress.stageDeaths[stageKey];
+            document.getElementById('hud-deaths').innerText = sDeaths;
+            document.getElementById('go-stage-deaths').innerText = sDeaths;
             document.getElementById('go-total-deaths').innerText = gameData.progress.totalDeaths;
             document.getElementById('gameover-reason').innerText = reason;
             document.getElementById('screen-gameover').classList.remove('hidden');
@@ -1213,26 +1514,34 @@
 
             const wIdx = gameData.currentWorld;
             const sIdx = gameData.currentStage;
-            let unlockedNewWorld = false;
-            let gameCompleted = false;
+            const stageKey = `${wIdx}-${sIdx}`;
 
             if (!gameData.progress.unlockedStages[wIdx]) {
                 gameData.progress.unlockedStages[wIdx] = [0];
             }
             if (sIdx + 1 < 7 && !gameData.progress.unlockedStages[wIdx].includes(sIdx + 1)) {
                 gameData.progress.unlockedStages[wIdx].push(sIdx + 1);
-            } else if (sIdx + 1 >= 7) {
-                if (wIdx + 1 < worldsConfig.length) {
-                    if (!gameData.progress.unlockedWorlds.includes(wIdx + 1)) {
-                        gameData.progress.unlockedWorlds.push(wIdx + 1);
-                        unlockedNewWorld = true;
-                    }
-                    if (!gameData.progress.unlockedStages[wIdx + 1]) {
-                        gameData.progress.unlockedStages[wIdx + 1] = [0];
-                    }
-                } else {
-                    gameCompleted = true;
+            } else if (sIdx + 1 >= 7 && wIdx + 1 < worldsConfig.length) {
+                if (!gameData.progress.unlockedWorlds.includes(wIdx + 1)) {
+                    gameData.progress.unlockedWorlds.push(wIdx + 1);
                 }
+                if (!gameData.progress.unlockedStages[wIdx + 1]) {
+                    gameData.progress.unlockedStages[wIdx + 1] = [0];
+                }
+            }
+
+            const keyBadgeWin = document.getElementById('win-key-earned');
+            let earnedKeyLabel = null;
+
+            if (sIdx === 6) {
+                earnedKeyLabel = moonBosses[wIdx].keyName[currentLang];
+                if (!gameData.progress.keysEarned.includes(wIdx)) {
+                    gameData.progress.keysEarned.push(wIdx);
+                }
+                keyBadgeWin.innerText = earnedKeyLabel;
+                keyBadgeWin.classList.remove('hidden');
+            } else {
+                keyBadgeWin.classList.add('hidden');
             }
 
             const rewardStars = starsCollected + 12 + (wIdx * 4);
@@ -1240,16 +1549,16 @@
             saveProgress();
             syncProgress();
 
+            const sDeaths = gameData.progress.stageDeaths[stageKey] || 0;
             document.getElementById('win-stars').innerText = rewardStars;
-            document.getElementById('win-deaths').innerText = stageDeathCount;
+            document.getElementById('win-deaths').innerText = sDeaths;
             document.getElementById('win-total-deaths').innerText = gameData.progress.totalDeaths;
             document.getElementById('screen-win').classList.remove('hidden');
 
-            const t = translations[currentLang];
-            if (gameCompleted) {
-                showStoryModal("🌍🏆", t.storyWinGameTitle, t.storyWinGameText);
-            } else if (unlockedNewWorld) {
-                showStoryModal(worldsConfig[wIdx + 1].icon, t.worlds[wIdx + 1], t.worldStories[wIdx + 1]);
+            if (sIdx === 6) {
+                const t = translations[currentLang];
+                const icon = (wIdx === 6) ? "🌍🏆" : worldsConfig[wIdx].icon;
+                showStoryModal(icon, t.worldEndTitles[wIdx], t.worldEndStories[wIdx], earnedKeyLabel);
             }
         }
 
