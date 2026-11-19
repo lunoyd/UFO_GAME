@@ -172,7 +172,7 @@
             <div id="skins-container" class="scrollable-list grid grid-cols-2 md:grid-cols-4 gap-4 my-auto max-h-[360px] p-2"></div>
 
             <div class="text-center text-xs text-neutral-400 font-orbitron" id="shop-hint">
-                Solo la skin gratis resta invariata — Slime, Galattico, Fuoco, Ghiaccio, Fulmine e Lunoyd Prime con corona!
+                Tutte e 50 le skin restano sempre in posizione fissa mentre scorri o riapri il negozio.
             </div>
         </div>
 
@@ -428,7 +428,7 @@
                 shopBtn: "🛒 NEGOZIO",
                 storyBtn: "📜 STORIA",
                 shopTitle: "NEGOZIO SKIN ŮFØ (50 SKIN)",
-                shopHint: "Solo la skin gratis resta invariata — Slime, Galattico, Fuoco, Ghiaccio, Fulmine e Lunoyd Prime con corona!",
+                shopHint: "Tutte e 50 le skin restano sempre in posizione fissa mentre scorri o riapri il negozio.",
                 mapTitle: "SELEZIONA MONDO (7 MONDI)",
                 mapHint: "Scorri su e giù e clicca su una luna per accedere ai suoi 7 livelli fissi!",
                 touchHint: "Tocca per fluttuare (Pavimento sicuro, soffitto solido)",
@@ -477,7 +477,7 @@
                 shopBtn: "🛒 SHOP",
                 storyBtn: "📜 STORY",
                 shopTitle: "ŮFØ SKIN SHOP (50 SKINS)",
-                shopHint: "Only the free skin stays unchanged — Slime, Galactic, Fire, Ice, Lightning, and Lunoyd Prime with crown!",
+                shopHint: "All 50 skins always stay in a fixed position as you scroll or reopen the shop.",
                 mapTitle: "SELECT WORLD (7 WORLDS)",
                 mapHint: "Scroll up and down and click on a moon to access its 7 fixed stages!",
                 touchHint: "Tap to float (Safe ground, solid ceiling)",
@@ -522,8 +522,48 @@
             }
         };
 
+        const SAVE_KEY = 'unoyd_ufo_ultimate_v10_progress';
+        const LEGACY_KEYS = ['unoyd_ufo_ultimate_v9_progress', 'unoyd_ufo_ultimate_v8_progress', 'unoyd_ufo_ultimate_v7_progress'];
+
+        function loadSavedProgress() {
+            let raw = localStorage.getItem(SAVE_KEY);
+            if (!raw) {
+                for (const k of LEGACY_KEYS) {
+                    const old = localStorage.getItem(k);
+                    if (old) {
+                        raw = old;
+                        localStorage.setItem(SAVE_KEY, old);
+                        break;
+                    }
+                }
+            }
+            const defaults = {
+                unlockedWorlds: [0],
+                unlockedStages: { 0: [0] },
+                keysEarned: [],
+                stars: 0,
+                totalDeaths: 0,
+                stageDeaths: {},
+                storySeen: false,
+                skins: ['classic'],
+                activeSkin: 'classic',
+                lang: 'it'
+            };
+            if (!raw) return defaults;
+            try {
+                const parsed = JSON.parse(raw);
+                return Object.assign({}, defaults, parsed);
+            } catch (e) {
+                return defaults;
+            }
+        }
+
         function setLanguage(lang) {
             currentLang = lang;
+            if (gameData && gameData.progress) {
+                gameData.progress.lang = lang;
+                saveProgress();
+            }
             document.getElementById('lang-btn-it').className = lang === 'it' ? "px-3 py-1 rounded-lg border border-purple-500/50 bg-purple-900/40 font-orbitron text-xs font-bold transition flex items-center gap-1" : "px-3 py-1 rounded-lg border border-neutral-700 bg-neutral-900 font-orbitron text-xs font-bold text-neutral-400 transition flex items-center gap-1";
             document.getElementById('lang-btn-en').className = lang === 'en' ? "px-3 py-1 rounded-lg border border-purple-500/50 bg-purple-900/40 font-orbitron text-xs font-bold transition flex items-center gap-1" : "px-3 py-1 rounded-lg border border-neutral-700 bg-neutral-900 font-orbitron text-xs font-bold text-neutral-400 transition flex items-center gap-1";
             updateUITexts();
@@ -551,7 +591,6 @@
             document.getElementById('warn-desc').innerText = t.warnDesc;
         }
 
-        // 50 skin: nessuna skin stretta; solo 'classic' è invariata; include Slime, Galattico, Fuoco, Ghiaccio, Fulmine e Lunoyd Prime
         const themeCycles = ['slime', 'galactic', 'fire', 'ice', 'lightning'];
         const themePalettes = [
             { body: '#14532d', light: '#4ade80', halo: '#a3e635' },
@@ -615,17 +654,7 @@
             currentWorld: 0,
             currentStage: 0,
             soundEnabled: true,
-            progress: JSON.parse(localStorage.getItem('unoyd_ufo_ultimate_v8_progress')) || {
-                unlockedWorlds: [0],
-                unlockedStages: { 0: [0] },
-                keysEarned: [],
-                stars: 0,
-                totalDeaths: 0,
-                stageDeaths: {},
-                storySeen: false,
-                skins: ['classic'],
-                activeSkin: 'classic'
-            }
+            progress: loadSavedProgress()
         };
 
         if (typeof gameData.progress.totalDeaths !== 'number') {
@@ -637,10 +666,18 @@
         if (!Array.isArray(gameData.progress.keysEarned)) {
             gameData.progress.keysEarned = [];
         }
+        if (gameData.progress.lang === 'en' || gameData.progress.lang === 'it') {
+            currentLang = gameData.progress.lang;
+        }
 
         function saveProgress() {
-            localStorage.setItem('unoyd_ufo_ultimate_v8_progress', JSON.stringify(gameData.progress));
+            try {
+                localStorage.setItem(SAVE_KEY, JSON.stringify(gameData.progress));
+            } catch (e) {}
         }
+
+        window.addEventListener('pagehide', saveProgress);
+        window.addEventListener('beforeunload', saveProgress);
 
         function syncProgress() {
             worldsConfig.forEach((w, idx) => {
@@ -654,6 +691,7 @@
             document.getElementById('lobby-deaths').innerText = gameData.progress.totalDeaths;
             document.getElementById('world-deaths').innerText = gameData.progress.totalDeaths;
             document.getElementById('hud-total-deaths').innerText = gameData.progress.totalDeaths;
+            saveProgress();
         }
         syncProgress();
 
@@ -969,7 +1007,8 @@
         }
         function showShop() {
             syncProgress();
-            renderShop();
+            buildShopOnce();
+            refreshShopState();
             hideAllScreens();
             document.getElementById('screen-shop').classList.remove('hidden');
         }
@@ -1008,7 +1047,6 @@
             drawCraftSkin(pCtx, 60, 33, 18, 0, activeSkin);
         }
 
-        // Skin gratis 'original' identica; altre skin con effetti Slime, Galattico, Fuoco, Ghiaccio, Fulmine e Corona Lunoyd
         function drawCraftSkin(ctx, x, y, radius, angle, skin) {
             ctx.save();
             ctx.translate(x, y);
@@ -1073,7 +1111,6 @@
             }
 
             if (th === 'fire') {
-                // Fiamme vive dietro e attorno allo scafo
                 ctx.fillStyle = '#f97316';
                 ctx.shadowColor = '#ef4444';
                 ctx.shadowBlur = 16;
@@ -1085,21 +1122,18 @@
                 ctx.closePath();
                 ctx.fill();
             } else if (th === 'galactic') {
-                // Anello cosmico con stelle
                 ctx.strokeStyle = '#facc15';
                 ctx.lineWidth = 1.8;
                 ctx.beginPath();
                 ctx.ellipse(0, 3, radius + 8, 11, -0.2, 0, Math.PI * 2);
                 ctx.stroke();
             } else if (th === 'ice') {
-                // Cristalli di ghiaccio
                 ctx.fillStyle = '#bae6fd';
                 ctx.beginPath();
                 ctx.moveTo(-10, -13); ctx.lineTo(-6, -20); ctx.lineTo(-2, -13);
                 ctx.moveTo(4, -13); ctx.lineTo(8, -19); ctx.lineTo(12, -13);
                 ctx.fill();
             } else if (th === 'lightning') {
-                // Saette elettriche laterali
                 ctx.strokeStyle = '#fde047';
                 ctx.shadowColor = '#38bdf8';
                 ctx.shadowBlur = 12;
@@ -1109,7 +1143,6 @@
                 ctx.stroke();
             }
 
-            // Cupola: per Slime è un bulbo viscido gocciolante; per Galattico è una nebulosa stellata
             if (th === 'slime') {
                 const slimeGrad = ctx.createRadialGradient(-3, -10, 2, 0, -4, 15);
                 slimeGrad.addColorStop(0, '#bbf7d0');
@@ -1150,7 +1183,6 @@
                 ctx.fill(); ctx.stroke();
             }
 
-            // Disco metallico
             const grad = ctx.createLinearGradient(-radius, -3, radius, 11);
             grad.addColorStop(0, '#1f2937');
             grad.addColorStop(0.5, skin.bodyColor);
@@ -1174,7 +1206,6 @@
             ctx.restore();
         }
 
-        // 7 Boss tipici di ogni luna con dettagli e proiettili del proprio colore
         function drawMoonBoss(ctx, centerX, centerY, scale, bossData, chargeRatio = 0, hitShake = 0, isExploded = false) {
             if (isExploded) return;
             const b = bossData || moonBosses[0];
@@ -1314,41 +1345,70 @@
             ctx.restore();
         }
 
-        function renderShop() {
+        let shopBuilt = false;
+
+        function buildShopOnce() {
+            if (shopBuilt) return;
             const container = document.getElementById('skins-container');
             container.innerHTML = '';
+
+            skinsConfig.forEach(skin => {
+                const isLunoyd = skin.id === 'lunoyd';
+                const card = document.createElement('div');
+                card.id = `skin-card-${skin.id}`;
+                card.className = isLunoyd
+                    ? 'p-3 rounded-xl border flex flex-col items-center justify-between relative bg-gradient-to-b from-purple-950/90 to-amber-950/40 border-yellow-400/80 shadow-xl'
+                    : 'p-3 rounded-xl border flex flex-col items-center justify-between relative bg-neutral-900 border-neutral-800';
+
+                const titleEl = document.createElement('div');
+                titleEl.className = `font-orbitron font-bold text-[10px] ${isLunoyd ? 'text-yellow-300' : 'text-white'} text-center truncate w-full mb-1`;
+                titleEl.innerText = skin.name;
+
+                const previewWrap = document.createElement('div');
+                previewWrap.className = 'w-22 h-12 flex items-center justify-center my-1';
+                const scCanvas = document.createElement('canvas');
+                scCanvas.width = 92;
+                scCanvas.height = 48;
+                const scCtx = scCanvas.getContext('2d');
+                drawCraftSkin(scCtx, 46, 27, 16, 0, skin);
+                previewWrap.appendChild(scCanvas);
+
+                const actionWrap = document.createElement('div');
+                actionWrap.id = `skin-action-${skin.id}`;
+                actionWrap.className = 'w-full mt-2';
+
+                card.appendChild(titleEl);
+                card.appendChild(previewWrap);
+                card.appendChild(actionWrap);
+                container.appendChild(card);
+            });
+
+            shopBuilt = true;
+        }
+
+        function refreshShopState() {
             skinsConfig.forEach(skin => {
                 const isOwned = gameData.progress.skins.includes(skin.id);
                 const isActive = gameData.progress.activeSkin === skin.id;
                 const isLunoyd = skin.id === 'lunoyd';
+                const card = document.getElementById(`skin-card-${skin.id}`);
+                const actionWrap = document.getElementById(`skin-action-${skin.id}`);
 
-                const card = document.createElement('div');
-                card.className = `p-3 rounded-xl border flex flex-col items-center justify-between transition relative ${
-                    isLunoyd ? 'bg-gradient-to-b from-purple-950/90 to-amber-950/40 border-yellow-400/80 shadow-xl' :
-                    (isActive ? 'bg-purple-950/60 border-purple-500 shadow-lg' : 'bg-neutral-900 border-neutral-800')
-                }`;
+                if (card) {
+                    card.className = isLunoyd
+                        ? 'p-3 rounded-xl border flex flex-col items-center justify-between relative bg-gradient-to-b from-purple-950/90 to-amber-950/40 border-yellow-400/80 shadow-xl'
+                        : (isActive ? 'p-3 rounded-xl border flex flex-col items-center justify-between relative bg-purple-950/60 border-purple-500 shadow-lg' : 'p-3 rounded-xl border flex flex-col items-center justify-between relative bg-neutral-900 border-neutral-800');
+                }
 
-                card.innerHTML = `
-                    <div class="font-orbitron font-bold text-[10px] ${isLunoyd ? 'text-yellow-300' : 'text-white'} text-center truncate w-full mb-1">${skin.name}</div>
-                    <div class="w-22 h-12 flex items-center justify-center my-1" id="skin-prev-${skin.id}"></div>
-                    <div class="w-full mt-2">
-                        ${isActive ? '<span class="block text-center font-orbitron text-[9px] text-purple-300 py-1">ATTIVA</span>' :
-                          isOwned ? `<button onclick="selectSkin('${skin.id}')" class="w-full py-1 bg-neutral-800 hover:bg-neutral-700 text-white font-orbitron text-[9px] rounded-lg">USA</button>` :
-                          `<button onclick="buySkin('${skin.id}')" class="w-full py-1 bg-yellow-600 hover:bg-yellow-500 text-black font-orbitron font-bold text-[9px] rounded-lg">⭐ ${skin.price}</button>`}
-                    </div>
-                `;
-                container.appendChild(card);
-
-                setTimeout(() => {
-                    const scEl = document.getElementById(`skin-prev-${skin.id}`);
-                    if (scEl) {
-                        const scCanvas = document.createElement('canvas');
-                        scCanvas.width = 92; scCanvas.height = 48;
-                        const scCtx = scCanvas.getContext('2d');
-                        drawCraftSkin(scCtx, 46, 27, 16, 0, skin);
-                        scEl.appendChild(scCanvas);
+                if (actionWrap) {
+                    if (isActive) {
+                        actionWrap.innerHTML = '<span class="block text-center font-orbitron text-[9px] text-purple-300 py-1">ATTIVA</span>';
+                    } else if (isOwned) {
+                        actionWrap.innerHTML = `<button onclick="selectSkin('${skin.id}')" class="w-full py-1 bg-neutral-800 hover:bg-neutral-700 text-white font-orbitron text-[9px] rounded-lg">USA</button>`;
+                    } else {
+                        actionWrap.innerHTML = `<button onclick="buySkin('${skin.id}')" class="w-full py-1 bg-yellow-600 hover:bg-yellow-500 text-black font-orbitron font-bold text-[9px] rounded-lg">⭐ ${skin.price}</button>`;
                     }
-                }, 50);
+                }
             });
         }
 
@@ -1356,11 +1416,13 @@
             const skin = skinsConfig.find(s => s.id === skinId);
             if (gameData.progress.stars >= skin.price) {
                 gameData.progress.stars -= skin.price;
-                gameData.progress.skins.push(skinId);
+                if (!gameData.progress.skins.includes(skinId)) {
+                    gameData.progress.skins.push(skinId);
+                }
                 gameData.progress.activeSkin = skinId;
                 saveProgress();
                 syncProgress();
-                renderShop();
+                refreshShopState();
                 playSound('win');
             } else {
                 playSound('crash');
@@ -1370,7 +1432,7 @@
         function selectSkin(skinId) {
             gameData.progress.activeSkin = skinId;
             saveProgress();
-            renderShop();
+            refreshShopState();
         }
 
         function renderWorldsGrid() {
@@ -2088,6 +2150,7 @@
         }
 
         window.addEventListener('load', () => {
+            setLanguage(currentLang);
             showLobby();
         });
     </script>
