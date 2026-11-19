@@ -85,10 +85,10 @@
             <div class="max-w-lg w-full bg-neutral-900/95 border border-red-500/50 p-5 rounded-2xl text-center shadow-2xl flex flex-col gap-3">
                 <div class="text-[10px] font-orbitron uppercase tracking-widest text-red-400">⚠️ BOSS FIGHT - STAGE 07</div>
                 <div class="flex items-center justify-center gap-4">
-                    <canvas id="bossPreviewCanvas" width="136" height="96" class="w-34 h-24 bg-black/70 rounded-xl border border-neutral-800"></canvas>
+                    <canvas id="bossPreviewCanvas" width="144" height="104" class="w-36 h-26 bg-black/75 rounded-xl border border-neutral-800"></canvas>
                     <div class="text-left">
                         <div id="boss-brief-name" class="font-orbitron text-lg font-black text-white">KODOS-X</div>
-                        <div id="boss-brief-role" class="font-orbitron text-[10px] text-red-300">Boss Alieno della Luna Base</div>
+                        <div id="boss-brief-role" class="font-orbitron text-[10px] text-red-300">Guardiano della Luna Classica</div>
                         <div class="font-orbitron text-xs text-yellow-400 mt-1">
                             🎯 Obiettivo Stelle: <span id="boss-brief-target" class="font-bold">12</span> ⭐
                         </div>
@@ -136,8 +136,8 @@
                 <p id="txt-subtitle" class="text-purple-300/80 text-xs md:text-sm tracking-widest uppercase mt-1 font-orbitron">Geometry Space Escape</p>
                 
                 <div class="flex justify-center my-3">
-                    <div class="w-24 h-12 relative flex items-center justify-center animate-pulse">
-                        <canvas id="previewCanvas" width="110" height="56" class="w-24 h-12"></canvas>
+                    <div class="w-28 h-14 relative flex items-center justify-center animate-pulse">
+                        <canvas id="previewCanvas" width="120" height="60" class="w-28 h-14"></canvas>
                     </div>
                 </div>
             </div>
@@ -172,7 +172,7 @@
             <div id="skins-container" class="scrollable-list grid grid-cols-2 md:grid-cols-4 gap-4 my-auto max-h-[360px] p-2"></div>
 
             <div class="text-center text-xs text-neutral-400 font-orbitron" id="shop-hint">
-                Solo la skin gratis resta invariata — 50 skin con forme e dettagli unici e Lunoyd Prime con la corona!
+                Solo la skin gratis resta invariata — Slime, Galattico, Fuoco, Ghiaccio, Fulmine e Lunoyd Prime con corona!
             </div>
         </div>
 
@@ -292,132 +292,131 @@
     <script>
         let currentLang = 'it';
 
-        // 7 Boss alieni con anatomia/forma diversa e resa tridimensionale/realistica
         const moonBosses = [
             {
                 id: 'kodosx',
-                type: 'cephalopod',
+                moonTheme: 'lunar_wraith',
                 name: 'KODOS-X',
-                primary: '#4d7c0f',
-                secondary: '#1a2e05',
-                highlight: '#bef264',
-                accent: '#dc2626',
-                glow: '#ef4444',
-                eye: '#facc15',
+                primary: '#9ca3af',
+                secondary: '#374151',
+                highlight: '#f3f4f6',
+                shotColor: '#e5e7eb',
+                shotCore: '#ffffff',
+                eye: '#fde047',
                 targetStars: 12,
                 keyName: { it: '🔑 CHIAVE ROSSA', en: '🔑 RED KEY' },
-                role: { it: 'Cefalopode Abissale della Luna Base', en: 'Abyssal Cephalopod of Base Moon' },
+                role: { it: 'Spettro Lunare della Luna Classica', en: 'Lunar Wraith of Classic Moon' },
                 brief: {
-                    it: "KODOS-X ti attende con tentacoli muscolari e sguardo rettiliano sulla Luna Base! Raccogli almeno 12 stelle e colpiscilo col raggio per la Chiave Rossa.",
-                    en: "KODOS-X awaits with muscular tentacles and a reptilian glare on Base Moon! Collect at least 12 stars and hit it with your beam for the Red Key."
+                    it: "KODOS-X pattuglia i crateri della Luna Classica sparando dardi e sfere grigio-argento! Raccogli 12 stelle e colpiscilo col raggio per la Chiave Rossa.",
+                    en: "KODOS-X patrols Classic Moon craters firing silver-grey shots! Collect 12 stars and hit it with your beam for the Red Key."
                 }
             },
             {
                 id: 'zorpina',
-                type: 'mantis',
+                moonTheme: 'crimson_valkyrie',
                 name: 'ZORPINA',
-                primary: '#be185d',
-                secondary: '#500724',
-                highlight: '#f9a8d4',
-                accent: '#facc15',
-                glow: '#facc15',
-                eye: '#fef08a',
+                primary: '#ef4444',
+                secondary: '#7f1d1d',
+                highlight: '#fca5a5',
+                shotColor: '#ef4444',
+                shotCore: '#fecaca',
+                eye: '#fde047',
                 targetStars: 15,
                 keyName: { it: '🔑 CHIAVE GIALLA', en: '🔑 YELLOW KEY' },
-                role: { it: 'Predatore Insettoide della Luna Rossa', en: 'Insectoid Predator of Red Moon' },
+                role: { it: 'Predatrice Cremisi della Luna Rossa', en: 'Crimson Stalker of Red Moon' },
                 brief: {
-                    it: "ZORPINA ha carapace chitinoso, mandibole e ali affilate sulla Luna Rossa! Raccogli almeno 15 stelle e annientala col raggio per la Chiave Gialla.",
-                    en: "ZORPINA has a chitin shell, mandibles, and sharp wings over Red Moon! Collect at least 15 stars and wipe her out with your beam for the Yellow Key."
+                    it: "ZORPINA domina i cieli cremisi della Luna Rossa sparando colpi rosso fuoco! Raccogli 15 stelle e annientala col raggio per la Chiave Gialla.",
+                    en: "ZORPINA rules Red Moon skies firing blazing red shots! Collect 15 stars and wipe her out with your beam for the Yellow Key."
                 }
             },
             {
                 id: 'blorgo',
-                type: 'magma',
+                moonTheme: 'solar_colossus',
                 name: 'BLORGO',
-                primary: '#3f3f46',
-                secondary: '#09090b',
-                highlight: '#fb923c',
-                accent: '#ef4444',
-                glow: '#fb923c',
-                eye: '#fde047',
+                primary: '#eab308',
+                secondary: '#713f12',
+                highlight: '#fef08a',
+                shotColor: '#facc15',
+                shotCore: '#ffffff',
+                eye: '#fef9c3',
                 targetStars: 18,
                 keyName: { it: '🔑 CHIAVE VERDE', en: '🔑 GREEN KEY' },
-                role: { it: 'Colosso Magmatico della Luna Gialla', en: 'Magmatic Colossus of Yellow Moon' },
+                role: { it: 'Colosso Solare della Luna Gialla', en: 'Solar Colossus of Yellow Moon' },
                 brief: {
-                    it: "BLORGO è un colosso di roccia fusa attraversato da lava incandescente! Raccogli almeno 18 stelle e colpisci il suo nucleo col raggio per la Chiave Verde.",
-                    en: "BLORGO is a molten rock colossus veined with glowing lava! Collect at least 18 stars and hit its core with your beam for the Green Key."
+                    it: "BLORGO sprigiona energia dorata sulla Luna Gialla sparando colpi giallo abbagliante! Raccogli 18 stelle e colpisci il suo nucleo per la Chiave Verde.",
+                    en: "BLORGO unleashes golden energy over Yellow Moon firing bright yellow shots! Collect 18 stars and hit its core for the Green Key."
                 }
             },
             {
                 id: 'goobz',
-                type: 'leviathan',
+                moonTheme: 'toxic_hydra',
                 name: 'GOOBZ',
-                primary: '#0f766e',
-                secondary: '#042f2e',
-                highlight: '#5eead4',
-                accent: '#a3e635',
-                glow: '#2dd4bf',
+                primary: '#22c55e',
+                secondary: '#14532d',
+                highlight: '#86efac',
+                shotColor: '#22c55e',
+                shotCore: '#dcfce7',
                 eye: '#fef08a',
                 targetStars: 21,
                 keyName: { it: '🔑 CHIAVE AZZURRA', en: '🔑 BLUE KEY' },
-                role: { it: 'Leviatano Viscido della Luna Verde', en: 'Slimy Leviathan of Green Moon' },
+                role: { it: 'Bestia Tossica della Luna Verde', en: 'Toxic Beast of Green Moon' },
                 brief: {
-                    it: "GOOBZ ha pelle marezzata, pinne dorsali e fauci spalancate sulla Luna Verde! Raccogli almeno 21 stelle e fallo esplodere col raggio per la Chiave Azzurra.",
-                    en: "GOOBZ has mottled skin, dorsal fins, and wide jaws over Green Moon! Collect at least 21 stars and blow it up with your beam for the Blue Key."
+                    it: "GOOBZ infesta le nebbie della Luna Verde sparando colpi verde smeraldo! Raccogli 21 stelle e fallo esplodere col raggio per la Chiave Azzurra.",
+                    en: "GOOBZ haunts Green Moon mists firing emerald green shots! Collect 21 stars and blow it up with your beam for the Blue Key."
                 }
             },
             {
                 id: 'snorble',
-                type: 'horned_titan',
+                moonTheme: 'cryo_behemoth',
                 name: 'SNORBLE',
-                primary: '#6b21a8',
-                secondary: '#2e1065',
-                highlight: '#d8b4fe',
-                accent: '#f43f5e',
-                glow: '#e879f9',
-                eye: '#fda4af',
+                primary: '#0ea5e9',
+                secondary: '#0c4a6e',
+                highlight: '#7dd3fc',
+                shotColor: '#38bdf8',
+                shotCore: '#e0f2fe',
+                eye: '#ffffff',
                 targetStars: 24,
                 keyName: { it: '🔑 CHIAVE VIOLA', en: '🔑 PURPLE KEY' },
-                role: { it: 'Titano Cornuto della Luna Azzurra', en: 'Horned Titan of Blue Moon' },
+                role: { it: 'Titano Glaciale della Luna Azzurra', en: 'Cryo Behemoth of Blue Moon' },
                 brief: {
-                    it: "SNORBLE carica con enormi corna ricurve e muso corazzato sulla Luna Azzurra! Raccogli almeno 24 stelle e fulminalo col raggio per la Chiave Viola.",
-                    en: "SNORBLE charges with massive curved horns and an armored snout over Blue Moon! Collect at least 24 stars and zap it with your beam for the Purple Key."
+                    it: "SNORBLE congela l'orbita della Luna Azzurra sparando colpi azzurro ghiaccio! Raccogli 24 stelle e fulminalo col raggio per la Chiave Viola.",
+                    en: "SNORBLE freezes Blue Moon orbit firing icy blue shots! Collect 24 stars and zap it with your beam for the Purple Key."
                 }
             },
             {
                 id: 'mumbo',
-                type: 'eyeball_horror',
+                moonTheme: 'void_watcher',
                 name: 'MUMBO-3',
-                primary: '#b45309',
-                secondary: '#451a03',
-                highlight: '#fde68a',
-                accent: '#dc2626',
-                glow: '#facc15',
-                eye: '#ffffff',
+                primary: '#a855f7',
+                secondary: '#4c1d95',
+                highlight: '#e9d5ff',
+                shotColor: '#a855f7',
+                shotCore: '#f3e8ff',
+                eye: '#fde047',
                 targetStars: 27,
                 keyName: { it: '🔑 CHIAVE DELLA TERRA', en: '🔑 EARTH KEY' },
-                role: { it: 'Orrore Oculare della Luna Viola', en: 'Ocular Horror of Purple Moon' },
+                role: { it: 'Custode del Vuoto della Luna Viola', en: 'Void Watcher of Purple Moon' },
                 brief: {
-                    it: "MUMBO-3 domina con un grande occhio realistico e viticci minacciosi! Raccogli almeno 27 stelle e colpiscilo col raggio per la Chiave della Terra.",
-                    en: "MUMBO-3 dominates with a detailed giant eye and menacing tendrils! Collect at least 27 stars and blast it with your beam for the Earth Key."
+                    it: "MUMBO-3 sorveglia la Luna Viola sparando colpi viola magnetici! Raccogli 27 stelle e colpiscilo col raggio per la Chiave della Terra.",
+                    en: "MUMBO-3 guards Purple Moon firing purple shots! Collect 27 stars and blast it with your beam for the Earth Key."
                 }
             },
             {
                 id: 'king_klax',
-                type: 'overlord',
+                moonTheme: 'terra_sovereign',
                 name: 'RE KLAX',
-                primary: '#047857',
-                secondary: '#022c22',
-                highlight: '#6ee7b7',
-                accent: '#f43f5e',
-                glow: '#fb7185',
+                primary: '#10b981',
+                secondary: '#064e3b',
+                highlight: '#facc15',
+                shotColor: '#34d399',
+                shotCore: '#fef08a',
                 eye: '#fef08a',
                 targetStars: 30,
                 keyName: { it: '🏅 MEDAGLIA DELLA LIBERTÀ', en: '🏅 FREEDOM MEDAL' },
-                role: { it: 'Signore Supremo Finale', en: 'Final Supreme Overlord' },
+                role: { it: 'Signore Supremo della Fuga Terrestre', en: 'Supreme Lord of Earth Escape' },
                 brief: {
-                    it: "RE KLAX è il signore alieno finale con elmo coronato e armatura scura! Raccogli almeno 30 stelle e spazzalo via col raggio finale per tornare sulla Terra!",
-                    en: "KING KLAX is the final alien overlord with a crowned helm and dark armor! Collect at least 30 stars and wipe it out with your final beam to return to Earth!"
+                    it: "RE KLAX è l'ultimo ostacolo prima della Terra e spara colpi verde-oro! Raccogli 30 stelle e spazzalo via col raggio finale per tornare a casa!",
+                    en: "KING KLAX is the final boss before Earth firing green-gold shots! Collect 30 stars and wipe it out with your final beam to go home!"
                 }
             }
         ];
@@ -429,7 +428,7 @@
                 shopBtn: "🛒 NEGOZIO",
                 storyBtn: "📜 STORIA",
                 shopTitle: "NEGOZIO SKIN ŮFØ (50 SKIN)",
-                shopHint: "Solo la skin gratis resta invariata — 50 skin con strutture diverse e Lunoyd Prime con la corona!",
+                shopHint: "Solo la skin gratis resta invariata — Slime, Galattico, Fuoco, Ghiaccio, Fulmine e Lunoyd Prime con corona!",
                 mapTitle: "SELEZIONA MONDO (7 MONDI)",
                 mapHint: "Scorri su e giù e clicca su una luna per accedere ai suoi 7 livelli fissi!",
                 touchHint: "Tocca per fluttuare (Pavimento sicuro, soffitto solido)",
@@ -443,15 +442,15 @@
                 warnDesc: "ŮFØ è progettato in orientamento orizzontale (landscape) per un'esperienza perfetta!",
                 worlds: ["Luna Classica", "Luna Rossa", "Luna Gialla", "Luna Verde", "Luna Azzurra", "Luna Viola", "Terra (Fuga)"],
                 storyIntroTitle: "LA GRANDE FUGA DALL'IMPERO",
-                storyIntroText: "Sei un pilota ribelle a bordo del prototipo sperimentale ŮFØ. L'Impero Galattico ha bloccato tutte le rotte spaziali con laser, spuntoni e creature aliene feroci a guardia di ogni luna. Raccogli le stelle, spara il raggio finale e conquista la chiave di ogni luna fino alla Terra!",
+                storyIntroText: "Sei un pilota ribelle a bordo del prototipo sperimentale ŮFØ. Ogni luna ha il suo guardiano alieno che spara proiettili del proprio colore. Raccogli le stelle, spara il raggio finale e conquista la chiave di ogni luna fino alla Terra!",
                 worldStories: [
-                    "Luna Classica: Evadi dalla base! Nel livello 7 affronti KODOS-X: raccogli 12 stelle per la Chiave Rossa.",
-                    "Luna Rossa: Zona rossa! Nel livello 7 affronti ZORPINA e raccogli 15 stelle per la Chiave Gialla.",
-                    "Luna Gialla: Tempeste solari! Nel livello 7 affronti BLORGO e raccogli 18 stelle per la Chiave Verde.",
-                    "Luna Verde: Nebbie tossiche! Nel livello 7 affronti GOOBZ e raccogli 21 stelle per la Chiave Azzurra.",
-                    "Luna Azzurra: Ghiacci orbitali! Nel livello 7 affronti SNORBLE e raccogli 24 stelle per la Chiave Viola.",
-                    "Luna Viola: Fortezza oscura! Nel livello 7 affronti MUMBO-3 e raccogli 27 stelle per la Chiave della Terra.",
-                    "Terra (Fuga): Ultimo scontro! Nel livello 7 affronti RE KLAX e raccogli 30 stelle per tornare sulla Terra!"
+                    "Luna Classica: Affronti KODOS-X che spara colpi grigio-argento! Raccogli 12 stelle per la Chiave Rossa.",
+                    "Luna Rossa: Affronti ZORPINA che spara colpi rossi! Raccogli 15 stelle per la Chiave Gialla.",
+                    "Luna Gialla: Affronti BLORGO che spara colpi gialli! Raccogli 18 stelle per la Chiave Verde.",
+                    "Luna Verde: Affronti GOOBZ che spara colpi verdi! Raccogli 21 stelle per la Chiave Azzurra.",
+                    "Luna Azzurra: Affronti SNORBLE che spara colpi azzurri! Raccogli 24 stelle per la Chiave Viola.",
+                    "Luna Viola: Affronti MUMBO-3 che spara colpi viola! Raccogli 27 stelle per la Chiave della Terra.",
+                    "Terra (Fuga): Affronti RE KLAX che spara colpi verde-oro! Raccogli 30 stelle per tornare sulla Terra!"
                 ],
                 worldEndTitles: [
                     "KODOS-X POLVERIZZATO!",
@@ -478,7 +477,7 @@
                 shopBtn: "🛒 SHOP",
                 storyBtn: "📜 STORY",
                 shopTitle: "ŮFØ SKIN SHOP (50 SKINS)",
-                shopHint: "Only the free skin stays unchanged — 50 skins with distinct structures and Lunoyd Prime wearing a crown!",
+                shopHint: "Only the free skin stays unchanged — Slime, Galactic, Fire, Ice, Lightning, and Lunoyd Prime with crown!",
                 mapTitle: "SELECT WORLD (7 WORLDS)",
                 mapHint: "Scroll up and down and click on a moon to access its 7 fixed stages!",
                 touchHint: "Tap to float (Safe ground, solid ceiling)",
@@ -492,15 +491,15 @@
                 warnDesc: "ŮFØ is designed in landscape orientation for the ultimate gameplay experience!",
                 worlds: ["Classic Moon", "Red Moon", "Yellow Moon", "Green Moon", "Blue Moon", "Purple Moon", "Earth (Escape)"],
                 storyIntroTitle: "THE GREAT ESCAPE",
-                storyIntroText: "You are a rogue pilot aboard the experimental ŮFØ prototype. The Galactic Empire blocked all space routes with lasers, spikes, and fierce alien creatures guarding every moon. Collect stars, fire the final beam, and claim each moon's key all the way to Earth!",
+                storyIntroText: "You are a rogue pilot aboard the experimental ŮFØ prototype. Each moon has its own alien guardian firing projectiles in its signature color. Collect stars, fire the final beam, and claim each moon's key all the way to Earth!",
                 worldStories: [
-                    "Classic Moon: Break out of the base! Face KODOS-X in Stage 7: collect 12 stars for the Red Key.",
-                    "Red Moon: Red zone! Face ZORPINA in Stage 7 and collect 15 stars for the Yellow Key.",
-                    "Yellow Moon: Solar storms! Face BLORGO in Stage 7 and collect 18 stars for the Green Key.",
-                    "Green Moon: Toxic mists! Face GOOBZ in Stage 7 and collect 21 stars for the Blue Key.",
-                    "Blue Moon: Orbital ice! Face SNORBLE in Stage 7 and collect 24 stars for the Purple Key.",
-                    "Purple Moon: Dark fortress! Face MUMBO-3 in Stage 7 and collect 27 stars for the Earth Key.",
-                    "Earth (Escape): Final clash! Face KING KLAX in Stage 7 and collect 30 stars to return to Earth!"
+                    "Classic Moon: Face KODOS-X firing silver-grey shots! Collect 12 stars for the Red Key.",
+                    "Red Moon: Face ZORPINA firing red shots! Collect 15 stars for the Yellow Key.",
+                    "Yellow Moon: Face BLORGO firing yellow shots! Collect 18 stars for the Green Key.",
+                    "Green Moon: Face GOOBZ firing green shots! Collect 21 stars for the Blue Key.",
+                    "Blue Moon: Face SNORBLE firing icy blue shots! Collect 24 stars for the Purple Key.",
+                    "Purple Moon: Face MUMBO-3 firing purple shots! Collect 27 stars for the Earth Key.",
+                    "Earth (Escape): Face KING KLAX firing green-gold shots! Collect 30 stars to return to Earth!"
                 ],
                 worldEndTitles: [
                     "KODOS-X VAPORIZED!",
@@ -552,61 +551,55 @@
             document.getElementById('warn-desc').innerText = t.warnDesc;
         }
 
-        // 50 skin: solo 'classic' è l'originale intatto; le altre hanno forme/strutture/accessori diversi sul canvas
-        const ufoParts = ['fins', 'spikes', 'ring', 'thruster', 'visor'];
-        const rawSkins = [
-            { id: 'classic', name: 'Classic ŮFØ', price: 0, part: 'original', bodyColor: '#9ca3af', lightColor: '#a855f7', haloColor: '#eab308' },
-            { id: 'cyber', name: 'Cyber Interceptor', price: 35, part: 'fins', bodyColor: '#0f172a', lightColor: '#06b6d4', haloColor: '#22d3ee' },
-            { id: 'golden', name: 'Solar Ring', price: 70, part: 'ring', bodyColor: '#78350f', lightColor: '#facc15', haloColor: '#fef08a' },
-            { id: 'emerald', name: 'Viper Thruster', price: 110, part: 'thruster', bodyColor: '#064e3b', lightColor: '#10b981', haloColor: '#34d399' },
-            { id: 'ruby', name: 'Crimson Spikes', price: 155, part: 'spikes', bodyColor: '#7f1d1d', lightColor: '#ef4444', haloColor: '#f87171' },
-            { id: 'plasma', name: 'Plasma Visor', price: 205, part: 'visor', bodyColor: '#3b0764', lightColor: '#c084fc', haloColor: '#e879f9' },
-            { id: 'obsidian', name: 'Stealth Fins', price: 260, part: 'fins', bodyColor: '#09090b', lightColor: '#94a3b8', haloColor: '#e2e8f0' },
-            { id: 'stalker', name: 'Venom Orbit', price: 320, part: 'ring', bodyColor: '#14532d', lightColor: '#4ade80', haloColor: '#a3e635' },
-            { id: 'royal', name: 'Sovereign Jet', price: 385, part: 'thruster', bodyColor: '#4c1d95', lightColor: '#a855f7', haloColor: '#facc15' },
-            { id: 'solar', name: 'Magma Barb', price: 455, part: 'spikes', bodyColor: '#7c2d12', lightColor: '#fb923c', haloColor: '#facc15' },
-            { id: 'frost', name: 'Cryo Visor', price: 530, part: 'visor', bodyColor: '#0c4a6e', lightColor: '#38bdf8', haloColor: '#bae6fd' },
-            { id: 'quantum', name: 'Quantum Wing', price: 610, part: 'fins', bodyColor: '#134e4a', lightColor: '#2dd4bf', haloColor: '#5eead4' },
-            { id: 'titanium', name: 'Aegis Halo', price: 695, part: 'ring', bodyColor: '#1e293b', lightColor: '#e2e8f0', haloColor: '#38bdf8' },
-            { id: 'darkmatter', name: 'Void Booster', price: 785, part: 'thruster', bodyColor: '#020617', lightColor: '#818cf8', haloColor: '#c084fc' },
-            { id: 'drifter', name: 'Star Thorn', price: 880, part: 'spikes', bodyColor: '#1d4ed8', lightColor: '#60a5fa', haloColor: '#fde047' },
-            { id: 'crimson', name: 'Reaper Shield', price: 980, part: 'visor', bodyColor: '#450a0a', lightColor: '#f87171', haloColor: '#ef4444' },
-            { id: 'phantom', name: 'Astral Swept', price: 1085, part: 'fins', bodyColor: '#2e1065', lightColor: '#d8b4fe', haloColor: '#a855f7' },
-            { id: 'supernova', name: 'Nova Gyro', price: 1195, part: 'ring', bodyColor: '#701a75', lightColor: '#f472b6', haloColor: '#facc15' },
-            { id: 'eclipse', name: 'Eclipse Drive', price: 1310, part: 'thruster', bodyColor: '#172554', lightColor: '#93c5fd', haloColor: '#f43f5e' },
-            { id: 'galaxy', name: 'Galaxy Claws', price: 1430, part: 'spikes', bodyColor: '#09090b', lightColor: '#facc15', haloColor: '#a855f7' },
-            { id: 'nebula', name: 'Nebula Lens', price: 1555, part: 'visor', bodyColor: '#4a044e', lightColor: '#f0abfc', haloColor: '#22d3ee' },
-            { id: 'vortex', name: 'Vortex Blades', price: 1685, part: 'fins', bodyColor: '#042f2e', lightColor: '#2dd4bf', haloColor: '#f43f5e' },
-            { id: 'inferno', name: 'Inferno Hoop', price: 1820, part: 'ring', bodyColor: '#431407', lightColor: '#fdba74', haloColor: '#ef4444' },
-            { id: 'zenith', name: 'Zenith Flame', price: 1960, part: 'thruster', bodyColor: '#1e1b4b', lightColor: '#a5b4fc', haloColor: '#facc15' },
-            { id: 'neutron', name: 'Neutron Prongs', price: 2105, part: 'spikes', bodyColor: '#18181b', lightColor: '#fef08a', haloColor: '#f97316' },
-            { id: 'hyperion', name: 'Hyperion Optics', price: 2255, part: 'visor', bodyColor: '#27272a', lightColor: '#fb7185', haloColor: '#facc15' },
-            { id: 'pulsar', name: 'Pulsar Struts', price: 2410, part: 'fins', bodyColor: '#064e3b', lightColor: '#6ee7b7', haloColor: '#38bdf8' },
-            { id: 'quasar', name: 'Quasar Disc', price: 2570, part: 'ring', bodyColor: '#4a044e', lightColor: '#f5d0fe', haloColor: '#fb7185' },
-            { id: 'singularity', name: 'Singularity Jet', price: 2735, part: 'thruster', bodyColor: '#000000', lightColor: '#ffffff', haloColor: '#a855f7' },
-            { id: 'cobalt', name: 'Cobalt Spikes', price: 2905, part: 'spikes', bodyColor: '#1e3a8a', lightColor: '#38bdf8', haloColor: '#22d3ee' },
-            { id: 'magma', name: 'Magma HUD', price: 3080, part: 'visor', bodyColor: '#7c2d12', lightColor: '#ef4444', haloColor: '#facc15' },
-            { id: 'venom', name: 'Venom Fins', price: 3260, part: 'fins', bodyColor: '#14532d', lightColor: '#84cc16', haloColor: '#22c55e' },
-            { id: 'mirage', name: 'Mirage Ring', price: 3445, part: 'ring', bodyColor: '#581c87', lightColor: '#e879f9', haloColor: '#38bdf8' },
-            { id: 'aether', name: 'Aether Thruster', price: 3635, part: 'thruster', bodyColor: '#0f172a', lightColor: '#a78bfa', haloColor: '#f472b6' },
-            { id: 'ironclad', name: 'Ironclad Barbs', price: 3830, part: 'spikes', bodyColor: '#334155', lightColor: '#f8fafc', haloColor: '#ef4444' },
-            { id: 'specter', name: 'Specter Visor', price: 4030, part: 'visor', bodyColor: '#09090b', lightColor: '#c084fc', haloColor: '#22d3ee' },
-            { id: 'helios', name: 'Helios Wings', price: 4235, part: 'fins', bodyColor: '#78350f', lightColor: '#fde047', haloColor: '#fb923c' },
-            { id: 'glacier', name: 'Glacier Orbit', price: 4445, part: 'ring', bodyColor: '#082f49', lightColor: '#67e8f9', haloColor: '#e0f2fe' },
-            { id: 'crimson_x', name: 'Blood Pulse', price: 4660, part: 'thruster', bodyColor: '#4c0519', lightColor: '#fb7185', haloColor: '#facc15' },
-            { id: 'jade', name: 'Jade Fangs', price: 4880, part: 'spikes', bodyColor: '#065f46', lightColor: '#34d399', haloColor: '#facc15' },
-            { id: 'cyber_gold', name: 'Auric Visor', price: 5105, part: 'visor', bodyColor: '#422006', lightColor: '#facc15', haloColor: '#38bdf8' },
-            { id: 'omega', name: 'Omega Fins', price: 5335, part: 'fins', bodyColor: '#171717', lightColor: '#f43f5e', haloColor: '#a855f7' },
-            { id: 'astral_king', name: 'Astral Ring', price: 5570, part: 'ring', bodyColor: '#1e1b4b', lightColor: '#c084fc', haloColor: '#fde047' },
-            { id: 'neon_blaze', name: 'Blaze Jet', price: 5810, part: 'thruster', bodyColor: '#311042', lightColor: '#f472b6', haloColor: '#22d3ee' },
-            { id: 'chrono', name: 'Chrono Spikes', price: 6055, part: 'spikes', bodyColor: '#042f2e', lightColor: '#5eead4', haloColor: '#c084fc' },
-            { id: 'storm', name: 'Storm Visor', price: 6305, part: 'visor', bodyColor: '#1e293b', lightColor: '#fde047', haloColor: '#38bdf8' },
-            { id: 'dread', name: 'Dread Fins', price: 6560, part: 'fins', bodyColor: '#18181b', lightColor: '#ef4444', haloColor: '#f87171' },
-            { id: 'celestial', name: 'Celestial Ring', price: 6820, part: 'ring', bodyColor: '#2e1065', lightColor: '#fef08a', haloColor: '#e879f9' },
-            { id: 'mythic', name: 'Mythic Booster', price: 7100, part: 'thruster', bodyColor: '#09090b', lightColor: '#22d3ee', haloColor: '#facc15' },
-            { id: 'lunoyd', name: '👑 Lunoyd Prime', price: 7500, part: 'lunoyd', bodyColor: '#2e1065', lightColor: '#c084fc', haloColor: '#facc15' }
+        // 50 skin: nessuna skin stretta; solo 'classic' è invariata; include Slime, Galattico, Fuoco, Ghiaccio, Fulmine e Lunoyd Prime
+        const themeCycles = ['slime', 'galactic', 'fire', 'ice', 'lightning'];
+        const themePalettes = [
+            { body: '#14532d', light: '#4ade80', halo: '#a3e635' },
+            { body: '#1e1b4b', light: '#c084fc', halo: '#facc15' },
+            { body: '#7c2d12', light: '#fb923c', halo: '#fef08a' },
+            { body: '#0c4a6e', light: '#38bdf8', halo: '#e0f2fe' },
+            { body: '#312e81', light: '#fde047', halo: '#38bdf8' }
         ];
-        const skinsConfig = rawSkins;
+
+        const skinsConfig = [
+            { id: 'classic', name: 'Classic ŮFØ', price: 0, theme: 'original', bodyColor: '#9ca3af', lightColor: '#a855f7', haloColor: '#eab308' },
+            { id: 'ufo_slime', name: '🧪 UFO Slime', price: 40, theme: 'slime', bodyColor: '#15803d', lightColor: '#4ade80', haloColor: '#bef264' },
+            { id: 'ufo_galactic', name: '🌌 UFO Galattico', price: 85, theme: 'galactic', bodyColor: '#1e1b4b', lightColor: '#c084fc', haloColor: '#facc15' },
+            { id: 'ufo_fire', name: '🔥 UFO di Fuoco', price: 135, theme: 'fire', bodyColor: '#7c2d12', lightColor: '#fb923c', haloColor: '#fde047' },
+            { id: 'ufo_ice', name: '❄️ UFO Ghiaccio', price: 190, theme: 'ice', bodyColor: '#0c4a6e', lightColor: '#38bdf8', haloColor: '#e0f2fe' },
+            { id: 'ufo_bolt', name: '⚡ UFO Fulmine', price: 250, theme: 'lightning', bodyColor: '#312e81', lightColor: '#fde047', haloColor: '#38bdf8' }
+        ];
+
+        const extraTitles = [
+            'Slime', 'Galattico', 'Fuoco', 'Ghiaccio', 'Fulmine',
+            'Nebulosa', 'Magma', 'Cristallo', 'Plasma', 'Cosmo',
+            'Smeraldo', 'Supernova', 'Brina', 'Saetta', 'Astro'
+        ];
+
+        for (let i = 6; i < 49; i++) {
+            const tIdx = (i - 6) % themeCycles.length;
+            const p = themePalettes[tIdx];
+            const label = extraTitles[(i - 6) % extraTitles.length];
+            skinsConfig.push({
+                id: `skin_${i + 1}`,
+                name: `ŮFØ ${label} #${i + 1}`,
+                price: 300 + (i - 5) * 165,
+                theme: themeCycles[tIdx],
+                bodyColor: p.body,
+                lightColor: p.light,
+                haloColor: p.halo
+            });
+        }
+
+        skinsConfig.push({
+            id: 'lunoyd',
+            name: '👑 Lunoyd Prime',
+            price: 7500,
+            theme: 'lunoyd',
+            bodyColor: '#2e1065',
+            lightColor: '#c084fc',
+            haloColor: '#facc15'
+        });
 
         const worldsConfig = [
             { id: 0, unlocked: true, bg: "#0d0d12", floorColor: "#4b5563", primary: "#9ca3af", icon: "🌕" },
@@ -622,7 +615,7 @@
             currentWorld: 0,
             currentStage: 0,
             soundEnabled: true,
-            progress: JSON.parse(localStorage.getItem('unoyd_ufo_ultimate_v6_progress')) || {
+            progress: JSON.parse(localStorage.getItem('unoyd_ufo_ultimate_v8_progress')) || {
                 unlockedWorlds: [0],
                 unlockedStages: { 0: [0] },
                 keysEarned: [],
@@ -646,7 +639,7 @@
         }
 
         function saveProgress() {
-            localStorage.setItem('unoyd_ufo_ultimate_v6_progress', JSON.stringify(gameData.progress));
+            localStorage.setItem('unoyd_ufo_ultimate_v8_progress', JSON.stringify(gameData.progress));
         }
 
         function syncProgress() {
@@ -682,7 +675,7 @@
             const bCanvas = document.getElementById('bossPreviewCanvas');
             const bCtx = bCanvas.getContext('2d');
             bCtx.clearRect(0, 0, bCanvas.width, bCanvas.height);
-            drawRealisticAlienBoss(bCtx, 68, 50, 0.95, boss, 0, 0, false);
+            drawMoonBoss(bCtx, 74, 54, 0.95, boss, 0, 0, false);
         }
 
         function closeBossBriefing() {
@@ -1012,19 +1005,18 @@
             const pCtx = pCanvas.getContext('2d');
             pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height);
             const activeSkin = skinsConfig.find(s => s.id === gameData.progress.activeSkin) || skinsConfig[0];
-            drawUFO(pCtx, 55, 31, 17, 0, activeSkin);
+            drawCraftSkin(pCtx, 60, 33, 18, 0, activeSkin);
         }
 
-        // Disegna l'ŮFØ: 'original' rimane identico; le altre skin hanno strutture diverse sul canvas
-        function drawUFO(ctx, x, y, radius, angle, skin) {
+        // Skin gratis 'original' identica; altre skin con effetti Slime, Galattico, Fuoco, Ghiaccio, Fulmine e Corona Lunoyd
+        function drawCraftSkin(ctx, x, y, radius, angle, skin) {
             ctx.save();
             ctx.translate(x, y);
             ctx.rotate(angle);
 
-            const part = skin.part || 'original';
+            const th = skin.theme || 'original';
 
-            if (part === 'original') {
-                // Originale intatto
+            if (th === 'original') {
                 ctx.strokeStyle = skin.haloColor;
                 ctx.shadowColor = skin.haloColor;
                 ctx.shadowBlur = 10;
@@ -1038,8 +1030,7 @@
                 ctx.lineWidth = 2;
                 ctx.beginPath();
                 ctx.arc(0, -4, 11, Math.PI, 0, false);
-                ctx.fill();
-                ctx.stroke();
+                ctx.fill(); ctx.stroke();
 
                 const grad = ctx.createLinearGradient(-radius, 0, radius, 0);
                 grad.addColorStop(0, '#1f2937');
@@ -1050,8 +1041,7 @@
                 ctx.lineWidth = 1.5;
                 ctx.beginPath();
                 ctx.ellipse(0, 4, radius, 7.5, 0, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.stroke();
+                ctx.fill(); ctx.stroke();
 
                 ctx.fillStyle = skin.lightColor;
                 ctx.shadowColor = skin.lightColor;
@@ -1066,67 +1056,103 @@
                 return;
             }
 
-            // Strutture diverse per le altre skin
-            if (part === 'ring' || part === 'lunoyd') {
-                ctx.strokeStyle = skin.haloColor;
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-                ctx.ellipse(0, 4, radius + 9, 12, -0.15, 0, Math.PI * 2);
-                ctx.stroke();
-            }
-
-            if (part === 'fins') {
-                ctx.fillStyle = skin.lightColor;
-                ctx.beginPath();
-                ctx.moveTo(-radius + 2, 2); ctx.lineTo(-radius - 13, -7); ctx.lineTo(-radius - 6, 7);
-                ctx.moveTo(radius - 2, 2); ctx.lineTo(radius + 13, -7); ctx.lineTo(radius + 6, 7);
-                ctx.fill();
-            } else if (part === 'spikes') {
-                ctx.fillStyle = skin.haloColor;
-                for (let i = -2; i <= 2; i++) {
-                    ctx.beginPath();
-                    ctx.moveTo(i * 6 - 3, 10); ctx.lineTo(i * 6, 17); ctx.lineTo(i * 6 + 3, 10);
-                    ctx.fill();
-                }
-            } else if (part === 'thruster') {
-                ctx.fillStyle = skin.haloColor;
-                ctx.beginPath();
-                ctx.moveTo(-radius, 2); ctx.lineTo(-radius - 14, 4); ctx.lineTo(-radius, 7);
-                ctx.fill();
-            }
-
-            if (part === 'lunoyd') {
+            if (th === 'lunoyd') {
                 ctx.save();
-                ctx.translate(0, -17);
+                ctx.translate(0, -18);
                 ctx.fillStyle = '#facc15';
                 ctx.strokeStyle = '#09090b';
                 ctx.shadowColor = '#facc15';
-                ctx.shadowBlur = 14;
+                ctx.shadowBlur = 16;
                 ctx.lineWidth = 2;
                 ctx.beginPath();
-                ctx.moveTo(-11, 3); ctx.lineTo(-13, -7); ctx.lineTo(-5, -1);
-                ctx.lineTo(0, -10); ctx.lineTo(5, -1); ctx.lineTo(13, -7); ctx.lineTo(11, 3);
+                ctx.moveTo(-12, 3); ctx.lineTo(-14, -8); ctx.lineTo(-5, -1);
+                ctx.lineTo(0, -11); ctx.lineTo(5, -1); ctx.lineTo(14, -8); ctx.lineTo(12, 3);
                 ctx.closePath();
                 ctx.fill(); ctx.stroke();
                 ctx.restore();
             }
 
-            // Cupola
-            ctx.fillStyle = skin.lightColor + '44';
-            ctx.strokeStyle = skin.lightColor;
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.arc(0, -4, 11, Math.PI, 0, false);
-            ctx.fill(); ctx.stroke();
+            if (th === 'fire') {
+                // Fiamme vive dietro e attorno allo scafo
+                ctx.fillStyle = '#f97316';
+                ctx.shadowColor = '#ef4444';
+                ctx.shadowBlur = 16;
+                ctx.beginPath();
+                ctx.moveTo(-radius, 2);
+                ctx.lineTo(-radius - 16, -5);
+                ctx.lineTo(-radius - 11, 4);
+                ctx.lineTo(-radius - 17, 11);
+                ctx.closePath();
+                ctx.fill();
+            } else if (th === 'galactic') {
+                // Anello cosmico con stelle
+                ctx.strokeStyle = '#facc15';
+                ctx.lineWidth = 1.8;
+                ctx.beginPath();
+                ctx.ellipse(0, 3, radius + 8, 11, -0.2, 0, Math.PI * 2);
+                ctx.stroke();
+            } else if (th === 'ice') {
+                // Cristalli di ghiaccio
+                ctx.fillStyle = '#bae6fd';
+                ctx.beginPath();
+                ctx.moveTo(-10, -13); ctx.lineTo(-6, -20); ctx.lineTo(-2, -13);
+                ctx.moveTo(4, -13); ctx.lineTo(8, -19); ctx.lineTo(12, -13);
+                ctx.fill();
+            } else if (th === 'lightning') {
+                // Saette elettriche laterali
+                ctx.strokeStyle = '#fde047';
+                ctx.shadowColor = '#38bdf8';
+                ctx.shadowBlur = 12;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(-radius - 2, 2); ctx.lineTo(-radius - 10, -4); ctx.lineTo(-radius - 16, 3);
+                ctx.stroke();
+            }
 
-            if (part === 'visor') {
-                ctx.fillStyle = skin.haloColor;
-                ctx.fillRect(-7, -8, 14, 3);
+            // Cupola: per Slime è un bulbo viscido gocciolante; per Galattico è una nebulosa stellata
+            if (th === 'slime') {
+                const slimeGrad = ctx.createRadialGradient(-3, -10, 2, 0, -4, 15);
+                slimeGrad.addColorStop(0, '#bbf7d0');
+                slimeGrad.addColorStop(0.5, '#4ade80');
+                slimeGrad.addColorStop(1, '#15803d');
+                ctx.fillStyle = slimeGrad;
+                ctx.strokeStyle = '#86efac';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(-12, 0);
+                ctx.quadraticCurveTo(-12, -16, 0, -16);
+                ctx.quadraticCurveTo(12, -16, 12, 0);
+                ctx.lineTo(8, 3); ctx.lineTo(5, -1); ctx.lineTo(1, 4);
+                ctx.lineTo(-4, -1); ctx.lineTo(-8, 3);
+                ctx.closePath();
+                ctx.fill(); ctx.stroke();
+            } else if (th === 'galactic') {
+                const galGrad = ctx.createRadialGradient(-2, -8, 1, 0, -5, 13);
+                galGrad.addColorStop(0, '#fef08a');
+                galGrad.addColorStop(0.45, '#c084fc');
+                galGrad.addColorStop(1, '#312e81');
+                ctx.fillStyle = galGrad;
+                ctx.strokeStyle = '#e879f9';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(0, -4, 11, Math.PI, 0, false);
+                ctx.closePath();
+                ctx.fill(); ctx.stroke();
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(-5, -10, 2, 2);
+                ctx.fillRect(4, -8, 1.5, 1.5);
+            } else {
+                ctx.fillStyle = skin.lightColor + '44';
+                ctx.strokeStyle = skin.lightColor;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(0, -4, 11, Math.PI, 0, false);
+                ctx.fill(); ctx.stroke();
             }
 
             // Disco metallico
             const grad = ctx.createLinearGradient(-radius, -3, radius, 11);
-            grad.addColorStop(0, skin.highlight || '#e5e7eb');
+            grad.addColorStop(0, '#1f2937');
             grad.addColorStop(0.5, skin.bodyColor);
             grad.addColorStop(1, '#09090b');
             ctx.fillStyle = grad;
@@ -1148,8 +1174,8 @@
             ctx.restore();
         }
 
-        // 7 Boss alieni più realistici (gradienti tridimensionali, ombre, riflessi, anatomie distinte)
-        function drawRealisticAlienBoss(ctx, centerX, centerY, scale, bossData, chargeRatio = 0, hitShake = 0, isExploded = false) {
+        // 7 Boss tipici di ogni luna con dettagli e proiettili del proprio colore
+        function drawMoonBoss(ctx, centerX, centerY, scale, bossData, chargeRatio = 0, hitShake = 0, isExploded = false) {
             if (isExploded) return;
             const b = bossData || moonBosses[0];
             const shakeX = hitShake > 0 ? (Math.random() - 0.5) * hitShake * 12 : 0;
@@ -1159,242 +1185,130 @@
             ctx.translate(centerX + shakeX, centerY + shakeY);
             ctx.scale(scale, scale);
 
-            // Ombra ambientale
-            ctx.fillStyle = 'rgba(0,0,0,0.45)';
-            ctx.beginPath();
-            ctx.ellipse(0, 28, 28, 7, 0, 0, Math.PI * 2);
-            ctx.fill();
+            const grad = ctx.createRadialGradient(-8, -14, 3, 0, 0, 34);
+            grad.addColorStop(0, b.highlight);
+            grad.addColorStop(0.5, b.primary);
+            grad.addColorStop(1, b.secondary);
 
-            const bodyGrad = ctx.createRadialGradient(-8, -16, 4, 0, 0, 36);
-            bodyGrad.addColorStop(0, b.highlight);
-            bodyGrad.addColorStop(0.45, b.primary);
-            bodyGrad.addColorStop(1, b.secondary);
+            ctx.shadowColor = b.shotColor;
+            ctx.shadowBlur = 16;
 
-            if (b.type === 'cephalopod') {
-                // Tentacoli muscolari con ventose
-                for (let t = -2; t <= 2; t++) {
-                    ctx.fillStyle = bodyGrad;
-                    ctx.strokeStyle = '#09090b';
-                    ctx.lineWidth = 2;
-                    ctx.beginPath();
-                    ctx.moveTo(t * 7 - 4, 10);
-                    ctx.quadraticCurveTo(t * 14, 24, t * 16 - 5, 32);
-                    ctx.lineTo(t * 11 + 4, 32);
-                    ctx.quadraticCurveTo(t * 8, 22, t * 7 + 4, 10);
-                    ctx.closePath();
-                    ctx.fill(); ctx.stroke();
-                }
-                // Cranio allungato
-                ctx.fillStyle = bodyGrad;
-                ctx.beginPath();
-                ctx.moveTo(-20, 12);
-                ctx.bezierCurveTo(-24, -14, -14, -38, 0, -40);
-                ctx.bezierCurveTo(14, -38, 24, -14, 20, 12);
-                ctx.closePath();
-                ctx.fill(); ctx.stroke();
-
-                // Occhi rettiliani
-                [-9, 9].forEach((ex, idx) => {
-                    ctx.fillStyle = b.eye;
-                    ctx.beginPath();
-                    ctx.ellipse(ex, -8, 6.5, 4.5, idx === 0 ? 0.25 : -0.25, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.fillStyle = '#09090b';
-                    ctx.fillRect(ex - 1.2, -11, 2.4, 6);
-                });
-            } else if (b.type === 'mantis') {
-                // Ali chitinose
-                ctx.fillStyle = 'rgba(249, 168, 212, 0.25)';
+            if (b.moonTheme === 'lunar_wraith') {
                 ctx.strokeStyle = b.highlight;
-                ctx.lineWidth = 1.5;
-                ctx.beginPath();
-                ctx.ellipse(-24, -12, 16, 6, -0.5, 0, Math.PI * 2);
-                ctx.ellipse(24, -12, 16, 6, 0.5, 0, Math.PI * 2);
-                ctx.fill(); ctx.stroke();
-
-                // Testa triangolare insettoide
-                ctx.fillStyle = bodyGrad;
-                ctx.strokeStyle = '#09090b';
-                ctx.lineWidth = 2.2;
-                ctx.beginPath();
-                ctx.moveTo(0, 18); ctx.lineTo(-24, -18); ctx.lineTo(24, -18);
-                ctx.closePath();
-                ctx.fill(); ctx.stroke();
-
-                // Grandi occhi composti laterali
-                [-16, 16].forEach(ex => {
-                    const eyeGrad = ctx.createRadialGradient(ex - 2, -12, 1, ex, -10, 8);
-                    eyeGrad.addColorStop(0, '#ffffff');
-                    eyeGrad.addColorStop(0.5, b.eye);
-                    eyeGrad.addColorStop(1, '#7f1d1d');
-                    ctx.fillStyle = eyeGrad;
-                    ctx.beginPath();
-                    ctx.arc(ex, -10, 7.5, 0, Math.PI * 2);
-                    ctx.fill(); ctx.stroke();
-                });
-            } else if (b.type === 'magma') {
-                // Corpo roccioso scuro con crepe incandescenti
-                ctx.fillStyle = bodyGrad;
-                ctx.strokeStyle = '#09090b';
-                ctx.lineWidth = 2.4;
-                ctx.beginPath();
-                ctx.arc(0, -4, 24, 0, Math.PI * 2);
-                ctx.fill(); ctx.stroke();
-
-                ctx.strokeStyle = b.highlight;
-                ctx.shadowColor = b.glow;
-                ctx.shadowBlur = 10;
-                ctx.lineWidth = 2.2;
-                ctx.beginPath();
-                ctx.moveTo(-14, -16); ctx.lineTo(-4, -4); ctx.lineTo(-10, 8);
-                ctx.moveTo(12, -14); ctx.lineTo(3, 0); ctx.lineTo(11, 10);
-                ctx.stroke();
-                ctx.shadowBlur = 0;
-
-                [-9, 9].forEach(ex => {
-                    ctx.fillStyle = b.eye;
-                    ctx.beginPath();
-                    ctx.arc(ex, -6, 4.5, 0, Math.PI * 2);
-                    ctx.fill();
-                });
-            } else if (b.type === 'leviathan') {
-                // Pinna dorsale e corpo massiccio
-                ctx.fillStyle = b.accent;
-                ctx.beginPath();
-                ctx.moveTo(-6, -24); ctx.lineTo(0, -38); ctx.lineTo(8, -24);
-                ctx.closePath();
-                ctx.fill();
-
-                ctx.fillStyle = bodyGrad;
-                ctx.strokeStyle = '#09090b';
-                ctx.lineWidth = 2.2;
-                ctx.beginPath();
-                ctx.ellipse(0, -2, 26, 20, 0, 0, Math.PI * 2);
-                ctx.fill(); ctx.stroke();
-
-                [-10, 10].forEach(ex => {
-                    ctx.fillStyle = b.eye;
-                    ctx.beginPath();
-                    ctx.arc(ex, -8, 5.5, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.fillStyle = '#991b1b';
-                    ctx.beginPath();
-                    ctx.arc(ex - 1, -8, 2.5, 0, Math.PI * 2);
-                    ctx.fill();
-                });
-
-                // Fauci con denti
-                ctx.fillStyle = '#1c0505';
-                ctx.beginPath();
-                ctx.ellipse(0, 7, 15, 7, 0, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.fillStyle = '#f8fafc';
-                for (let dx = -10; dx <= 8; dx += 6) {
-                    ctx.beginPath();
-                    ctx.moveTo(dx, 3); ctx.lineTo(dx + 2.5, 9); ctx.lineTo(dx + 5, 3);
-                    ctx.fill();
-                }
-            } else if (b.type === 'horned_titan') {
-                // Corna ricurve con sfumatura
-                ctx.strokeStyle = '#09090b';
                 ctx.lineWidth = 2;
-                ctx.fillStyle = b.highlight;
                 ctx.beginPath();
-                ctx.moveTo(-16, -16); ctx.quadraticCurveTo(-34, -30, -24, -44); ctx.quadraticCurveTo(-18, -32, -10, -22);
+                ctx.ellipse(0, 2, 32, 9, -0.25, 0, Math.PI * 2);
+                ctx.stroke();
+
+                ctx.fillStyle = grad;
+                ctx.beginPath();
+                ctx.arc(0, -4, 22, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.fillStyle = b.secondary;
+                ctx.beginPath();
+                ctx.arc(-10, -12, 4, 0, Math.PI * 2);
+                ctx.arc(11, 4, 3, 0, Math.PI * 2);
+                ctx.fill();
+            } else if (b.moonTheme === 'crimson_valkyrie') {
+                ctx.fillStyle = b.primary;
+                ctx.beginPath();
+                ctx.moveTo(-14, -4); ctx.lineTo(-34, -22); ctx.lineTo(-22, 8);
+                ctx.moveTo(14, -4); ctx.lineTo(34, -22); ctx.lineTo(22, 8);
+                ctx.fill();
+
+                ctx.fillStyle = grad;
+                ctx.beginPath();
+                ctx.moveTo(0, 20); ctx.lineTo(-22, -16); ctx.lineTo(22, -16);
                 ctx.closePath();
-                ctx.fill(); ctx.stroke();
-
-                ctx.beginPath();
-                ctx.moveTo(16, -16); ctx.quadraticCurveTo(34, -30, 24, -44); ctx.quadraticCurveTo(18, -32, 10, -22);
-                ctx.closePath();
-                ctx.fill(); ctx.stroke();
-
-                ctx.fillStyle = bodyGrad;
-                ctx.beginPath();
-                ctx.arc(0, -4, 23, 0, Math.PI * 2);
-                ctx.fill(); ctx.stroke();
-
-                [-9, 9].forEach(ex => {
-                    ctx.fillStyle = b.eye;
+                ctx.fill();
+            } else if (b.moonTheme === 'solar_colossus') {
+                ctx.strokeStyle = b.highlight;
+                ctx.lineWidth = 2.5;
+                for (let r = 0; r < 8; r++) {
+                    const ang = (r / 8) * Math.PI * 2;
                     ctx.beginPath();
-                    ctx.arc(ex, -7, 5, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.fillStyle = '#dc2626';
-                    ctx.beginPath();
-                    ctx.arc(ex - 1, -7, 2.2, 0, Math.PI * 2);
-                    ctx.fill();
-                });
-            } else if (b.type === 'eyeball_horror') {
-                // Viticci attorno a un grande occhio realistico
-                for (let a = 0; a < 6; a++) {
-                    const ang = (a / 6) * Math.PI * 2;
-                    ctx.strokeStyle = b.primary;
-                    ctx.lineWidth = 3.5;
-                    ctx.beginPath();
-                    ctx.moveTo(Math.cos(ang) * 18, Math.sin(ang) * 18 - 4);
-                    ctx.quadraticCurveTo(Math.cos(ang) * 28, Math.sin(ang) * 28 - 4, Math.cos(ang + 0.3) * 32, Math.sin(ang + 0.3) * 32 - 4);
+                    ctx.moveTo(Math.cos(ang) * 20, Math.sin(ang) * 20 - 4);
+                    ctx.lineTo(Math.cos(ang) * 30, Math.sin(ang) * 30 - 4);
                     ctx.stroke();
                 }
+                ctx.fillStyle = grad;
+                ctx.beginPath();
+                ctx.arc(0, -4, 21, 0, Math.PI * 2);
+                ctx.fill();
+            } else if (b.moonTheme === 'toxic_hydra') {
+                ctx.strokeStyle = b.primary;
+                ctx.lineWidth = 3;
+                [-14, 14].forEach(tx => {
+                    ctx.beginPath();
+                    ctx.moveTo(tx, 10); ctx.quadraticCurveTo(tx * 1.8, 24, tx * 1.2, 32);
+                    ctx.stroke();
+                });
+                ctx.fillStyle = grad;
+                ctx.beginPath();
+                ctx.ellipse(0, -3, 24, 19, 0, 0, Math.PI * 2);
+                ctx.fill();
+            } else if (b.moonTheme === 'cryo_behemoth') {
+                ctx.fillStyle = b.highlight;
+                ctx.beginPath();
+                ctx.moveTo(-14, -18); ctx.lineTo(-22, -34); ctx.lineTo(-6, -22);
+                ctx.moveTo(14, -18); ctx.lineTo(22, -34); ctx.lineTo(6, -22);
+                ctx.fill();
+
+                ctx.fillStyle = grad;
+                ctx.beginPath();
+                ctx.arc(0, -4, 22, 0, Math.PI * 2);
+                ctx.fill();
+            } else if (b.moonTheme === 'void_watcher') {
+                ctx.fillStyle = grad;
+                ctx.beginPath();
+                ctx.arc(0, -4, 24, 0, Math.PI * 2);
+                ctx.fill();
+
                 ctx.fillStyle = '#f8fafc';
-                ctx.strokeStyle = '#09090b';
-                ctx.lineWidth = 2.5;
                 ctx.beginPath();
-                ctx.arc(0, -4, 18, 0, Math.PI * 2);
-                ctx.fill(); ctx.stroke();
-
-                const irisGrad = ctx.createRadialGradient(-2, -6, 2, -2, -4, 10);
-                irisGrad.addColorStop(0, b.highlight);
-                irisGrad.addColorStop(0.6, b.primary);
-                irisGrad.addColorStop(1, b.secondary);
-                ctx.fillStyle = irisGrad;
-                ctx.beginPath();
-                ctx.arc(-2, -4, 9.5, 0, Math.PI * 2);
+                ctx.arc(0, -5, 11, 0, Math.PI * 2);
                 ctx.fill();
 
-                ctx.fillStyle = '#09090b';
+                ctx.fillStyle = b.secondary;
                 ctx.beginPath();
-                ctx.arc(-3, -4, 4.2, 0, Math.PI * 2);
-                ctx.fill();
-
-                // Riflesso lucido
-                ctx.fillStyle = '#ffffff';
-                ctx.beginPath();
-                ctx.arc(-6, -8, 2.5, 0, Math.PI * 2);
+                ctx.arc(-2, -5, 5, 0, Math.PI * 2);
                 ctx.fill();
             } else {
-                // Overlord con spallacci e corona regale
-                ctx.fillStyle = bodyGrad;
-                ctx.strokeStyle = '#09090b';
-                ctx.lineWidth = 2.4;
+                ctx.fillStyle = grad;
                 ctx.beginPath();
-                ctx.moveTo(-30, 18); ctx.quadraticCurveTo(-24, -18, 0, -22); ctx.quadraticCurveTo(24, -18, 30, 18);
+                ctx.moveTo(-26, 16); ctx.quadraticCurveTo(-20, -20, 0, -22); ctx.quadraticCurveTo(20, -20, 26, 16);
                 ctx.closePath();
-                ctx.fill(); ctx.stroke();
+                ctx.fill();
 
                 ctx.fillStyle = '#facc15';
                 ctx.beginPath();
-                ctx.moveTo(-14, -20); ctx.lineTo(-17, -34); ctx.lineTo(-6, -26);
-                ctx.lineTo(0, -38); ctx.lineTo(6, -26); ctx.lineTo(17, -34); ctx.lineTo(14, -20);
+                ctx.moveTo(-12, -20); ctx.lineTo(-15, -32); ctx.lineTo(-5, -25);
+                ctx.lineTo(0, -36); ctx.lineTo(5, -25); ctx.lineTo(15, -32); ctx.lineTo(12, -20);
                 ctx.closePath();
-                ctx.fill(); ctx.stroke();
+                ctx.fill();
+            }
 
+            ctx.shadowBlur = 0;
+
+            if (b.moonTheme !== 'void_watcher') {
                 [-8, 8].forEach(ex => {
                     ctx.fillStyle = b.eye;
                     ctx.beginPath();
-                    ctx.arc(ex, -8, 5, 0, Math.PI * 2);
+                    ctx.arc(ex, -7, 4.5, 0, Math.PI * 2);
                     ctx.fill();
-                    ctx.fillStyle = '#b91c1c';
+                    ctx.fillStyle = '#09090b';
                     ctx.beginPath();
-                    ctx.arc(ex - 1, -8, 2.2, 0, Math.PI * 2);
+                    ctx.arc(ex - 1, -7, 2, 0, Math.PI * 2);
                     ctx.fill();
                 });
             }
 
             if (chargeRatio > 0) {
                 ctx.fillStyle = 'rgba(0,0,0,0.75)';
-                ctx.fillRect(-26, -56, 52, 6);
-                ctx.fillStyle = chargeRatio > 0.75 ? '#ef4444' : b.glow;
-                ctx.fillRect(-25, -55, 50 * Math.min(1, chargeRatio), 4);
+                ctx.fillRect(-26, -54, 52, 6);
+                ctx.fillStyle = chargeRatio > 0.75 ? '#ef4444' : b.shotColor;
+                ctx.fillRect(-25, -53, 50 * Math.min(1, chargeRatio), 4);
             }
 
             ctx.restore();
@@ -1416,7 +1330,7 @@
 
                 card.innerHTML = `
                     <div class="font-orbitron font-bold text-[10px] ${isLunoyd ? 'text-yellow-300' : 'text-white'} text-center truncate w-full mb-1">${skin.name}</div>
-                    <div class="w-20 h-12 flex items-center justify-center my-1" id="skin-prev-${skin.id}"></div>
+                    <div class="w-22 h-12 flex items-center justify-center my-1" id="skin-prev-${skin.id}"></div>
                     <div class="w-full mt-2">
                         ${isActive ? '<span class="block text-center font-orbitron text-[9px] text-purple-300 py-1">ATTIVA</span>' :
                           isOwned ? `<button onclick="selectSkin('${skin.id}')" class="w-full py-1 bg-neutral-800 hover:bg-neutral-700 text-white font-orbitron text-[9px] rounded-lg">USA</button>` :
@@ -1429,9 +1343,9 @@
                     const scEl = document.getElementById(`skin-prev-${skin.id}`);
                     if (scEl) {
                         const scCanvas = document.createElement('canvas');
-                        scCanvas.width = 88; scCanvas.height = 48;
+                        scCanvas.width = 92; scCanvas.height = 48;
                         const scCtx = scCanvas.getContext('2d');
-                        drawUFO(scCtx, 44, 27, 16, 0, skin);
+                        drawCraftSkin(scCtx, 46, 27, 16, 0, skin);
                         scEl.appendChild(scCanvas);
                     }
                 }, 50);
@@ -1639,7 +1553,8 @@
                     vy: Math.max(-2.6, Math.min(2.6, aimDy)),
                     radius: 10,
                     type: 'orb',
-                    color: boss.glow
+                    color: boss.shotColor,
+                    core: boss.shotCore
                 });
             } else {
                 bossProjectiles.push({
@@ -1650,7 +1565,8 @@
                     width: 28,
                     height: 22,
                     type: 'dart',
-                    color: '#ef4444'
+                    color: boss.shotColor,
+                    core: boss.shotCore
                 });
             }
             playSound('shoot');
@@ -1754,10 +1670,10 @@
                 radius: 12,
                 maxRadius: 135,
                 alpha: 1,
-                color: boss.glow
+                color: boss.shotColor
             });
 
-            const burstColors = [boss.primary, boss.highlight, boss.accent, boss.glow, '#facc15', '#ffffff'];
+            const burstColors = [boss.primary, boss.highlight, boss.shotColor, boss.shotCore, '#facc15', '#ffffff'];
             for (let i = 0; i < 60; i++) {
                 const ang = Math.random() * Math.PI * 2;
                 const spd = 2.5 + Math.random() * 9;
@@ -1870,14 +1786,14 @@
                     if (proj.type === 'orb') {
                         if (Math.hypot(ufo.x - proj.x, ufo.y - proj.y) < ufo.radius + proj.radius - 2) {
                             const boss = moonBosses[gameData.currentWorld] || moonBosses[0];
-                            gameOver(`Colpito dal colpo lanciato da ${boss.name}!`);
+                            gameOver(`Colpito dal colpo di ${boss.name}!`);
                             return;
                         }
                     } else {
                         if (ufo.x + ufo.radius > proj.x && ufo.x - ufo.radius < proj.x + proj.width &&
                             ufo.y + ufo.radius > proj.y && ufo.y - ufo.radius < proj.y + proj.height) {
                             const boss = moonBosses[gameData.currentWorld] || moonBosses[0];
-                            gameOver(`Colpito dall'ostacolo lanciato da ${boss.name}!`);
+                            gameOver(`Colpito dal dardo di ${boss.name}!`);
                             return;
                         }
                     }
@@ -1994,18 +1910,18 @@
                 if (proj.type === 'orb') {
                     ctx.fillStyle = proj.color;
                     ctx.shadowColor = proj.color;
-                    ctx.shadowBlur = 14;
+                    ctx.shadowBlur = 16;
                     ctx.beginPath();
                     ctx.arc(proj.x, proj.y, proj.radius, 0, Math.PI * 2);
                     ctx.fill();
-                    ctx.fillStyle = '#ffffff';
+                    ctx.fillStyle = proj.core || '#ffffff';
                     ctx.beginPath();
-                    ctx.arc(proj.x, proj.y, proj.radius * 0.42, 0, Math.PI * 2);
+                    ctx.arc(proj.x, proj.y, proj.radius * 0.45, 0, Math.PI * 2);
                     ctx.fill();
                 } else {
                     ctx.fillStyle = proj.color;
                     ctx.shadowColor = proj.color;
-                    ctx.shadowBlur = 12;
+                    ctx.shadowBlur = 14;
                     ctx.beginPath();
                     ctx.moveTo(proj.x, proj.y + proj.height / 2);
                     ctx.lineTo(proj.x + proj.width, proj.y);
@@ -2055,7 +1971,7 @@
             if (bossState.active) {
                 const bossData = moonBosses[gameData.currentWorld] || moonBosses[0];
                 const chargeRatio = bossState.dyingSequence ? 0 : (bossState.attackTimer / bossState.attackInterval);
-                drawRealisticAlienBoss(ctx, bossState.x, bossState.y, 1.35, bossData, chargeRatio, bossState.hitShake, bossState.exploded);
+                drawMoonBoss(ctx, bossState.x, bossState.y, 1.35, bossData, chargeRatio, bossState.hitShake, bossState.exploded);
             }
 
             particles.forEach(p => {
@@ -2064,7 +1980,7 @@
                 ctx.restore();
             });
 
-            drawUFO(ctx, ufo.x, ufo.y, ufo.radius, ufo.angle, activeSkin);
+            drawCraftSkin(ctx, ufo.x, ufo.y, ufo.radius, ufo.angle, activeSkin);
         }
 
         function stopGameLoopOnly() {
