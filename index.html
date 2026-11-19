@@ -83,14 +83,14 @@
         <!-- BOSS BRIEFING MODAL (STAGE 7) -->
         <div id="screen-boss-briefing" class="absolute inset-0 hidden flex flex-col items-center justify-center p-6 z-50 bg-black/95 backdrop-blur-md">
             <div class="max-w-lg w-full bg-neutral-900/95 border border-red-500/50 p-5 rounded-2xl text-center shadow-2xl flex flex-col gap-3">
-                <div class="text-[10px] font-orbitron uppercase tracking-widest text-red-400">⚠️ BOSS FIGHT - STAGE 07</div>
+                <div class="text-[10px] font-orbitron uppercase tracking-widest text-red-400">⚠️ BOSS FIGHT CARTOON - STAGE 07</div>
                 <div class="flex items-center justify-center gap-4">
-                    <canvas id="bossPreviewCanvas" width="100" height="60" class="w-24 h-14 bg-black/60 rounded-xl border border-neutral-800"></canvas>
+                    <canvas id="bossPreviewCanvas" width="120" height="84" class="w-28 h-20 bg-black/60 rounded-xl border border-neutral-800"></canvas>
                     <div class="text-left">
-                        <div id="boss-brief-name" class="font-orbitron text-lg font-black text-white">VEXAR-01</div>
-                        <div id="boss-brief-role" class="font-orbitron text-[10px] text-red-300">Sentinella della Luna Base</div>
+                        <div id="boss-brief-name" class="font-orbitron text-lg font-black text-white">KODOS-X</div>
+                        <div id="boss-brief-role" class="font-orbitron text-[10px] text-lime-300">Alieno Cartone della Luna Base</div>
                         <div class="font-orbitron text-xs text-yellow-400 mt-1">
-                            🎯 Obiettivo Sfere: <span id="boss-brief-target" class="font-bold">12</span> ⭐
+                            🎯 Obiettivo Stelle: <span id="boss-brief-target" class="font-bold">12</span> ⭐
                         </div>
                     </div>
                 </div>
@@ -224,8 +224,8 @@
                         </div>
                     </div>
                     <div class="flex items-center gap-2 bg-black/60 px-3 py-1.5 rounded-xl border border-purple-500/30">
-                        <div id="hud-boss-target-wrap" class="hidden text-red-300 font-orbitron text-[10px]">
-                            🎯 <span id="hud-boss-name">BOSS</span>: <span id="hud-boss-progress">0/12</span>
+                        <div id="hud-boss-target-wrap" class="hidden text-lime-300 font-orbitron text-[10px]">
+                            👾 <span id="hud-boss-name">BOSS</span>: <span id="hud-boss-progress">0/12 ⭐</span>
                         </div>
                         <div class="text-yellow-400 font-orbitron text-xs">⭐ <span id="hud-stars">0</span></div>
                     </div>
@@ -277,7 +277,7 @@
                 <h2 id="go-title" class="font-orbitron text-xl font-bold text-red-500">DISTRUTTO!</h2>
                 <p id="gameover-reason" class="text-neutral-300 text-xs">Sei stato colpito.</p>
                 <div class="text-[11px] font-orbitron text-red-300 bg-red-950/50 py-1.5 rounded-lg border border-red-500/20">
-                    Morti Livello: <span id="go-stage-deaths" class="font-bold">1</span> | Totali: <span id="go-total-deaths" class="font-bold">1</span>
+                    Morti Livello: <span id="go-stage-deaths" class="font-bold">1</span> | Morti Totali: <span id="go-total-deaths" class="font-bold">1</span>
                 </div>
                 <div class="flex gap-2 mt-1">
                     <button onclick="showStages(gameData.currentWorld)" id="btn-go-stages" class="flex-1 py-2.5 bg-neutral-800 hover:bg-neutral-700 font-orbitron text-xs rounded-xl text-neutral-200">LIVELLI</button>
@@ -292,110 +292,139 @@
     <script>
         let currentLang = 'it';
 
+        // 7 alieni in stile cartoon colorato ispirati ai Simpson (Kang & Kodos style), ognuno unico
         const moonBosses = [
             {
-                id: 'vexar',
-                name: 'VEXAR-01',
-                domeColor: 'rgba(34, 197, 94, 0.55)',
-                hullColor: '#374151',
-                glowColor: '#22c55e',
-                eyeColor: '#fef08a',
+                id: 'kodosx',
+                variant: 'kang_tall',
+                name: 'KODOS-X',
+                skinColor: '#84cc16',
+                cheekColor: '#a3e635',
+                domeColor: 'rgba(132, 204, 22, 0.25)',
+                hullColor: '#facc15',
+                glowColor: '#a3e635',
+                eyeColor: '#ffffff',
+                pupilColor: '#dc2626',
                 targetStars: 12,
                 keyName: { it: '🔑 CHIAVE ROSSA', en: '🔑 RED KEY' },
-                role: { it: 'Sentinella della Luna Base', en: 'Base Moon Sentinel' },
+                role: { it: 'Alieno Verde della Luna Base', en: 'Base Moon Cartoon Alien' },
                 brief: {
-                    it: "VEXAR-01 è in posizione a destra e ti lancia ostacoli mentre avanzi! Raccogli 12 sfere per sconfiggerlo e prendere la Chiave Rossa.",
-                    en: "VEXAR-01 stays on the right and launches obstacles at you as you advance! Collect 12 orbs to defeat it and claim the Red Key."
+                    it: "Ti hanno visto! KODOS-X ti aspetta a destra e ti lancia ostacoli mentre avanzi. Raccogli almeno 12 stelle e fagli prendere il raggio finale per ottenere la Chiave Rossa!",
+                    en: "You've been spotted! KODOS-X waits on the right and launches obstacles as you advance. Collect at least 12 stars and blast it with your final beam to get the Red Key!"
                 }
             },
             {
-                id: 'kraxon',
-                name: 'KRAXON',
-                domeColor: 'rgba(239, 68, 68, 0.55)',
-                hullColor: '#7f1d1d',
-                glowColor: '#ef4444',
-                eyeColor: '#fca5a5',
+                id: 'zorpina',
+                variant: 'kodos_pink',
+                name: 'ZORPINA',
+                skinColor: '#ec4899',
+                cheekColor: '#f472b6',
+                domeColor: 'rgba(236, 72, 153, 0.25)',
+                hullColor: '#38bdf8',
+                glowColor: '#f472b6',
+                eyeColor: '#fef08a',
+                pupilColor: '#7e22ce',
                 targetStars: 15,
                 keyName: { it: '🔑 CHIAVE GIALLA', en: '🔑 YELLOW KEY' },
-                role: { it: 'Cacciatore Cremisi', en: 'Crimson Hunter' },
+                role: { it: 'Aliena Rosa della Luna Rossa', en: 'Red Moon Cartoon Alien' },
                 brief: {
-                    it: "KRAXON ti insegue sulla destra lanciando raffiche ostili! Raccogli 15 sfere e conquista la Chiave Gialla.",
-                    en: "KRAXON stays on the right firing hostile bursts! Collect 15 orbs and win the Yellow Key."
+                    it: "ZORPINA pattuglia la Luna Rossa con i suoi riccioli tentacolari! Raccogli almeno 15 stelle, schiva i suoi lanci e colpiscila col raggio per la Chiave Gialla.",
+                    en: "ZORPINA patrols the Red Moon with tentacle curls! Collect at least 15 stars, dodge her shots, and blast her with your beam for the Yellow Key."
                 }
             },
             {
-                id: 'solaris',
-                name: 'SOLARIS-X',
-                domeColor: 'rgba(250, 204, 21, 0.6)',
-                hullColor: '#78350f',
-                glowColor: '#eab308',
+                id: 'blorgo',
+                variant: 'bulb_orange',
+                name: 'BLORGO',
+                skinColor: '#f97316',
+                cheekColor: '#fb923c',
+                domeColor: 'rgba(249, 115, 22, 0.25)',
+                hullColor: '#a855f7',
+                glowColor: '#fb923c',
                 eyeColor: '#ffffff',
+                pupilColor: '#0f172a',
                 targetStars: 18,
                 keyName: { it: '🔑 CHIAVE VERDE', en: '🔑 GREEN KEY' },
-                role: { it: 'Inquisitore Solare', en: 'Solar Inquisitor' },
+                role: { it: 'Alieno Lampadina della Luna Gialla', en: 'Yellow Moon Cartoon Alien' },
                 brief: {
-                    it: "SOLARIS-X lancia proiettili solari dalla destra! Raccogli 18 sfere e ottieni la Chiave Verde.",
-                    en: "SOLARIS-X launches solar projectiles from the right! Collect 18 orbs and get the Green Key."
+                    it: "BLORGO brilla come una lampada aliena sulla Luna Gialla! Raccogli almeno 18 stelle e distruggilo col raggio del tuo UFO per la Chiave Verde.",
+                    en: "BLORGO glows like an alien bulb over the Yellow Moon! Collect at least 18 stars and blast it with your UFO beam for the Green Key."
                 }
             },
             {
-                id: 'toxicor',
-                name: 'TOXICOR',
-                domeColor: 'rgba(16, 185, 129, 0.6)',
-                hullColor: '#064e3b',
-                glowColor: '#10b981',
-                eyeColor: '#bef264',
-                targetStars: 20,
+                id: 'goobz',
+                variant: 'slime_cyan',
+                name: 'GOOBZ',
+                skinColor: '#06b6d4',
+                cheekColor: '#22d3ee',
+                domeColor: 'rgba(6, 182, 212, 0.25)',
+                hullColor: '#ef4444',
+                glowColor: '#22d3ee',
+                eyeColor: '#fef08a',
+                pupilColor: '#b91c1c',
+                targetStars: 21,
                 keyName: { it: '🔑 CHIAVE AZZURRA', en: '🔑 BLUE KEY' },
-                role: { it: 'Predatore Tossico', en: 'Toxic Predator' },
+                role: { it: 'Alieno Gommoso della Luna Verde', en: 'Green Moon Cartoon Alien' },
                 brief: {
-                    it: "TOXICOR ti spara sfere tossiche dalla destra! Raccogli 20 sfere e sblocca la Chiave Azzurra.",
-                    en: "TOXICOR fires toxic orbs from the right! Collect 20 orbs and unlock the Blue Key."
+                    it: "GOOBZ rimbalza e lancia bolle tossiche sulla Luna Verde! Raccogli almeno 21 stelle e colpiscilo col raggio finale per la Chiave Azzurra.",
+                    en: "GOOBZ bounces and launches toxic blobs on the Green Moon! Collect at least 21 stars and blast it with the final beam for the Blue Key."
                 }
             },
             {
-                id: 'glacius',
-                name: 'GLACIUS-9',
-                domeColor: 'rgba(56, 189, 248, 0.6)',
-                hullColor: '#0c4a6e',
-                glowColor: '#38bdf8',
-                eyeColor: '#e0f2fe',
-                targetStars: 22,
+                id: 'snorble',
+                variant: 'horns_violet',
+                name: 'SNORBLE',
+                skinColor: '#a855f7',
+                cheekColor: '#c084fc',
+                domeColor: 'rgba(168, 85, 247, 0.25)',
+                hullColor: '#22c55e',
+                glowColor: '#c084fc',
+                eyeColor: '#ffffff',
+                pupilColor: '#4c1d95',
+                targetStars: 24,
                 keyName: { it: '🔑 CHIAVE VIOLA', en: '🔑 PURPLE KEY' },
-                role: { it: 'Custode Criogenico', en: 'Cryo Warden' },
+                role: { it: 'Alieno Cornuto della Luna Azzurra', en: 'Blue Moon Cartoon Alien' },
                 brief: {
-                    it: "GLACIUS-9 lancia schegge criogeniche dalla destra! Raccogli 22 sfere e conquista la Chiave Viola.",
-                    en: "GLACIUS-9 launches cryo shards from the right! Collect 22 orbs and claim the Purple Key."
+                    it: "SNORBLE ha due corna giganti e ti spara schegge sulla Luna Azzurra! Raccogli almeno 24 stelle e fulminalo col raggio per la Chiave Viola.",
+                    en: "SNORBLE has giant horns and fires shards on the Blue Moon! Collect at least 24 stars and zap it with your beam for the Purple Key."
                 }
             },
             {
-                id: 'malakor',
-                name: 'MALAKOR',
-                domeColor: 'rgba(192, 132, 252, 0.6)',
-                hullColor: '#3b0764',
-                glowColor: '#a855f7',
-                eyeColor: '#f5d0fe',
-                targetStars: 25,
+                id: 'mumbo',
+                variant: 'three_eye_gold',
+                name: 'MUMBO-3',
+                skinColor: '#eab308',
+                cheekColor: '#fde047',
+                domeColor: 'rgba(234, 179, 8, 0.25)',
+                hullColor: '#ec4899',
+                glowColor: '#fde047',
+                eyeColor: '#ffffff',
+                pupilColor: '#991b1b',
+                targetStars: 27,
                 keyName: { it: '🔑 CHIAVE DELLA TERRA', en: '🔑 EARTH KEY' },
-                role: { it: "Signore dell'Ombra", en: 'Shadow Lord' },
+                role: { it: 'Alieno a 3 Occhi della Luna Viola', en: 'Purple Moon 3-Eyed Alien' },
                 brief: {
-                    it: "MALAKOR ti bombarda dalla destra con energia oscura! Raccogli 25 sfere e prendi la Chiave della Terra.",
-                    en: "MALAKOR bombards you from the right with dark energy! Collect 25 orbs and get the Earth Key."
+                    it: "MUMBO-3 ti osserva con tre occhi sulla Luna Viola! Raccogli almeno 27 stelle e colpiscilo col raggio del tuo UFO per ottenere la Chiave della Terra.",
+                    en: "MUMBO-3 watches you with three eyes on the Purple Moon! Collect at least 27 stars and blast it with your UFO beam for the Earth Key."
                 }
             },
             {
-                id: 'omega',
-                name: 'OMEGA-PRIME',
-                domeColor: 'rgba(244, 63, 94, 0.65)',
-                hullColor: '#111827',
-                glowColor: '#f43f5e',
-                eyeColor: '#fde047',
-                targetStars: 28,
+                id: 'king_klax',
+                variant: 'crown_lime_red',
+                name: 'RE KLAX',
+                skinColor: '#10b981',
+                cheekColor: '#fb7185',
+                domeColor: 'rgba(16, 185, 129, 0.25)',
+                hullColor: '#f59e0b',
+                glowColor: '#34d399',
+                eyeColor: '#fef08a',
+                pupilColor: '#dc2626',
+                targetStars: 30,
                 keyName: { it: '🏅 MEDAGLIA DELLA LIBERTÀ', en: '🏅 FREEDOM MEDAL' },
-                role: { it: 'Comandante Supremo', en: 'Supreme Commander' },
+                role: { it: 'Re Cartone Finale verso la Terra', en: 'Final Cartoon King to Earth' },
                 brief: {
-                    it: "OMEGA-PRIME resta a destra e lancia attacchi continui! Raccogli 28 sfere per l'iper-salto finale verso la Terra!",
-                    en: "OMEGA-PRIME stays on the right launching heavy attacks! Collect 28 orbs for the final jump to Earth!"
+                    it: "RE KLAX è l'ultimo alieno prima della Terra! Raccogli almeno 30 stelle e spazzalo via col raggio finale del tuo ŮFØ per tornare a casa!",
+                    en: "KING KLAX is the final alien before Earth! Collect at least 30 stars and wipe it out with your ŮFØ's final beam to return home!"
                 }
             }
         ];
@@ -421,33 +450,33 @@
                 warnDesc: "ŮFØ è progettato in orientamento orizzontale (landscape) per un'esperienza perfetta!",
                 worlds: ["Luna Classica", "Luna Rossa", "Luna Gialla", "Luna Verde", "Luna Azzurra", "Luna Viola", "Terra (Fuga)"],
                 storyIntroTitle: "LA GRANDE FUGA DALL'IMPERO",
-                storyIntroText: "Sei un pilota ribelle a bordo del prototipo sperimentale ŮFØ. L'Impero Galattico ha bloccato tutte le rotte spaziali con laser, spuntoni e Boss alieni a guardia di ogni luna. Completa il livello 7 di ogni mondo per ottenere la chiave del colore successivo fino alla Terra!",
+                storyIntroText: "Sei un pilota ribelle a bordo del prototipo sperimentale ŮFØ. L'Impero Galattico ha bloccato tutte le rotte spaziali con laser, spuntoni e Boss alieni a cartone a guardia di ogni luna. Raccogli le stelle, spara il raggio finale e conquista la chiave di ogni luna fino alla Terra!",
                 worldStories: [
-                    "Luna Classica: Evadi dalla base! Nel livello 7 affronti VEXAR-01 a destra: raccogli 12 sfere per la Chiave Rossa.",
-                    "Luna Rossa: Sei entrato nella zona rossa! Nel livello 7 affronti KRAXON e raccogli 15 sfere per la Chiave Gialla.",
-                    "Luna Gialla: Tempeste solari! Nel livello 7 affronti SOLARIS-X e raccogli 18 sfere per la Chiave Verde.",
-                    "Luna Verde: Nebbie tossiche! Nel livello 7 affronti TOXICOR e raccogli 20 sfere per la Chiave Azzurra.",
-                    "Luna Azzurra: Ghiacci orbitali! Nel livello 7 affronti GLACIUS-9 e raccogli 22 sfere per la Chiave Viola.",
-                    "Luna Viola: Fortezza oscura! Nel livello 7 affronti MALAKOR e raccogli 25 sfere per la Chiave della Terra.",
-                    "Terra (Fuga): Ultimo sbarramento! Nel livello 7 affronti OMEGA-PRIME e raccogli 28 sfere per tornare sulla Terra!"
+                    "Luna Classica: Evadi dalla base! Nel livello 7 affronti KODOS-X: raccogli 12 stelle per la Chiave Rossa.",
+                    "Luna Rossa: Zona rossa! Nel livello 7 affronti ZORPINA e raccogli 15 stelle per la Chiave Gialla.",
+                    "Luna Gialla: Tempeste solari! Nel livello 7 affronti BLORGO e raccogli 18 stelle per la Chiave Verde.",
+                    "Luna Verde: Nebbie tossiche! Nel livello 7 affronti GOOBZ e raccogli 21 stelle per la Chiave Azzurra.",
+                    "Luna Azzurra: Ghiacci orbitali! Nel livello 7 affronti SNORBLE e raccogli 24 stelle per la Chiave Viola.",
+                    "Luna Viola: Fortezza oscura! Nel livello 7 affronti MUMBO-3 e raccogli 27 stelle per la Chiave della Terra.",
+                    "Terra (Fuga): Ultimo scontro! Nel livello 7 affronti RE KLAX e raccogli 30 stelle per tornare sulla Terra!"
                 ],
                 worldEndTitles: [
-                    "LUNA CLASSICA LIBERATA!",
-                    "LUNA ROSSA LIBERATA!",
-                    "LUNA GIALLA LIBERATA!",
-                    "LUNA VERDE LIBERATA!",
-                    "LUNA AZZURRA ESPUGNATA!",
-                    "LUNA VIOLA ESPUGNATA!",
-                    "FUGA COMPLETATA: SEI SULLA TERRA!"
+                    "KODOS-X POLVERIZZATO!",
+                    "ZORPINA SCONFITTA!",
+                    "BLORGO IN FRANTUMI!",
+                    "GOOBZ ESPLOSO!",
+                    "SNORBLE ABBATTUTO!",
+                    "MUMBO-3 SPENTO!",
+                    "RE KLAX SCONFITTO: SEI SULLA TERRA!"
                 ],
                 worldEndStories: [
-                    "Hai sconfitto VEXAR-01 e ottenuto la Chiave Rossa! La strada verso la Luna Rossa è ora aperta.",
-                    "Hai battuto KRAXON e ottenuto la Chiave Gialla! L'ŮFØ può ora puntare sulla Luna Gialla.",
-                    "Hai superato SOLARIS-X e ottenuto la Chiave Verde! Prossima destinazione: Luna Verde.",
-                    "Hai sconfitto TOXICOR e ottenuto la Chiave Azzurra! L'orbita della Luna Azzurra ti attende.",
-                    "Hai battuto GLACIUS-9 e ottenuto la Chiave Viola! L'ultima luna prima della Terra è sbloccata.",
-                    "Hai sconfitto MALAKOR e ottenuto la Chiave della Terra! L'atmosfera terrestre è finalmente a portata di mano.",
-                    "OMEGA-PRIME è sconfitto! L'ŮFØ atterra trionfante sulla Terra: missione compiuta!"
+                    "Il tuo raggio ha centrato KODOS-X e ora hai la Chiave Rossa! La strada verso la Luna Rossa è aperta.",
+                    "ZORPINA è stata colpita in pieno dal raggio e hai ottenuto la Chiave Gialla! Rotta sulla Luna Gialla.",
+                    "BLORGO è esploso sotto il tuo raggio e hai preso la Chiave Verde! Prossima meta: Luna Verde.",
+                    "GOOBZ non ha retto al raggio dell'ŮFØ e hai ottenuto la Chiave Azzurra! Avanti verso la Luna Azzurra.",
+                    "SNORBLE è stato spazzato via dal raggio e hai conquistato la Chiave Viola! Ultima luna in vista.",
+                    "MUMBO-3 è stato sconfitto dal tuo raggio e hai ottenuto la Chiave della Terra! Casa è vicinissima.",
+                    "RE KLAX è esploso in mille pezzi! L'ŮFØ atterra trionfante sulla Terra: missione compiuta!"
                 ]
             },
             en: {
@@ -470,33 +499,33 @@
                 warnDesc: "ŮFØ is designed in landscape orientation for the ultimate gameplay experience!",
                 worlds: ["Classic Moon", "Red Moon", "Yellow Moon", "Green Moon", "Blue Moon", "Purple Moon", "Earth (Escape)"],
                 storyIntroTitle: "THE GREAT ESCAPE",
-                storyIntroText: "You are a rogue pilot aboard the experimental ŮFØ prototype. The Galactic Empire blocked all space routes with lasers, spikes, and alien Bosses guarding every moon. Beat Stage 7 of each world to get the next color key all the way to Earth!",
+                storyIntroText: "You are a rogue pilot aboard the experimental ŮFØ prototype. The Galactic Empire blocked all space routes with lasers, spikes, and cartoon alien Bosses guarding every moon. Collect stars, fire the final beam, and claim each moon's key all the way to Earth!",
                 worldStories: [
-                    "Classic Moon: Break out of the base! Face VEXAR-01 on the right in Stage 7: collect 12 orbs for the Red Key.",
-                    "Red Moon: You entered the red zone! Face KRAXON in Stage 7 and collect 15 orbs for the Yellow Key.",
-                    "Yellow Moon: Solar storms! Face SOLARIS-X in Stage 7 and collect 18 orbs for the Green Key.",
-                    "Green Moon: Toxic mists! Face TOXICOR in Stage 7 and collect 20 orbs for the Blue Key.",
-                    "Blue Moon: Orbital ice! Face GLACIUS-9 in Stage 7 and collect 22 orbs for the Purple Key.",
-                    "Purple Moon: Dark fortress! Face MALAKOR in Stage 7 and collect 25 orbs for the Earth Key.",
-                    "Earth (Escape): Final blockade! Face OMEGA-PRIME in Stage 7 and collect 28 orbs to return to Earth!"
+                    "Classic Moon: Break out of the base! Face KODOS-X in Stage 7: collect 12 stars for the Red Key.",
+                    "Red Moon: Red zone! Face ZORPINA in Stage 7 and collect 15 stars for the Yellow Key.",
+                    "Yellow Moon: Solar storms! Face BLORGO in Stage 7 and collect 18 stars for the Green Key.",
+                    "Green Moon: Toxic mists! Face GOOBZ in Stage 7 and collect 21 stars for the Blue Key.",
+                    "Blue Moon: Orbital ice! Face SNORBLE in Stage 7 and collect 24 stars for the Purple Key.",
+                    "Purple Moon: Dark fortress! Face MUMBO-3 in Stage 7 and collect 27 stars for the Earth Key.",
+                    "Earth (Escape): Final clash! Face KING KLAX in Stage 7 and collect 30 stars to return to Earth!"
                 ],
                 worldEndTitles: [
-                    "CLASSIC MOON CLEARED!",
-                    "RED MOON CLEARED!",
-                    "YELLOW MOON CLEARED!",
-                    "GREEN MOON CLEARED!",
-                    "BLUE MOON CONQUERED!",
-                    "PURPLE MOON CONQUERED!",
-                    "ESCAPE COMPLETE: YOU ARE ON EARTH!"
+                    "KODOS-X VAPORIZED!",
+                    "ZORPINA DEFEATED!",
+                    "BLORGO SHATTERED!",
+                    "GOOBZ EXPLODED!",
+                    "SNORBLE TAKEN DOWN!",
+                    "MUMBO-3 SHUT DOWN!",
+                    "KING KLAX DEFEATED: YOU ARE ON EARTH!"
                 ],
                 worldEndStories: [
-                    "You defeated VEXAR-01 and got the Red Key! The path to the Red Moon is now open.",
-                    "You beat KRAXON and got the Yellow Key! ŮFØ can now head to the Yellow Moon.",
-                    "You cleared SOLARIS-X and got the Green Key! Next destination: Green Moon.",
-                    "You defeated TOXICOR and got the Blue Key! The Blue Moon orbit awaits.",
-                    "You beat GLACIUS-9 and got the Purple Key! The last moon before Earth is unlocked.",
-                    "You defeated MALAKOR and got the Earth Key! Earth's atmosphere is finally within reach.",
-                    "OMEGA-PRIME is defeated! ŮFØ lands triumphantly on Earth: mission accomplished!"
+                    "Your beam hit KODOS-X dead on and you got the Red Key! The path to the Red Moon is open.",
+                    "ZORPINA took a direct beam hit and you got the Yellow Key! Heading to the Yellow Moon.",
+                    "BLORGO exploded under your beam and you got the Green Key! Next stop: Green Moon.",
+                    "GOOBZ couldn't survive the ŮFØ beam and you got the Blue Key! Onward to the Blue Moon.",
+                    "SNORBLE was blasted away by your beam and you claimed the Purple Key! Final moon ahead.",
+                    "MUMBO-3 was defeated by your beam and you got the Earth Key! Home is right there.",
+                    "KING KLAX blew up into pieces! ŮFØ lands triumphantly on Earth: mission accomplished!"
                 ]
             }
         };
@@ -637,7 +666,7 @@
             const bCanvas = document.getElementById('bossPreviewCanvas');
             const bCtx = bCanvas.getContext('2d');
             bCtx.clearRect(0, 0, bCanvas.width, bCanvas.height);
-            drawBossShip(bCtx, 52, 32, 1.15, boss, 0);
+            drawCartoonAlienBoss(bCtx, 62, 44, 0.95, boss, 0, 0, false);
         }
 
         function closeBossBriefing() {
@@ -884,6 +913,20 @@
                 gain.gain.setValueAtTime(0.09, now);
                 gain.gain.linearRampToValueAtTime(0.001, now + 0.12);
                 osc.start(now); osc.stop(now + 0.12);
+            } else if (type === 'beam') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(880, now);
+                osc.frequency.exponentialRampToValueAtTime(180, now + 0.45);
+                gain.gain.setValueAtTime(0.22, now);
+                gain.gain.linearRampToValueAtTime(0.001, now + 0.45);
+                osc.start(now); osc.stop(now + 0.45);
+            } else if (type === 'boss_boom') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(160, now);
+                osc.frequency.exponentialRampToValueAtTime(22, now + 0.65);
+                gain.gain.setValueAtTime(0.35, now);
+                gain.gain.linearRampToValueAtTime(0.001, now + 0.65);
+                osc.start(now); osc.stop(now + 0.65);
             } else if (type === 'crash') {
                 osc.type = 'sawtooth';
                 osc.frequency.setValueAtTime(120, now);
@@ -1001,57 +1044,163 @@
             ctx.restore();
         }
 
-        // Disegna il Boss fisso a destra durante il Livello 7
-        function drawBossShip(ctx, centerX, centerY, scale, bossData, chargeRatio = 0) {
+        // Disegna Boss Alieno in stile cartoon colorato (ispirato a Kang & Kodos dei Simpson)
+        function drawCartoonAlienBoss(ctx, centerX, centerY, scale, bossData, chargeRatio = 0, hitShake = 0, isExploded = false) {
+            if (isExploded) return;
             const b = bossData || moonBosses[0];
+            const shakeX = hitShake > 0 ? (Math.random() - 0.5) * hitShake * 10 : 0;
+            const shakeY = hitShake > 0 ? (Math.random() - 0.5) * hitShake * 10 : 0;
+
             ctx.save();
-            ctx.translate(centerX, centerY);
+            ctx.translate(centerX + shakeX, centerY + shakeY);
             ctx.scale(scale, scale);
 
-            // Aura e scia energetica
-            ctx.strokeStyle = b.glowColor;
-            ctx.shadowColor = b.glowColor;
-            ctx.shadowBlur = 18 + chargeRatio * 14;
-            ctx.lineWidth = 2.5;
-
-            // Cupola aliena
+            // Navicella a cupola inferiore stile cartone
+            ctx.strokeStyle = '#09090b';
+            ctx.lineWidth = 3;
             ctx.fillStyle = b.domeColor;
             ctx.beginPath();
-            ctx.arc(0, -6, 18, Math.PI, 0, false);
+            ctx.ellipse(0, 12, 34, 14, 0, 0, Math.PI * 2);
             ctx.fill();
             ctx.stroke();
 
-            // Occhio / Sensore centrale
-            ctx.fillStyle = b.eyeColor;
-            ctx.beginPath();
-            ctx.arc(-3, -11, 4.5, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Scafo principale del Boss
             ctx.fillStyle = b.hullColor;
             ctx.beginPath();
-            ctx.ellipse(0, 4, 30, 11, 0, 0, Math.PI * 2);
+            ctx.ellipse(0, 18, 38, 9, 0, 0, Math.PI * 2);
             ctx.fill();
             ctx.stroke();
 
-            // Cannone frontale a sinistra (verso il giocatore)
-            ctx.fillStyle = b.glowColor;
-            ctx.fillRect(-36, 1, 10, 6);
+            // Testa / Corpo alieno cartoon con contorno nero spesso
+            ctx.fillStyle = b.skinColor;
+            ctx.strokeStyle = '#09090b';
+            ctx.lineWidth = 3.2;
 
-            // Luci inferiori
-            for (let i = -2; i <= 2; i++) {
+            if (b.variant === 'kang_tall' || b.variant === 'kodos_pink' || b.variant === 'crown_lime_red') {
+                // Testa alta a goccia stile Kang & Kodos
                 ctx.beginPath();
-                ctx.arc(i * 9, 4, 2.5, 0, Math.PI * 2);
+                ctx.moveTo(-16, 10);
+                ctx.quadraticCurveTo(-24, -22, 0, -34);
+                ctx.quadraticCurveTo(24, -22, 16, 10);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+            } else if (b.variant === 'bulb_orange') {
+                // Testa rotonda a bulbo
+                ctx.beginPath();
+                ctx.ellipse(0, -10, 22, 20, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+            } else if (b.variant === 'slime_cyan') {
+                // Testa larga e gommosa
+                ctx.beginPath();
+                ctx.ellipse(0, -7, 25, 16, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+            } else {
+                // Testa ovale espressiva
+                ctx.beginPath();
+                ctx.ellipse(0, -10, 21, 18, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+            }
+
+            // Dettagli unici per variante cartoon
+            if (b.variant === 'kodos_pink') {
+                // Riccioli laterali stile Kodos
+                ctx.fillStyle = b.cheekColor;
+                ctx.beginPath();
+                ctx.arc(-20, -14, 7, 0, Math.PI * 2);
+                ctx.arc(20, -14, 7, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+            } else if (b.variant === 'horns_violet') {
+                // Corna cartoon
+                ctx.fillStyle = '#fde047';
+                ctx.beginPath();
+                ctx.moveTo(-14, -22); ctx.lineTo(-22, -38); ctx.lineTo(-6, -26); ctx.closePath();
+                ctx.fill(); ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(14, -22); ctx.lineTo(22, -38); ctx.lineTo(6, -26); ctx.closePath();
+                ctx.fill(); ctx.stroke();
+            } else if (b.variant === 'crown_lime_red') {
+                // Corona reale
+                ctx.fillStyle = '#facc15';
+                ctx.beginPath();
+                ctx.moveTo(-15, -31); ctx.lineTo(-18, -44); ctx.lineTo(-6, -36);
+                ctx.lineTo(0, -47); ctx.lineTo(6, -36); ctx.lineTo(18, -44); ctx.lineTo(15, -31);
+                ctx.closePath();
+                ctx.fill(); ctx.stroke();
+            } else {
+                // Antennina cartoon
+                ctx.strokeStyle = '#09090b';
+                ctx.lineWidth = 2.5;
+                ctx.beginPath();
+                ctx.moveTo(0, -26);
+                ctx.lineTo(0, -37);
+                ctx.stroke();
+                ctx.fillStyle = b.glowColor;
+                ctx.beginPath();
+                ctx.arc(0, -39, 4.5, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+            }
+
+            // Bolle/guance colorate
+            ctx.fillStyle = b.cheekColor;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(-11, -3, 3.5, 0, Math.PI * 2);
+            ctx.arc(11, -3, 3.5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            // Occhi espressivi da cartone animato
+            function drawEye(ex, ey, r) {
+                ctx.fillStyle = b.eyeColor;
+                ctx.strokeStyle = '#09090b';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(ex, ey, r, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+
+                ctx.fillStyle = b.pupilColor;
+                ctx.beginPath();
+                ctx.arc(ex - r * 0.25, ey, r * 0.42, 0, Math.PI * 2);
                 ctx.fill();
             }
 
+            if (b.variant === 'three_eye_gold') {
+                drawEye(-8, -11, 5.2);
+                drawEye(8, -11, 5.2);
+                drawEye(0, -19, 4.8);
+            } else {
+                drawEye(-7, -11, 5.8);
+                drawEye(7, -11, 5.8);
+            }
+
+            // Sopracciglia aggrottate
+            ctx.strokeStyle = '#09090b';
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            ctx.moveTo(-13, -17); ctx.lineTo(-2, -14);
+            ctx.moveTo(13, -17); ctx.lineTo(2, -14);
+            ctx.stroke();
+
+            // Bocca ghignante da cartone
+            ctx.strokeStyle = '#09090b';
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            ctx.moveTo(-10, 4);
+            ctx.quadraticCurveTo(0, 9, 10, 3);
+            ctx.stroke();
+
             // Barra di carica attacco sopra il boss
             if (chargeRatio > 0) {
-                ctx.shadowBlur = 0;
-                ctx.fillStyle = 'rgba(0,0,0,0.65)';
-                ctx.fillRect(-26, -34, 52, 5);
+                ctx.fillStyle = 'rgba(0,0,0,0.7)';
+                ctx.fillRect(-26, -54, 52, 6);
                 ctx.fillStyle = chargeRatio > 0.75 ? '#ef4444' : b.glowColor;
-                ctx.fillRect(-25, -33, 50 * Math.min(1, chargeRatio), 3);
+                ctx.fillRect(-25, -53, 50 * Math.min(1, chargeRatio), 4);
             }
 
             ctx.restore();
@@ -1200,6 +1349,7 @@
         let bossProjectiles = [];
         let stars = [];
         let particles = [];
+        let explosionRings = [];
         let distTraveled = 0;
         let levelLength = 7500;
         let starsCollected = 0;
@@ -1211,7 +1361,11 @@
             y: 270,
             baseY: 270,
             attackTimer: 0,
-            attackInterval: 88
+            attackInterval: 88,
+            dyingSequence: false,
+            dyingTimer: 0,
+            exploded: false,
+            hitShake: 0
         };
 
         function updateBossHud() {
@@ -1220,7 +1374,7 @@
                 const boss = moonBosses[gameData.currentWorld] || moonBosses[0];
                 wrap.classList.remove('hidden');
                 document.getElementById('hud-boss-name').innerText = boss.name;
-                document.getElementById('hud-boss-progress').innerText = `${starsCollected}/${boss.targetStars}`;
+                document.getElementById('hud-boss-progress').innerText = `${starsCollected}/${boss.targetStars} ⭐`;
             } else {
                 wrap.classList.add('hidden');
             }
@@ -1249,13 +1403,18 @@
             distTraveled = 0; starsCollected = 0;
             bossProjectiles = [];
             particles = [];
+            explosionRings = [];
 
             bossState.active = (stageIdx === 6);
-            bossState.x = canvas.width - 110;
+            bossState.x = canvas.width - 115;
             bossState.y = canvas.height / 2;
             bossState.baseY = canvas.height / 2;
             bossState.attackTimer = 0;
             bossState.attackInterval = Math.max(54, 88 - worldIdx * 5);
+            bossState.dyingSequence = false;
+            bossState.dyingTimer = 0;
+            bossState.exploded = false;
+            bossState.hitShake = 0;
 
             document.getElementById('hud-stars').innerText = starsCollected;
             document.getElementById('hud-progress-bar').style.width = '0%';
@@ -1273,10 +1432,9 @@
             const boss = moonBosses[gameData.currentWorld] || moonBosses[0];
             const modeRoll = Math.random();
             const originX = bossState.x - 36;
-            const originY = bossState.y + 3;
+            const originY = bossState.y + 4;
 
             if (modeRoll < 0.55) {
-                // Proiettile energetico lanciato verso sinistra (con leggera inclinazione)
                 const aimDy = (ufo.y - originY) * 0.012 + (Math.random() - 0.5) * 1.4;
                 bossProjectiles.push({
                     x: originX,
@@ -1288,7 +1446,6 @@
                     color: boss.glowColor
                 });
             } else {
-                // Ostacolo appuntito lanciato dal boss
                 bossProjectiles.push({
                     x: originX,
                     y: originY - 11,
@@ -1322,7 +1479,6 @@
                 const floorHeight = 50;
                 const ceilingHeight = 45;
 
-                // Nello stage 7 il boss sta fisso a destra e lancia attacchi, quindi lasciamo più spazio per schivare
                 if (sIdx === 6) {
                     if (r < 0.35) {
                         obstacles.push({ x: spawnX, y: canvas.height - floorHeight - 36, width: 28, height: 36, type: 'spike' });
@@ -1354,7 +1510,7 @@
         }
 
         function triggerJump() {
-            if (!gameRunning) return;
+            if (!gameRunning || bossState.dyingSequence) return;
             ufo.vy = ufo.lift;
             playSound('jump');
 
@@ -1380,6 +1536,47 @@
             triggerJump();
         });
 
+        function startBossDeathSequence() {
+            bossState.dyingSequence = true;
+            bossState.dyingTimer = 0;
+            bossState.hitShake = 1;
+            bossProjectiles = [];
+            ufo.vy = 0;
+            ufo.angle = 0;
+            playSound('beam');
+        }
+
+        function triggerBossExplosion() {
+            if (bossState.exploded) return;
+            bossState.exploded = true;
+            playSound('boss_boom');
+
+            const boss = moonBosses[gameData.currentWorld] || moonBosses[0];
+            explosionRings.push({
+                x: bossState.x,
+                y: bossState.y,
+                radius: 12,
+                maxRadius: 130,
+                alpha: 1,
+                color: boss.glowColor
+            });
+
+            const burstColors = [boss.skinColor, boss.glowColor, '#facc15', '#ec4899', '#38bdf8', '#ffffff'];
+            for (let i = 0; i < 55; i++) {
+                const ang = Math.random() * Math.PI * 2;
+                const spd = 2 + Math.random() * 8.5;
+                particles.push({
+                    x: bossState.x,
+                    y: bossState.y,
+                    vx: Math.cos(ang) * spd,
+                    vy: Math.sin(ang) * spd,
+                    alpha: 1,
+                    color: burstColors[i % burstColors.length],
+                    size: 3 + Math.random() * 4
+                });
+            }
+        }
+
         function gameLoop() {
             if (!gameRunning) return;
             updateGame();
@@ -1388,12 +1585,43 @@
         }
 
         function updateGame() {
+            const floorY = canvas.height - 50;
+            const ceilingY = 45;
+
+            // Scena finale in cui il raggio del nostro UFO colpisce e fa esplodere l'alieno
+            if (bossState.dyingSequence) {
+                bossState.dyingTimer++;
+                ufo.y += (canvas.height / 2 - ufo.y) * 0.08;
+
+                if (bossState.dyingTimer === 48) {
+                    triggerBossExplosion();
+                }
+
+                for (let i = particles.length - 1; i >= 0; i--) {
+                    const p = particles[i];
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.alpha -= 0.022;
+                    if (p.alpha <= 0) particles.splice(i, 1);
+                }
+
+                for (let i = explosionRings.length - 1; i >= 0; i--) {
+                    const r = explosionRings[i];
+                    r.radius += 5.5;
+                    r.alpha -= 0.035;
+                    if (r.alpha <= 0) explosionRings.splice(i, 1);
+                }
+
+                if (bossState.dyingTimer >= 92) {
+                    bossState.dyingSequence = false;
+                    stageWin();
+                }
+                return;
+            }
+
             ufo.vy += ufo.gravity;
             ufo.y += ufo.vy;
             ufo.angle = Math.min(Math.max(ufo.vy * 0.035, -0.35), 0.35);
-
-            const floorY = canvas.height - 50;
-            const ceilingY = 45;
 
             if (ufo.y >= floorY - ufo.radius) {
                 ufo.y = floorY - ufo.radius;
@@ -1415,18 +1643,19 @@
                 if (gameData.currentStage === 6) {
                     const boss = moonBosses[gameData.currentWorld] || moonBosses[0];
                     if (starsCollected < boss.targetStars) {
-                        gameOver(`Ti servivano almeno ${boss.targetStars} sfere per sconfiggere ${boss.name}! (Raccolte: ${starsCollected})`);
+                        gameOver(`Ti servivano almeno ${boss.targetStars} stelle per attivare il raggio contro ${boss.name}! (Raccolte: ${starsCollected})`);
                         return;
                     }
+                    startBossDeathSequence();
+                    return;
                 }
                 stageWin();
                 return;
             }
 
-            // Aggiorna Boss fisso sulla destra e i suoi attacchi nel Livello 7
             if (bossState.active) {
                 bossState.y = bossState.baseY + Math.sin(distTraveled * 0.012) * 115;
-                bossState.y = Math.max(ceilingY + 42, Math.min(floorY - 36, bossState.y));
+                bossState.y = Math.max(ceilingY + 46, Math.min(floorY - 38, bossState.y));
 
                 bossState.attackTimer++;
                 if (bossState.attackTimer >= bossState.attackInterval) {
@@ -1446,7 +1675,7 @@
                     if (proj.type === 'orb') {
                         if (Math.hypot(ufo.x - proj.x, ufo.y - proj.y) < ufo.radius + proj.radius - 2) {
                             const boss = moonBosses[gameData.currentWorld] || moonBosses[0];
-                            gameOver(`Colpito dal raggio di ${boss.name}!`);
+                            gameOver(`Colpito dal colpo lanciato da ${boss.name}!`);
                             return;
                         }
                     } else {
@@ -1565,7 +1794,6 @@
                 }
             });
 
-            // Disegna i proiettili/ostacoli lanciati dal Boss
             bossProjectiles.forEach(proj => {
                 ctx.save();
                 if (proj.type === 'orb') {
@@ -1593,20 +1821,57 @@
                 ctx.restore();
             });
 
-            // Disegna il Boss fisso sulla destra durante il Livello 7
-            if (bossState.active) {
-                const bossData = moonBosses[gameData.currentWorld] || moonBosses[0];
-                const chargeRatio = bossState.attackTimer / bossState.attackInterval;
-                drawBossShip(ctx, bossState.x, bossState.y, 1.35, bossData, chargeRatio);
+            const activeSkin = skinsConfig.find(s => s.id === gameData.progress.activeSkin) || skinsConfig[0];
+
+            // Raggio finale che parte dal nostro UFO e colpisce l'alieno a destra
+            if (bossState.dyingSequence && !bossState.exploded) {
+                ctx.save();
+                const pulse = 10 + Math.sin(bossState.dyingTimer * 0.7) * 5;
+                ctx.strokeStyle = activeSkin.lightColor;
+                ctx.shadowColor = activeSkin.haloColor;
+                ctx.shadowBlur = 24;
+                ctx.lineWidth = pulse;
+                ctx.beginPath();
+                ctx.moveTo(ufo.x + 18, ufo.y + 4);
+                ctx.lineTo(bossState.x, bossState.y);
+                ctx.stroke();
+
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = Math.max(3, pulse * 0.35);
+                ctx.beginPath();
+                ctx.moveTo(ufo.x + 18, ufo.y + 4);
+                ctx.lineTo(bossState.x, bossState.y);
+                ctx.stroke();
+                ctx.restore();
             }
 
-            particles.forEach(p => {
-                ctx.save(); ctx.globalAlpha = p.alpha; ctx.fillStyle = p.color;
-                ctx.beginPath(); ctx.arc(p.x, p.y, 2, 0, Math.PI * 2); ctx.fill();
+            // Anelli d'onda dell'esplosione finale
+            explosionRings.forEach(r => {
+                ctx.save();
+                ctx.globalAlpha = Math.max(0, r.alpha);
+                ctx.strokeStyle = r.color;
+                ctx.shadowColor = r.color;
+                ctx.shadowBlur = 20;
+                ctx.lineWidth = 5;
+                ctx.beginPath();
+                ctx.arc(r.x, r.y, r.radius, 0, Math.PI * 2);
+                ctx.stroke();
                 ctx.restore();
             });
 
-            const activeSkin = skinsConfig.find(s => s.id === gameData.progress.activeSkin) || skinsConfig[0];
+            // Disegna il Boss alieno cartoon fisso a destra
+            if (bossState.active) {
+                const bossData = moonBosses[gameData.currentWorld] || moonBosses[0];
+                const chargeRatio = bossState.dyingSequence ? 0 : (bossState.attackTimer / bossState.attackInterval);
+                drawCartoonAlienBoss(ctx, bossState.x, bossState.y, 1.35, bossData, chargeRatio, bossState.hitShake, bossState.exploded);
+            }
+
+            particles.forEach(p => {
+                ctx.save(); ctx.globalAlpha = Math.max(0, p.alpha); ctx.fillStyle = p.color;
+                ctx.beginPath(); ctx.arc(p.x, p.y, p.size || 2, 0, Math.PI * 2); ctx.fill();
+                ctx.restore();
+            });
+
             drawUFO(ctx, ufo.x, ufo.y, ufo.radius, ufo.angle, activeSkin);
         }
 
