@@ -172,7 +172,7 @@
             <div id="skins-container" class="scrollable-list grid grid-cols-2 md:grid-cols-4 gap-4 my-auto max-h-[360px] p-2"></div>
 
             <div class="text-center text-xs text-neutral-400 font-orbitron" id="shop-hint">
-                Tutte e 50 le skin restano sempre in posizione fissa mentre scorri o riapri il negozio.
+                50 skin con forme differenti — restano ferme al loro posto mentre scorri o riapri il negozio.
             </div>
         </div>
 
@@ -428,7 +428,7 @@
                 shopBtn: "🛒 NEGOZIO",
                 storyBtn: "📜 STORIA",
                 shopTitle: "NEGOZIO SKIN ŮFØ (50 SKIN)",
-                shopHint: "Tutte e 50 le skin restano sempre in posizione fissa mentre scorri o riapri il negozio.",
+                shopHint: "50 skin con forme differenti — restano ferme al loro posto mentre scorri o riapri il negozio.",
                 mapTitle: "SELEZIONA MONDO (7 MONDI)",
                 mapHint: "Scorri su e giù e clicca su una luna per accedere ai suoi 7 livelli fissi!",
                 touchHint: "Tocca per fluttuare (Pavimento sicuro, soffitto solido)",
@@ -477,7 +477,7 @@
                 shopBtn: "🛒 SHOP",
                 storyBtn: "📜 STORY",
                 shopTitle: "ŮFØ SKIN SHOP (50 SKINS)",
-                shopHint: "All 50 skins always stay in a fixed position as you scroll or reopen the shop.",
+                shopHint: "50 different shapes — they stay fixed in place as you scroll or reopen the shop.",
                 mapTitle: "SELECT WORLD (7 WORLDS)",
                 mapHint: "Scroll up and down and click on a moon to access its 7 fixed stages!",
                 touchHint: "Tap to float (Safe ground, solid ceiling)",
@@ -522,8 +522,8 @@
             }
         };
 
-        const SAVE_KEY = 'unoyd_ufo_ultimate_v10_progress';
-        const LEGACY_KEYS = ['unoyd_ufo_ultimate_v9_progress', 'unoyd_ufo_ultimate_v8_progress', 'unoyd_ufo_ultimate_v7_progress'];
+        const SAVE_KEY = 'unoyd_ufo_ultimate_v11_progress';
+        const LEGACY_KEYS = ['unoyd_ufo_ultimate_v10_progress', 'unoyd_ufo_ultimate_v9_progress', 'unoyd_ufo_ultimate_v8_progress'];
 
         function loadSavedProgress() {
             let raw = localStorage.getItem(SAVE_KEY);
@@ -591,42 +591,71 @@
             document.getElementById('warn-desc').innerText = t.warnDesc;
         }
 
-        const themeCycles = ['slime', 'galactic', 'fire', 'ice', 'lightning'];
-        const themePalettes = [
-            { body: '#14532d', light: '#4ade80', halo: '#a3e635' },
-            { body: '#1e1b4b', light: '#c084fc', halo: '#facc15' },
-            { body: '#7c2d12', light: '#fb923c', halo: '#fef08a' },
-            { body: '#0c4a6e', light: '#38bdf8', halo: '#e0f2fe' },
-            { body: '#312e81', light: '#fde047', halo: '#38bdf8' }
+        const uniqueShapeCatalog = [
+            { shape: 'delta_jet', name: '✈️ Freccia Delta', body: '#38bdf8', accent: '#f8fafc', glow: '#38bdf8' },
+            { shape: 'diamond_core', name: '💎 Rombo Prisma', body: '#a855f7', accent: '#f0abfc', glow: '#c084fc' },
+            { shape: 'rocket_pod', name: '🚀 Razzo Scarlatto', body: '#ef4444', accent: '#fde047', glow: '#f97316' },
+            { shape: 'orbit_ring', name: '⭕ Anello Saturno', body: '#eab308', accent: '#38bdf8', glow: '#facc15' },
+            { shape: 'blob_goo', name: '🟢 Blob Viscoso', body: '#22c55e', accent: '#dcfce7', glow: '#4ade80' },
+            { shape: 'hex_shield', name: '⬡ Esagono Scudo', body: '#14b8a6', accent: '#99f6e4', glow: '#2dd4bf' },
+            { shape: 'comet_tail', name: '☄️ Cometa Glaciale', body: '#0ea5e9', accent: '#ffffff', glow: '#7dd3fc' },
+            { shape: 'spider_bot', name: '🕷️ Drone Ragno', body: '#f97316', accent: '#fef08a', glow: '#fb923c' },
+            { shape: 'star_nova', name: '🌟 Stella Nova', body: '#facc15', accent: '#fffbeb', glow: '#fde047' },
+            { shape: 'twin_pod', name: '🛸 Navetta Gemella', body: '#ec4899', accent: '#fbcfe8', glow: '#f472b6' },
+            { shape: 'pyramid_eye', name: '🔺 Piramide Occhio', body: '#8b5cf6', accent: '#fde047', glow: '#a78bfa' },
+            { shape: 'bolt_arc', name: '⚡ Arco Voltaico', body: '#eab308', accent: '#38bdf8', glow: '#fde047' },
+            { shape: 'jelly_drift', name: '🪼 Medusa Spaziale', body: '#c084fc', accent: '#67e8f9', glow: '#e879f9' },
+            { shape: 'cube_mech', name: '🧊 Cubo Mecha', body: '#64748b', accent: '#38bdf8', glow: '#94a3b8' },
+            { shape: 'crescent_blade', name: '🌙 Falce Lunare', body: '#e2e8f0', accent: '#facc15', glow: '#f8fafc' },
+            { shape: 'cross_drone', name: '✚ Croce Laser', body: '#10b981', accent: '#a7f3d0', glow: '#34d399' },
+            { shape: 'octagon_tank', name: '🛑 Ottagono Corazzato', body: '#dc2626', accent: '#fca5a5', glow: '#ef4444' },
+            { shape: 'orb_saturn', name: '🪐 Sfera ad Anelli', body: '#d97706', accent: '#fef08a', glow: '#fbbf24' },
+            { shape: 'spike_ball', name: '🦔 Riccio d’Acciaio', body: '#475569', accent: '#f43f5e', glow: '#fb7185' },
+            { shape: 'arrow_dart', name: '🏹 Dardo Supersonico', body: '#06b6d4', accent: '#fef08a', glow: '#22d3ee' },
+            { shape: 'wing_glider', name: '🦅 Aliante Alato', body: '#6366f1', accent: '#e0e7ff', glow: '#818cf8' },
+            { shape: 'dome_capsule', name: '🫧 Capsula a Bolla', body: '#3b82f6', accent: '#bae6fd', glow: '#60a5fa' },
+            { shape: 'gear_cog', name: '⚙️ Ingranaggio Atomico', body: '#78716c', accent: '#facc15', glow: '#d6d3d1' },
+            { shape: 'crown_gem', name: '💠 Gemma Reale', body: '#a21caf', accent: '#fde047', glow: '#e879f9' },
+            { shape: 'trident_ship', name: '🔱 Tridente Abissale', body: '#0284c7', accent: '#5eead4', glow: '#38bdf8' },
+            { shape: 'heart_pulse', name: '💖 Cuore Pulsar', body: '#e11d48', accent: '#fecdd3', glow: '#fb7185' },
+            { shape: 'flame_spirit', name: '🔥 Spirito Fiamma', body: '#ea580c', accent: '#fef08a', glow: '#fb923c' },
+            { shape: 'ice_shard', name: '❄️ Scheggia Brina', body: '#7dd3fc', accent: '#ffffff', glow: '#bae6fd' },
+            { shape: 'leaf_sprout', name: '🌿 Germoglio Cosmo', body: '#16a34a', accent: '#bef264', glow: '#4ade80' },
+            { shape: 'sun_burst', name: '☀️ Raggio Solare', body: '#f59e0b', accent: '#ffffff', glow: '#fde047' },
+            { shape: 'void_eye', name: '👁️ Occhio del Vuoto', body: '#312e81', accent: '#f43f5e', glow: '#818cf8' },
+            { shape: 'shield_crest', name: '🛡️ Scudo Galattico', body: '#2563eb', accent: '#facc15', glow: '#60a5fa' },
+            { shape: 'rocket_twin', name: '🚀 Doppio Propulsore', body: '#9333ea', accent: '#4ade80', glow: '#c084fc' },
+            { shape: 'hour_glass', name: '⏳ Clessidra Tempo', body: '#ca8a04', accent: '#fef9c3', glow: '#facc15' },
+            { shape: 'ufo_mini', name: '🛸 Sonda Circolare', body: '#0d9488', accent: '#f0fdfa', glow: '#2dd4bf' },
+            { shape: 'wedge_cutter', name: '📐 Cuneo Tagliente', body: '#be123c', accent: '#fde047', glow: '#fb7185' },
+            { shape: 'drop_aqua', name: '💧 Goccia Quantistica', body: '#0369a1', accent: '#7dd3fc', glow: '#38bdf8' },
+            { shape: 'fang_viper', name: '🐍 Vipera Spaziale', body: '#15803d', accent: '#fde047', glow: '#4ade80' },
+            { shape: 'halo_angel', name: '😇 Aureola Celeste', body: '#f8fafc', accent: '#facc15', glow: '#fde047' },
+            { shape: 'horn_bull', name: '🐂 Toro Astrale', body: '#7c2d12', accent: '#fbbf24', glow: '#fb923c' },
+            { shape: 'wave_pulse', name: '🌊 Onda Sonica', body: '#0891b2', accent: '#a5f3fc', glow: '#22d3ee' },
+            { shape: 'fan_turbine', name: '🌀 Turbina a Ventola', body: '#4f46e5', accent: '#f0abfc', glow: '#818cf8' },
+            { shape: 'key_master', name: '🗝️ Chiave Cosmica', body: '#eab308', accent: '#ffffff', glow: '#fde047' },
+            { shape: 'anchor_ship', name: '⚓ Ancora Stellare', body: '#334155', accent: '#38bdf8', glow: '#94a3b8' },
+            { shape: 'prism_beam', name: '🌈 Prisma Arcobaleno', body: '#ec4899', accent: '#facc15', glow: '#38bdf8' },
+            { shape: 'claw_mech', name: '🦀 Chela Cibernetica', body: '#b91c1c', accent: '#22d3ee', glow: '#f87171' },
+            { shape: 'cloud_nimbus', name: '☁️ Nuvola Elettrica', body: '#cbd5e1', accent: '#fde047', glow: '#e2e8f0' },
+            { shape: 'omega_core', name: 'Ω Nucleo Omega', body: '#7e22ce', accent: '#facc15', glow: '#c084fc' }
         ];
 
         const skinsConfig = [
-            { id: 'classic', name: 'Classic ŮFØ', price: 0, theme: 'original', bodyColor: '#9ca3af', lightColor: '#a855f7', haloColor: '#eab308' },
-            { id: 'ufo_slime', name: '🧪 UFO Slime', price: 40, theme: 'slime', bodyColor: '#15803d', lightColor: '#4ade80', haloColor: '#bef264' },
-            { id: 'ufo_galactic', name: '🌌 UFO Galattico', price: 85, theme: 'galactic', bodyColor: '#1e1b4b', lightColor: '#c084fc', haloColor: '#facc15' },
-            { id: 'ufo_fire', name: '🔥 UFO di Fuoco', price: 135, theme: 'fire', bodyColor: '#7c2d12', lightColor: '#fb923c', haloColor: '#fde047' },
-            { id: 'ufo_ice', name: '❄️ UFO Ghiaccio', price: 190, theme: 'ice', bodyColor: '#0c4a6e', lightColor: '#38bdf8', haloColor: '#e0f2fe' },
-            { id: 'ufo_bolt', name: '⚡ UFO Fulmine', price: 250, theme: 'lightning', bodyColor: '#312e81', lightColor: '#fde047', haloColor: '#38bdf8' }
+            { id: 'classic', name: 'Classic ŮFØ', price: 0, shape: 'classic_original', bodyColor: '#9ca3af', lightColor: '#a855f7', haloColor: '#eab308' }
         ];
 
-        const extraTitles = [
-            'Slime', 'Galattico', 'Fuoco', 'Ghiaccio', 'Fulmine',
-            'Nebulosa', 'Magma', 'Cristallo', 'Plasma', 'Cosmo',
-            'Smeraldo', 'Supernova', 'Brina', 'Saetta', 'Astro'
-        ];
-
-        for (let i = 6; i < 49; i++) {
-            const tIdx = (i - 6) % themeCycles.length;
-            const p = themePalettes[tIdx];
-            const label = extraTitles[(i - 6) % extraTitles.length];
+        for (let i = 0; i < 48; i++) {
+            const item = uniqueShapeCatalog[i];
             skinsConfig.push({
-                id: `skin_${i + 1}`,
-                name: `ŮFØ ${label} #${i + 1}`,
-                price: 300 + (i - 5) * 165,
-                theme: themeCycles[tIdx],
-                bodyColor: p.body,
-                lightColor: p.light,
-                haloColor: p.halo
+                id: `skin_${i + 2}`,
+                name: item.name,
+                price: 35 + i * 145,
+                shape: item.shape,
+                bodyColor: item.body,
+                lightColor: item.accent,
+                haloColor: item.glow
             });
         }
 
@@ -634,7 +663,7 @@
             id: 'lunoyd',
             name: '👑 Lunoyd Prime',
             price: 7500,
-            theme: 'lunoyd',
+            shape: 'lunoyd_sovereign',
             bodyColor: '#2e1065',
             lightColor: '#c084fc',
             haloColor: '#facc15'
@@ -1052,11 +1081,14 @@
             ctx.translate(x, y);
             ctx.rotate(angle);
 
-            const th = skin.theme || 'original';
+            const sh = skin.shape || 'classic_original';
+            const bc = skin.bodyColor || '#6366f1';
+            const lc = skin.lightColor || '#facc15';
+            const hc = skin.haloColor || '#38bdf8';
 
-            if (th === 'original') {
-                ctx.strokeStyle = skin.haloColor;
-                ctx.shadowColor = skin.haloColor;
+            if (sh === 'classic_original') {
+                ctx.strokeStyle = hc;
+                ctx.shadowColor = hc;
                 ctx.shadowBlur = 10;
                 ctx.lineWidth = 3;
                 ctx.beginPath();
@@ -1064,7 +1096,7 @@
                 ctx.stroke();
 
                 ctx.fillStyle = 'rgba(168, 85, 247, 0.35)';
-                ctx.strokeStyle = skin.lightColor;
+                ctx.strokeStyle = lc;
                 ctx.lineWidth = 2;
                 ctx.beginPath();
                 ctx.arc(0, -4, 11, Math.PI, 0, false);
@@ -1072,7 +1104,7 @@
 
                 const grad = ctx.createLinearGradient(-radius, 0, radius, 0);
                 grad.addColorStop(0, '#1f2937');
-                grad.addColorStop(0.5, skin.bodyColor);
+                grad.addColorStop(0.5, bc);
                 grad.addColorStop(1, '#111827');
                 ctx.fillStyle = grad;
                 ctx.strokeStyle = '#e5e7eb';
@@ -1081,126 +1113,315 @@
                 ctx.ellipse(0, 4, radius, 7.5, 0, 0, Math.PI * 2);
                 ctx.fill(); ctx.stroke();
 
-                ctx.fillStyle = skin.lightColor;
-                ctx.shadowColor = skin.lightColor;
+                ctx.fillStyle = lc;
+                ctx.shadowColor = lc;
                 ctx.shadowBlur = 12;
                 for (let i = -2; i <= 2; i++) {
                     ctx.beginPath();
                     ctx.arc(i * 7, 4, 1.8, 0, Math.PI * 2);
                     ctx.fill();
                 }
-
                 ctx.restore();
                 return;
             }
 
-            if (th === 'lunoyd') {
-                ctx.save();
-                ctx.translate(0, -18);
-                ctx.fillStyle = '#facc15';
-                ctx.strokeStyle = '#09090b';
+            if (sh === 'lunoyd_sovereign') {
                 ctx.shadowColor = '#facc15';
-                ctx.shadowBlur = 16;
-                ctx.lineWidth = 2;
+                ctx.shadowBlur = 18;
+                ctx.fillStyle = '#facc15';
                 ctx.beginPath();
-                ctx.moveTo(-12, 3); ctx.lineTo(-14, -8); ctx.lineTo(-5, -1);
-                ctx.lineTo(0, -11); ctx.lineTo(5, -1); ctx.lineTo(14, -8); ctx.lineTo(12, 3);
-                ctx.closePath();
-                ctx.fill(); ctx.stroke();
-                ctx.restore();
-            }
-
-            if (th === 'fire') {
-                ctx.fillStyle = '#f97316';
-                ctx.shadowColor = '#ef4444';
-                ctx.shadowBlur = 16;
-                ctx.beginPath();
-                ctx.moveTo(-radius, 2);
-                ctx.lineTo(-radius - 16, -5);
-                ctx.lineTo(-radius - 11, 4);
-                ctx.lineTo(-radius - 17, 11);
+                ctx.moveTo(-10, -14); ctx.lineTo(-14, -25); ctx.lineTo(-4, -18);
+                ctx.lineTo(0, -28); ctx.lineTo(4, -18); ctx.lineTo(14, -25); ctx.lineTo(10, -14);
                 ctx.closePath();
                 ctx.fill();
-            } else if (th === 'galactic') {
+
+                ctx.fillStyle = bc;
                 ctx.strokeStyle = '#facc15';
-                ctx.lineWidth = 1.8;
+                ctx.lineWidth = 2;
                 ctx.beginPath();
-                ctx.ellipse(0, 3, radius + 8, 11, -0.2, 0, Math.PI * 2);
-                ctx.stroke();
-            } else if (th === 'ice') {
-                ctx.fillStyle = '#bae6fd';
+                ctx.moveTo(22, 0); ctx.lineTo(-14, -15); ctx.lineTo(-8, 0); ctx.lineTo(-14, 15);
+                ctx.closePath();
+                ctx.fill(); ctx.stroke();
+
+                ctx.fillStyle = lc;
                 ctx.beginPath();
-                ctx.moveTo(-10, -13); ctx.lineTo(-6, -20); ctx.lineTo(-2, -13);
-                ctx.moveTo(4, -13); ctx.lineTo(8, -19); ctx.lineTo(12, -13);
+                ctx.arc(2, 0, 5, 0, Math.PI * 2);
                 ctx.fill();
-            } else if (th === 'lightning') {
-                ctx.strokeStyle = '#fde047';
-                ctx.shadowColor = '#38bdf8';
-                ctx.shadowBlur = 12;
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-                ctx.moveTo(-radius - 2, 2); ctx.lineTo(-radius - 10, -4); ctx.lineTo(-radius - 16, 3);
-                ctx.stroke();
+                ctx.restore();
+                return;
             }
 
-            if (th === 'slime') {
-                const slimeGrad = ctx.createRadialGradient(-3, -10, 2, 0, -4, 15);
-                slimeGrad.addColorStop(0, '#bbf7d0');
-                slimeGrad.addColorStop(0.5, '#4ade80');
-                slimeGrad.addColorStop(1, '#15803d');
-                ctx.fillStyle = slimeGrad;
-                ctx.strokeStyle = '#86efac';
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-                ctx.moveTo(-12, 0);
-                ctx.quadraticCurveTo(-12, -16, 0, -16);
-                ctx.quadraticCurveTo(12, -16, 12, 0);
-                ctx.lineTo(8, 3); ctx.lineTo(5, -1); ctx.lineTo(1, 4);
-                ctx.lineTo(-4, -1); ctx.lineTo(-8, 3);
-                ctx.closePath();
-                ctx.fill(); ctx.stroke();
-            } else if (th === 'galactic') {
-                const galGrad = ctx.createRadialGradient(-2, -8, 1, 0, -5, 13);
-                galGrad.addColorStop(0, '#fef08a');
-                galGrad.addColorStop(0.45, '#c084fc');
-                galGrad.addColorStop(1, '#312e81');
-                ctx.fillStyle = galGrad;
-                ctx.strokeStyle = '#e879f9';
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-                ctx.arc(0, -4, 11, Math.PI, 0, false);
-                ctx.closePath();
-                ctx.fill(); ctx.stroke();
-                ctx.fillStyle = '#ffffff';
-                ctx.fillRect(-5, -10, 2, 2);
-                ctx.fillRect(4, -8, 1.5, 1.5);
-            } else {
-                ctx.fillStyle = skin.lightColor + '44';
-                ctx.strokeStyle = skin.lightColor;
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-                ctx.arc(0, -4, 11, Math.PI, 0, false);
-                ctx.fill(); ctx.stroke();
-            }
-
-            const grad = ctx.createLinearGradient(-radius, -3, radius, 11);
-            grad.addColorStop(0, '#1f2937');
-            grad.addColorStop(0.5, skin.bodyColor);
-            grad.addColorStop(1, '#09090b');
-            ctx.fillStyle = grad;
-            ctx.strokeStyle = '#e5e7eb';
-            ctx.lineWidth = 1.5;
-            ctx.beginPath();
-            ctx.ellipse(0, 4, radius, 7.5, 0, 0, Math.PI * 2);
-            ctx.fill(); ctx.stroke();
-
-            ctx.fillStyle = skin.lightColor;
-            ctx.shadowColor = skin.lightColor;
+            ctx.shadowColor = hc;
             ctx.shadowBlur = 10;
-            for (let i = -2; i <= 2; i++) {
-                ctx.beginPath();
-                ctx.arc(i * 7, 4, 1.8, 0, Math.PI * 2);
-                ctx.fill();
+            ctx.fillStyle = bc;
+            ctx.strokeStyle = lc;
+            ctx.lineWidth = 2;
+
+            switch (sh) {
+                case 'delta_jet':
+                    ctx.beginPath();
+                    ctx.moveTo(22, 0); ctx.lineTo(-16, -13); ctx.lineTo(-9, 0); ctx.lineTo(-16, 13);
+                    ctx.closePath(); ctx.fill(); ctx.stroke();
+                    ctx.fillStyle = lc;
+                    ctx.beginPath(); ctx.arc(4, 0, 3.5, 0, Math.PI * 2); ctx.fill();
+                    break;
+                case 'diamond_core':
+                    ctx.beginPath();
+                    ctx.moveTo(0, -16); ctx.lineTo(18, 0); ctx.lineTo(0, 16); ctx.lineTo(-18, 0);
+                    ctx.closePath(); ctx.fill(); ctx.stroke();
+                    ctx.fillStyle = lc;
+                    ctx.beginPath(); ctx.arc(0, 0, 5, 0, Math.PI * 2); ctx.fill();
+                    break;
+                case 'rocket_pod':
+                    ctx.beginPath();
+                    ctx.roundRect(-14, -8, 28, 16, 7);
+                    ctx.fill(); ctx.stroke();
+                    ctx.fillStyle = lc;
+                    ctx.beginPath(); ctx.moveTo(-14, -6); ctx.lineTo(-22, -13); ctx.lineTo(-14, 0); ctx.fill();
+                    ctx.beginPath(); ctx.moveTo(-14, 6); ctx.lineTo(-22, 13); ctx.lineTo(-14, 0); ctx.fill();
+                    break;
+                case 'orbit_ring':
+                    ctx.beginPath(); ctx.arc(0, 0, 10, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+                    ctx.strokeStyle = lc; ctx.lineWidth = 2.5;
+                    ctx.beginPath(); ctx.ellipse(0, 0, 21, 6, -0.35, 0, Math.PI * 2); ctx.stroke();
+                    break;
+                case 'blob_goo':
+                    ctx.beginPath();
+                    ctx.moveTo(-15, 6);
+                    ctx.bezierCurveTo(-18, -14, 16, -15, 16, 4);
+                    ctx.bezierCurveTo(17, 13, -14, 14, -15, 6);
+                    ctx.fill(); ctx.stroke();
+                    ctx.fillStyle = lc;
+                    ctx.beginPath(); ctx.arc(5, -3, 3, 0, Math.PI * 2); ctx.arc(-3, -4, 2, 0, Math.PI * 2); ctx.fill();
+                    break;
+                case 'hex_shield':
+                    ctx.beginPath();
+                    for (let i = 0; i < 6; i++) {
+                        const a = (i / 6) * Math.PI * 2;
+                        const px = Math.cos(a) * 15, py = Math.sin(a) * 13;
+                        if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+                    }
+                    ctx.closePath(); ctx.fill(); ctx.stroke();
+                    break;
+                case 'comet_tail':
+                    ctx.fillStyle = hc;
+                    ctx.beginPath(); ctx.moveTo(-4, -5); ctx.lineTo(-23, -10); ctx.lineTo(-19, 0); ctx.lineTo(-23, 10); ctx.lineTo(-4, 5); ctx.fill();
+                    ctx.fillStyle = bc;
+                    ctx.beginPath(); ctx.arc(4, 0, 11, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+                    break;
+                case 'spider_bot':
+                    ctx.strokeStyle = lc; ctx.lineWidth = 2;
+                    [-8, 0, 8].forEach(lx => {
+                        ctx.beginPath(); ctx.moveTo(lx, 4); ctx.lineTo(lx - 4, 14); ctx.stroke();
+                        ctx.beginPath(); ctx.moveTo(lx, -4); ctx.lineTo(lx - 4, -14); ctx.stroke();
+                    });
+                    ctx.beginPath(); ctx.ellipse(0, 0, 12, 8, 0, 0, Math.PI * 2); ctx.fill();
+                    break;
+                case 'star_nova':
+                    ctx.beginPath();
+                    for (let i = 0; i < 10; i++) {
+                        const r = i % 2 === 0 ? 17 : 7;
+                        const a = (i * 36) * Math.PI / 180;
+                        const px = Math.cos(a) * r, py = Math.sin(a) * r;
+                        if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+                    }
+                    ctx.closePath(); ctx.fill(); ctx.stroke();
+                    break;
+                case 'twin_pod':
+                    ctx.beginPath(); ctx.roundRect(-12, -13, 24, 9, 4); ctx.fill(); ctx.stroke();
+                    ctx.beginPath(); ctx.roundRect(-12, 4, 24, 9, 4); ctx.fill(); ctx.stroke();
+                    ctx.fillStyle = lc; ctx.fillRect(-6, -2, 14, 4);
+                    break;
+                case 'pyramid_eye':
+                    ctx.beginPath(); ctx.moveTo(18, 0); ctx.lineTo(-13, -14); ctx.lineTo(-13, 14); ctx.closePath(); ctx.fill(); ctx.stroke();
+                    ctx.fillStyle = lc; ctx.beginPath(); ctx.arc(-2, 0, 4.5, 0, Math.PI * 2); ctx.fill();
+                    break;
+                case 'bolt_arc':
+                    ctx.beginPath();
+                    ctx.moveTo(18, -3); ctx.lineTo(2, -13); ctx.lineTo(4, -2); ctx.lineTo(-16, 4); ctx.lineTo(0, 13); ctx.lineTo(-2, 2);
+                    ctx.closePath(); ctx.fill(); ctx.stroke();
+                    break;
+                case 'jelly_drift':
+                    ctx.strokeStyle = lc; ctx.lineWidth = 2;
+                    [-7, 0, 7].forEach(tx => {
+                        ctx.beginPath(); ctx.moveTo(-6, tx); ctx.lineTo(-18, tx + (tx === 0 ? 0 : 4)); ctx.stroke();
+                    });
+                    ctx.beginPath(); ctx.arc(3, 0, 11, -Math.PI / 2, Math.PI / 2); ctx.closePath(); ctx.fill(); ctx.stroke();
+                    break;
+                case 'cube_mech':
+                    ctx.fillRect(-12, -12, 24, 24); ctx.strokeRect(-12, -12, 24, 24);
+                    ctx.fillStyle = lc; ctx.fillRect(2, -5, 6, 10);
+                    break;
+                case 'crescent_blade':
+                    ctx.beginPath();
+                    ctx.arc(0, 0, 14, -Math.PI * 0.75, Math.PI * 0.75);
+                    ctx.arc(6, 0, 10, Math.PI * 0.65, -Math.PI * 0.65, true);
+                    ctx.closePath(); ctx.fill(); ctx.stroke();
+                    break;
+                case 'cross_drone':
+                    ctx.fillRect(-16, -5, 32, 10); ctx.fillRect(-5, -14, 10, 28);
+                    ctx.strokeRect(-16, -5, 32, 10); ctx.strokeRect(-5, -14, 10, 28);
+                    ctx.fillStyle = lc; ctx.beginPath(); ctx.arc(0, 0, 4, 0, Math.PI * 2); ctx.fill();
+                    break;
+                case 'octagon_tank':
+                    ctx.beginPath();
+                    for (let i = 0; i < 8; i++) {
+                        const a = (i / 8) * Math.PI * 2 + Math.PI / 8;
+                        const px = Math.cos(a) * 14, py = Math.sin(a) * 14;
+                        if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+                    }
+                    ctx.closePath(); ctx.fill(); ctx.stroke();
+                    ctx.fillStyle = lc; ctx.fillRect(4, -3, 13, 6);
+                    break;
+                case 'orb_saturn':
+                    ctx.beginPath(); ctx.arc(0, 0, 9, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+                    ctx.strokeStyle = lc; ctx.beginPath(); ctx.ellipse(0, 0, 19, 5, 0.3, 0, Math.PI * 2); ctx.stroke();
+                    break;
+                case 'spike_ball':
+                    ctx.fillStyle = lc;
+                    for (let i = 0; i < 8; i++) {
+                        const a = (i / 8) * Math.PI * 2;
+                        ctx.beginPath();
+                        ctx.moveTo(Math.cos(a - 0.25) * 9, Math.sin(a - 0.25) * 9);
+                        ctx.lineTo(Math.cos(a) * 17, Math.sin(a) * 17);
+                        ctx.lineTo(Math.cos(a + 0.25) * 9, Math.sin(a + 0.25) * 9);
+                        ctx.fill();
+                    }
+                    ctx.fillStyle = bc; ctx.beginPath(); ctx.arc(0, 0, 10, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+                    break;
+                case 'arrow_dart':
+                    ctx.beginPath(); ctx.moveTo(20, 0); ctx.lineTo(-14, -9); ctx.lineTo(-8, 0); ctx.lineTo(-14, 9); ctx.closePath(); ctx.fill(); ctx.stroke();
+                    break;
+                case 'wing_glider':
+                    ctx.beginPath(); ctx.moveTo(14, 2); ctx.lineTo(-6, -15); ctx.lineTo(-14, 2); ctx.lineTo(0, 8); ctx.closePath(); ctx.fill(); ctx.stroke();
+                    break;
+                case 'dome_capsule':
+                    ctx.beginPath(); ctx.arc(0, 0, 13, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+                    ctx.fillStyle = lc; ctx.beginPath(); ctx.arc(4, -4, 4, 0, Math.PI * 2); ctx.fill();
+                    break;
+                case 'gear_cog':
+                    for (let i = 0; i < 6; i++) {
+                        const a = (i / 6) * Math.PI * 2;
+                        ctx.save(); ctx.rotate(a); ctx.fillRect(10, -3, 5, 6); ctx.restore();
+                    }
+                    ctx.beginPath(); ctx.arc(0, 0, 11, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+                    ctx.fillStyle = '#09090b'; ctx.beginPath(); ctx.arc(0, 0, 4, 0, Math.PI * 2); ctx.fill();
+                    break;
+                case 'crown_gem':
+                    ctx.beginPath(); ctx.moveTo(0, -15); ctx.lineTo(15, 0); ctx.lineTo(0, 15); ctx.lineTo(-15, 0); ctx.closePath(); ctx.fill(); ctx.stroke();
+                    ctx.strokeStyle = lc; ctx.strokeRect(-7, -7, 14, 14);
+                    break;
+                case 'trident_ship':
+                    ctx.beginPath(); ctx.moveTo(18, 0); ctx.lineTo(6, -11); ctx.lineTo(8, -4); ctx.lineTo(-15, -4); ctx.lineTo(-15, 4); ctx.lineTo(8, 4); ctx.lineTo(6, 11); ctx.closePath(); ctx.fill(); ctx.stroke();
+                    break;
+                case 'heart_pulse':
+                    ctx.beginPath();
+                    ctx.moveTo(0, 12);
+                    ctx.bezierCurveTo(-18, 2, -16, -13, 0, -5);
+                    ctx.bezierCurveTo(16, -13, 18, 2, 0, 12);
+                    ctx.fill(); ctx.stroke();
+                    break;
+                case 'flame_spirit':
+                    ctx.beginPath();
+                    ctx.moveTo(18, 0); ctx.quadraticCurveTo(4, -16, -16, -7); ctx.quadraticCurveTo(-8, 0, -16, 7); ctx.quadraticCurveTo(4, 16, 18, 0);
+                    ctx.fill(); ctx.stroke();
+                    break;
+                case 'ice_shard':
+                    ctx.beginPath(); ctx.moveTo(19, 0); ctx.lineTo(-4, -12); ctx.lineTo(-15, -4); ctx.lineTo(-15, 4); ctx.lineTo(-4, 12); ctx.closePath(); ctx.fill(); ctx.stroke();
+                    break;
+                case 'leaf_sprout':
+                    ctx.beginPath(); ctx.ellipse(2, 0, 15, 8, -0.2, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+                    ctx.strokeStyle = lc; ctx.beginPath(); ctx.moveTo(-12, 2); ctx.lineTo(15, -2); ctx.stroke();
+                    break;
+                case 'sun_burst':
+                    for (let i = 0; i < 8; i++) {
+                        const a = (i / 8) * Math.PI * 2;
+                        ctx.beginPath(); ctx.moveTo(Math.cos(a) * 10, Math.sin(a) * 10); ctx.lineTo(Math.cos(a) * 17, Math.sin(a) * 17); ctx.stroke();
+                    }
+                    ctx.beginPath(); ctx.arc(0, 0, 10, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+                    break;
+                case 'void_eye':
+                    ctx.beginPath(); ctx.ellipse(0, 0, 17, 10, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+                    ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(2, 0, 6, 0, Math.PI * 2); ctx.fill();
+                    ctx.fillStyle = lc; ctx.beginPath(); ctx.arc(3, 0, 3, 0, Math.PI * 2); ctx.fill();
+                    break;
+                case 'shield_crest':
+                    ctx.beginPath(); ctx.moveTo(14, -12); ctx.lineTo(14, 4); ctx.quadraticCurveTo(14, 13, -12, 13); ctx.lineTo(-12, -12); ctx.closePath(); ctx.fill(); ctx.stroke();
+                    break;
+                case 'rocket_twin':
+                    ctx.fillRect(-14, -10, 26, 7); ctx.strokeRect(-14, -10, 26, 7);
+                    ctx.fillRect(-14, 3, 26, 7); ctx.strokeRect(-14, 3, 26, 7);
+                    break;
+                case 'hour_glass':
+                    ctx.beginPath(); ctx.moveTo(-12, -13); ctx.lineTo(12, -13); ctx.lineTo(0, 0); ctx.lineTo(12, 13); ctx.lineTo(-12, 13); ctx.lineTo(0, 0); ctx.closePath(); ctx.fill(); ctx.stroke();
+                    break;
+                case 'ufo_mini':
+                    ctx.beginPath(); ctx.ellipse(0, 2, 16, 6, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+                    ctx.fillStyle = lc; ctx.beginPath(); ctx.arc(0, -1, 7, Math.PI, 0); ctx.fill();
+                    break;
+                case 'wedge_cutter':
+                    ctx.beginPath(); ctx.moveTo(18, 6); ctx.lineTo(-15, 6); ctx.lineTo(-15, -12); ctx.closePath(); ctx.fill(); ctx.stroke();
+                    break;
+                case 'drop_aqua':
+                    ctx.beginPath(); ctx.moveTo(18, 0); ctx.quadraticCurveTo(0, -14, -14, 0); ctx.quadraticCurveTo(0, 14, 18, 0); ctx.fill(); ctx.stroke();
+                    break;
+                case 'fang_viper':
+                    ctx.beginPath(); ctx.moveTo(18, 0); ctx.lineTo(-12, -11); ctx.lineTo(-4, 0); ctx.lineTo(-12, 11); ctx.closePath(); ctx.fill(); ctx.stroke();
+                    ctx.fillStyle = lc; ctx.beginPath(); ctx.arc(5, -2, 2.5, 0, Math.PI * 2); ctx.fill();
+                    break;
+                case 'halo_angel':
+                    ctx.beginPath(); ctx.arc(2, 2, 10, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+                    ctx.strokeStyle = lc; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.ellipse(-4, -12, 4, 11, 0.2, 0, Math.PI * 2); ctx.stroke();
+                    break;
+                case 'horn_bull':
+                    ctx.strokeStyle = lc; ctx.lineWidth = 3;
+                    ctx.beginPath(); ctx.moveTo(4, -7); ctx.quadraticCurveTo(18, -16, 16, -2); ctx.stroke();
+                    ctx.beginPath(); ctx.moveTo(4, 7); ctx.quadraticCurveTo(18, 16, 16, 2); ctx.stroke();
+                    ctx.beginPath(); ctx.ellipse(-2, 0, 12, 9, 0, 0, Math.PI * 2); ctx.fill();
+                    break;
+                case 'wave_pulse':
+                    ctx.strokeStyle = lc; ctx.lineWidth = 3;
+                    ctx.beginPath(); ctx.moveTo(-16, 0); ctx.quadraticCurveTo(-8, -14, 0, 0); ctx.quadraticCurveTo(8, 14, 16, 0); ctx.stroke();
+                    ctx.beginPath(); ctx.arc(0, 0, 7, 0, Math.PI * 2); ctx.fill();
+                    break;
+                case 'fan_turbine':
+                    ctx.beginPath(); ctx.arc(0, 0, 13, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+                    ctx.strokeStyle = lc;
+                    for (let i = 0; i < 4; i++) {
+                        const a = (i / 4) * Math.PI * 2;
+                        ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(Math.cos(a + 0.4) * 11, Math.sin(a + 0.4) * 11); ctx.stroke();
+                    }
+                    break;
+                case 'key_master':
+                    ctx.beginPath(); ctx.arc(-7, 0, 8, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+                    ctx.fillRect(1, -2.5, 16, 5); ctx.fillRect(10, 2.5, 3, 5); ctx.fillRect(14, 2.5, 3, 5);
+                    break;
+                case 'anchor_ship':
+                    ctx.strokeStyle = lc; ctx.lineWidth = 2.5;
+                    ctx.beginPath(); ctx.moveTo(14, 0); ctx.lineTo(-14, 0); ctx.moveTo(-14, -10); ctx.quadraticCurveTo(-20, 0, -14, 10); ctx.stroke();
+                    ctx.beginPath(); ctx.arc(6, 0, 7, 0, Math.PI * 2); ctx.fill();
+                    break;
+                case 'prism_beam':
+                    ctx.beginPath(); ctx.moveTo(16, 0); ctx.lineTo(-12, -13); ctx.lineTo(-12, 13); ctx.closePath(); ctx.fill(); ctx.stroke();
+                    ctx.fillStyle = lc; ctx.fillRect(-18, -4, 6, 8);
+                    break;
+                case 'claw_mech':
+                    ctx.beginPath(); ctx.arc(-4, 0, 9, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+                    ctx.strokeStyle = lc; ctx.lineWidth = 3;
+                    ctx.beginPath(); ctx.moveTo(4, -5); ctx.lineTo(17, -9); ctx.moveTo(4, 5); ctx.lineTo(17, 9); ctx.stroke();
+                    break;
+                case 'cloud_nimbus':
+                    ctx.beginPath();
+                    ctx.arc(-6, 2, 8, 0, Math.PI * 2);
+                    ctx.arc(4, 2, 8, 0, Math.PI * 2);
+                    ctx.arc(-1, -4, 9, 0, Math.PI * 2);
+                    ctx.fill(); ctx.stroke();
+                    break;
+                case 'omega_core':
+                    ctx.beginPath(); ctx.arc(0, 0, 13, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+                    ctx.strokeStyle = lc; ctx.lineWidth = 2.5;
+                    ctx.beginPath(); ctx.arc(0, 0, 7, Math.PI * 0.25, Math.PI * 1.75); ctx.stroke();
+                    break;
             }
 
             ctx.restore();
@@ -1365,12 +1586,12 @@
                 titleEl.innerText = skin.name;
 
                 const previewWrap = document.createElement('div');
-                previewWrap.className = 'w-22 h-12 flex items-center justify-center my-1';
+                previewWrap.className = 'w-24 h-12 flex items-center justify-center my-1';
                 const scCanvas = document.createElement('canvas');
-                scCanvas.width = 92;
+                scCanvas.width = 96;
                 scCanvas.height = 48;
                 const scCtx = scCanvas.getContext('2d');
-                drawCraftSkin(scCtx, 46, 27, 16, 0, skin);
+                drawCraftSkin(scCtx, 48, 24, 16, 0, skin);
                 previewWrap.appendChild(scCanvas);
 
                 const actionWrap = document.createElement('div');
